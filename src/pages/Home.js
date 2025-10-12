@@ -16,6 +16,7 @@ const Home = () => {
     width: window.innerWidth,
     height: window.innerHeight,
   });
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // Track menu state
   
   const navigate = useNavigate();
 
@@ -79,6 +80,35 @@ const Home = () => {
 
   const handleNavigation = (href) => {
     navigate(href);
+  };
+
+  // Handle instant assessment circle tap for mobile and tablet
+  const handleInstantAssessmentTap = () => {
+    if (isMobile || isTablet) {
+      // On mobile/tablet, show mini circles on tap instead of hover
+      setIs3DButtonHovered(!is3DButtonHovered);
+    } else {
+      // On desktop, navigate to assessment page
+      handleNavigation('/assessment');
+    }
+  };
+
+  // Handle mini circle tap for mobile and tablet
+  const handleMiniCircleTap = (href) => {
+    if (isMobile || isTablet) {
+      handleNavigation(href);
+      // Close the mini circles after selection
+      setIs3DButtonHovered(false);
+    }
+  };
+
+  // Handle menu state from Navbar
+  const handleMenuStateChange = (isOpen) => {
+    setIsMenuOpen(isOpen);
+    // Close instant assessment circles when menu opens
+    if (isOpen) {
+      setIs3DButtonHovered(false);
+    }
   };
 
   useEffect(() => {
@@ -182,130 +212,145 @@ const Home = () => {
 
       {/* Content Overlay */}
       <div className="absolute inset-0 z-10">
-        <Navbar />
+        {/* Pass menu state handler to Navbar */}
+        <Navbar onMenuStateChange={handleMenuStateChange} />
 
-        {/* Game-Style 3D Circular Button with Curved Mini Circles */}
-        <div 
-          className={`fixed z-50 ${getButtonPosition()}`}
-          onMouseEnter={() => setIs3DButtonHovered(true)}
-          onMouseLeave={() => { setIs3DButtonHovered(false); setHoveredCircle(null); }}
-        >
-          <div className="relative" style={{ width: getResponsiveSize('200px', '250px', '280px', '180px', '160px'), height: getResponsiveSize('200px', '250px', '280px', '180px', '160px') }}>
-            <div className="absolute inset-0">
-              {assessmentCategories.map((category, index) => {
-                const radius = getResponsiveSize(120, 150, 180, 100, 90);
-                const position = getCirclePosition(category.angle, radius, index);
-                const circleSize = getResponsiveSize('80px', '100px', '112px', '70px', '60px');
-                
-                return (
-                  <div key={category.title} className={`absolute transition-all duration-700 ease-out ${is3DButtonHovered && !isMobile ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
-                    style={{ 
-                      left: '50%', 
-                      top: '50%', 
-                      transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`, 
-                      transitionDelay: is3DButtonHovered ? `${index * 120}ms` : '0ms' 
-                    }}
-                    onMouseEnter={() => !isMobile && setHoveredCircle(index)}
-                    onMouseLeave={() => !isMobile && setHoveredCircle(null)}>
-                    {!isMobile && (
-                      <svg className={`absolute transition-all duration-500 ${is3DButtonHovered ? 'opacity-100' : 'opacity-0'}`}
-                        style={{ 
-                          left: '50%', 
-                          top: '50%', 
-                          transform: `translate(-50%, -50%)`, 
-                          width: isTablet ? `${Math.abs(position.x) * 2 + 50}px` : `${radius + 50}px`, 
-                          height: isTablet ? '100px' : `${radius + 50}px`, 
-                          pointerEvents: 'none', 
-                          transitionDelay: is3DButtonHovered ? `${index * 120 + 200}ms` : '0ms' 
-                        }}>
-                        {/* Only show connecting lines for tablet in horizontal layout */}
-                        {isTablet && (
-                          <path 
-                            d={`M ${(Math.abs(position.x) * 2 + 50) / 2} ${50} L ${(Math.abs(position.x) * 2 + 50) / 2 + position.x} ${50 + position.y}`} 
-                            stroke="rgba(251, 191, 36, 0.6)" 
-                            strokeWidth="3" 
-                            fill="none" 
-                            strokeDasharray="5,5" 
-                          />
-                        )}
-                        {!isTablet && (
-                          <path 
-                            d={`M ${(radius + 50) / 2} ${(radius + 50) / 2} L ${(radius + 50) / 2 - position.x} ${(radius + 50) / 2 - position.y}`} 
-                            stroke="rgba(251, 191, 36, 0.6)" 
-                            strokeWidth="3" 
-                            fill="none" 
-                            strokeDasharray="5,5" 
-                          />
-                        )}
-                        <circle 
-                          cx={isTablet ? `${(Math.abs(position.x) * 2 + 50) / 2 + position.x}` : `${(radius + 50) / 2 - position.x}`} 
-                          cy={isTablet ? `${50 + position.y}` : `${(radius + 50) / 2 - position.y}`} 
-                          r="4" 
-                          fill="#fbbf24" 
-                          className="drop-shadow-lg" 
-                          style={{ filter: 'drop-shadow(0 0 6px rgba(251, 191, 36, 0.8))' }} 
-                        />
-                      </svg>
-                    )}
-                    <div className={`relative rounded-full transform transition-all duration-400 cursor-pointer ${!isMobile && hoveredCircle === index ? 'scale-110 rotate-12' : 'scale-100 rotate-0'} bg-gradient-to-br ${category.gradient} shadow-xl ${category.shadow} ${!isMobile && hoveredCircle === index ? `${category.glow} shadow-2xl` : ''}`}
+        {/* Game-Style 3D Circular Button with Curved Mini Circles - Hide when menu is open */}
+        {!isMenuOpen && (
+          <div 
+            className={`fixed z-40 ${getButtonPosition()}`} // Reduced z-index from 50 to 40
+            onMouseEnter={() => !isMobile && setIs3DButtonHovered(true)}
+            onMouseLeave={() => {
+              if (!isMobile) {
+                setIs3DButtonHovered(false);
+                setHoveredCircle(null);
+              }
+            }}
+          >
+            <div className="relative" style={{ width: getResponsiveSize('200px', '250px', '280px', '180px', '160px'), height: getResponsiveSize('200px', '250px', '280px', '180px', '160px') }}>
+              <div className="absolute inset-0">
+                {assessmentCategories.map((category, index) => {
+                  const radius = getResponsiveSize(120, 150, 180, 100, 90);
+                  const position = getCirclePosition(category.angle, radius, index);
+                  const circleSize = getResponsiveSize('80px', '100px', '112px', '70px', '60px');
+                  
+                  return (
+                    <div key={category.title} className={`absolute transition-all duration-700 ease-out ${(is3DButtonHovered || (isMobile || isTablet)) && !isMobile ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
                       style={{ 
-                        width: circleSize, 
-                        height: circleSize, 
-                        border: '4px solid rgba(255, 255, 255, 0.3)', 
-                        boxShadow: !isMobile && hoveredCircle === index ? `0 15px 40px ${category.shadow.replace('/50', '/60')}, inset 0 -4px 12px rgba(0,0,0,0.3), inset 0 4px 12px rgba(255,255,255,0.3)` : '0 8px 25px rgba(0,0,0,0.3), inset 0 -3px 10px rgba(0,0,0,0.3), inset 0 3px 10px rgba(255,255,255,0.2)' 
+                        left: '50%', 
+                        top: '50%', 
+                        transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`, 
+                        transitionDelay: (is3DButtonHovered || (isMobile || isTablet)) ? `${index * 120}ms` : '0ms' 
                       }}
-                      onClick={() => handleNavigation(category.href)}>
-                      <div className="absolute inset-2 rounded-full border-2 border-white/20"></div>
-                      <div className="absolute inset-4 rounded-full bg-gradient-to-br from-white/30 to-transparent"></div>
-                      <div className="relative z-10 flex flex-col items-center justify-center h-full p-2">
-                        <span className="text-white font-black tracking-wider mb-1 drop-shadow-lg" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)', fontSize: getResponsiveSize('0.75rem', '0.875rem', '1.125rem', '0.7rem', '0.65rem') }}>{category.title}</span>
-                      </div>
-                      {!isMobile && <div className={`absolute inset-0 rounded-full transition-all duration-500 ${hoveredCircle === index ? 'opacity-100' : 'opacity-0'}`} style={{ border: '2px dashed rgba(255, 255, 255, 0.4)', animation: hoveredCircle === index ? 'spin 3s linear infinite' : 'none' }}></div>}
-                      {!isMobile && hoveredCircle === index && (
-                        <div className="absolute inset-0 rounded-full overflow-hidden">
-                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent shine-animation"></div>
-                        </div>
+                      onMouseEnter={() => !isMobile && setHoveredCircle(index)}
+                      onMouseLeave={() => !isMobile && setHoveredCircle(null)}>
+                      {!isMobile && (
+                        <svg className={`absolute transition-all duration-500 ${(is3DButtonHovered || (isMobile || isTablet)) ? 'opacity-100' : 'opacity-0'}`}
+                          style={{ 
+                            left: '50%', 
+                            top: '50%', 
+                            transform: `translate(-50%, -50%)`, 
+                            width: isTablet ? `${Math.abs(position.x) * 2 + 50}px` : `${radius + 50}px`, 
+                            height: isTablet ? '100px' : `${radius + 50}px`, 
+                            pointerEvents: 'none', 
+                            transitionDelay: (is3DButtonHovered || (isMobile || isTablet)) ? `${index * 120 + 200}ms` : '0ms' 
+                          }}>
+                          {/* Only show connecting lines for tablet in horizontal layout */}
+                          {isTablet && (
+                            <path 
+                              d={`M ${(Math.abs(position.x) * 2 + 50) / 2} ${50} L ${(Math.abs(position.x) * 2 + 50) / 2 + position.x} ${50 + position.y}`} 
+                              stroke="rgba(251, 191, 36, 0.6)" 
+                              strokeWidth="3" 
+                              fill="none" 
+                              strokeDasharray="5,5" 
+                            />
+                          )}
+                          {!isTablet && (
+                            <path 
+                              d={`M ${(radius + 50) / 2} ${(radius + 50) / 2} L ${(radius + 50) / 2 - position.x} ${(radius + 50) / 2 - position.y}`} 
+                              stroke="rgba(251, 191, 36, 0.6)" 
+                              strokeWidth="3" 
+                              fill="none" 
+                              strokeDasharray="5,5" 
+                            />
+                          )}
+                          <circle 
+                            cx={isTablet ? `${(Math.abs(position.x) * 2 + 50) / 2 + position.x}` : `${(radius + 50) / 2 - position.x}`} 
+                            cy={isTablet ? `${50 + position.y}` : `${(radius + 50) / 2 - position.y}`} 
+                            r="4" 
+                            fill="#fbbf24" 
+                            className="drop-shadow-lg" 
+                            style={{ filter: 'drop-shadow(0 0 6px rgba(251, 191, 36, 0.8))' }} 
+                          />
+                        </svg>
                       )}
+                      <div 
+                        className={`relative rounded-full transform transition-all duration-400 cursor-pointer ${!isMobile && hoveredCircle === index ? 'scale-110 rotate-12' : 'scale-100 rotate-0'} bg-gradient-to-br ${category.gradient} shadow-xl ${category.shadow} ${!isMobile && hoveredCircle === index ? `${category.glow} shadow-2xl` : ''}`}
+                        style={{ 
+                          width: circleSize, 
+                          height: circleSize, 
+                          border: '4px solid rgba(255, 255, 255, 0.3)', 
+                          boxShadow: !isMobile && hoveredCircle === index ? `0 15px 40px ${category.shadow.replace('/50', '/60')}, inset 0 -4px 12px rgba(0,0,0,0.3), inset 0 4px 12px rgba(255,255,255,0.3)` : '0 8px 25px rgba(0,0,0,0.3), inset 0 -3px 10px rgba(0,0,0,0.3), inset 0 3px 10px rgba(255,255,255,0.2)' 
+                        }}
+                        onClick={() => handleMiniCircleTap(category.href)}
+                      >
+                        <div className="absolute inset-2 rounded-full border-2 border-white/20"></div>
+                        <div className="absolute inset-4 rounded-full bg-gradient-to-br from-white/30 to-transparent"></div>
+                        <div className="relative z-10 flex flex-col items-center justify-center h-full p-2">
+                          <span className="text-white font-black tracking-wider mb-1 drop-shadow-lg" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)', fontSize: getResponsiveSize('0.75rem', '0.875rem', '1.125rem', '0.7rem', '0.65rem') }}>{category.title}</span>
+                        </div>
+                        {!isMobile && <div className={`absolute inset-0 rounded-full transition-all duration-500 ${hoveredCircle === index ? 'opacity-100' : 'opacity-0'}`} style={{ border: '2px dashed rgba(255, 255, 255, 0.4)', animation: hoveredCircle === index ? 'spin 3s linear infinite' : 'none' }}></div>}
+                        {!isMobile && hoveredCircle === index && (
+                          <div className="absolute inset-0 rounded-full overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent shine-animation"></div>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <button className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-500 ${!isMobile && is3DButtonHovered ? 'scale-110' : 'scale-100'} cursor-pointer group`}
-              style={{ 
-                width: getResponsiveSize('100px', '120px', '160px', '90px', '80px'), 
-                height: getResponsiveSize('100px', '120px', '160px', '90px', '80px'), 
-                background: 'linear-gradient(145deg, #fbbf24, #f59e0b, #d97706)', 
-                boxShadow: !isMobile && is3DButtonHovered ? '0 20px 50px rgba(251, 191, 36, 0.6), 0 0 80px rgba(251, 191, 36, 0.4), inset 0 -8px 20px rgba(0,0,0,0.4), inset 0 8px 20px rgba(255,255,255,0.3)' : '0 12px 30px rgba(251, 191, 36, 0.4), 0 0 40px rgba(251, 191, 36, 0.2), inset 0 -5px 15px rgba(0,0,0,0.3), inset 0 5px 15px rgba(255,255,255,0.2)', 
-                border: '5px solid rgba(255, 255, 255, 0.3)' 
-              }}
-              onClick={() => handleNavigation('/assessment')}>
-              <div className="absolute inset-0 rounded-full" style={{ border: '3px solid rgba(0, 0, 0, 0.2)', boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.5), inset 0 -2px 4px rgba(0,0,0,0.3)' }}></div>
-              {!isMobile && <div className={`absolute inset-0 rounded-full transition-opacity duration-500 ${is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ border: '2px dashed rgba(255, 255, 255, 0.3)', animation: is3DButtonHovered ? 'spin 4s linear infinite' : 'none' }}></div>}
-              <div className={`absolute rounded-full transition-opacity duration-700 ${!isMobile && is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ inset: getResponsiveSize('1.5rem', '1.75rem', '1.5rem', '1rem', '0.875rem'), background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 60%)', animation: !isMobile && is3DButtonHovered ? 'pulse 1.5s ease-in-out infinite' : 'none' }}></div>
-              <div className="relative z-10 flex flex-col items-center justify-center h-full">
-                <div className="relative mb-1">
-                  <div className="absolute inset-0 bg-white/20 rounded-full blur-md"></div>
-                  <svg className="text-white drop-shadow-lg relative z-10" style={{ width: getResponsiveSize('2rem', '2.5rem', '3.5rem', '1.75rem', '1.5rem'), height: getResponsiveSize('2rem', '2.5rem', '3.5rem', '1.75rem', '1.5rem') }} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                  </svg>
-                </div>
-                <div className="text-center">
-                  <span className="text-white font-black tracking-wider drop-shadow-lg block" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5), 0 0 10px rgba(255,255,255,0.3)', fontSize: getResponsiveSize('0.75rem', '0.875rem', '1.25rem', '0.7rem', '0.65rem') }}>INSTANT</span>
-                  <div className="text-white font-bold tracking-wide drop-shadow-lg" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)', fontSize: getResponsiveSize('0.6rem', '0.7rem', '0.875rem', '0.55rem', '0.5rem') }}>ASSESS</div>
-                  <span className="text-white/90 font-semibold mt-0.5 block" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)', fontSize: getResponsiveSize('0.5rem', '0.6rem', '0.5rem', '0.45rem', '0.4rem') }}>Powered by KAI</span>
-                </div>
+                  );
+                })}
               </div>
-              {!isMobile && (
-                <div className={`absolute inset-0 rounded-full overflow-hidden transition-opacity duration-500 ${is3DButtonHovered ? 'opacity-100' : 'opacity-0'}`}>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent shine-animation"></div>
-                </div>
-              )}
-            </button>
-          </div>
-        </div>
 
+              <button 
+                className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-500 ${!isMobile && is3DButtonHovered ? 'scale-110' : 'scale-100'} cursor-pointer group`}
+                style={{ 
+                  width: getResponsiveSize('100px', '120px', '160px', '90px', '80px'), 
+                  height: getResponsiveSize('100px', '120px', '160px', '90px', '80px'), 
+                  background: 'linear-gradient(145deg, #fbbf24, #f59e0b, #d97706)', 
+                  boxShadow: !isMobile && is3DButtonHovered ? '0 20px 50px rgba(251, 191, 36, 0.6), 0 0 80px rgba(251, 191, 36, 0.4), inset 0 -8px 20px rgba(0,0,0,0.4), inset 0 8px 20px rgba(255,255,255,0.3)' : '0 12px 30px rgba(251, 191, 36, 0.4), 0 0 40px rgba(251, 191, 36, 0.2), inset 0 -5px 15px rgba(0,0,0,0.3), inset 0 5px 15px rgba(255,255,255,0.2)', 
+                  border: '5px solid rgba(255, 255, 255, 0.3)' 
+                }}
+                onClick={handleInstantAssessmentTap}
+                onMouseEnter={() => !isMobile && setIs3DButtonHovered(true)}
+                onMouseLeave={() => !isMobile && setIs3DButtonHovered(false)}
+              >
+                <div className="absolute inset-0 rounded-full" style={{ border: '3px solid rgba(0, 0, 0, 0.2)', boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.5), inset 0 -2px 4px rgba(0,0,0,0.3)' }}></div>
+                {!isMobile && <div className={`absolute inset-0 rounded-full transition-opacity duration-500 ${is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ border: '2px dashed rgba(255, 255, 255, 0.3)', animation: is3DButtonHovered ? 'spin 4s linear infinite' : 'none' }}></div>}
+                <div className={`absolute rounded-full transition-opacity duration-700 ${!isMobile && is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ inset: getResponsiveSize('1.5rem', '1.75rem', '1.5rem', '1rem', '0.875rem'), background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 60%)', animation: !isMobile && is3DButtonHovered ? 'pulse 1.5s ease-in-out infinite' : 'none' }}></div>
+                <div className="relative z-10 flex flex-col items-center justify-center h-full">
+                  <div className="relative mb-1">
+                    <div className="absolute inset-0 bg-white/20 rounded-full blur-md"></div>
+                    <svg className="text-white drop-shadow-lg relative z-10" style={{ width: getResponsiveSize('2rem', '2.5rem', '3.5rem', '1.75rem', '1.5rem'), height: getResponsiveSize('2rem', '2.5rem', '3.5rem', '1.75rem', '1.5rem') }} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    </svg>
+                  </div>
+                  <div className="text-center">
+                    <span className="text-white font-black tracking-wider drop-shadow-lg block" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5), 0 0 10px rgba(255,255,255,0.3)', fontSize: getResponsiveSize('0.75rem', '0.875rem', '1.25rem', '0.7rem', '0.65rem') }}>INSTANT</span>
+                    <div className="text-white font-bold tracking-wide drop-shadow-lg" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)', fontSize: getResponsiveSize('0.6rem', '0.7rem', '0.875rem', '0.55rem', '0.5rem') }}>ASSESS</div>
+                    <span className="text-white/90 font-semibold mt-0.5 block" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)', fontSize: getResponsiveSize('0.5rem', '0.6rem', '0.5rem', '0.45rem', '0.4rem') }}>Powered by KAI</span>
+                  </div>
+                </div>
+                {!isMobile && (
+                  <div className={`absolute inset-0 rounded-full overflow-hidden transition-opacity duration-500 ${is3DButtonHovered ? 'opacity-100' : 'opacity-0'}`}>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent shine-animation"></div>
+                  </div>
+                )}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Rest of the component remains the same */}
         {/* Floating Plus Menu with Robot and Dialog */}
         <nav className={`btn-pluss-wrapper fixed z-40 flex flex-col items-center transition-all duration-300 ${
           isSmallMobileLandscape ? 'bottom-1 left-1 scale-75' : 
@@ -380,7 +425,7 @@ const Home = () => {
           </div>
         </nav>
 
-        {/* Ninja Image with Cartoon Dialog - Updated for tablet */}
+        {/* Ninja Image with Cartoon Dialog */}
         <div className={`fixed bottom-0 left-1/2 transform -translate-x-1/2 z-30 transition-all duration-300 ${getNinjaPosition()}`}>
           <div className="relative">
             <img 
