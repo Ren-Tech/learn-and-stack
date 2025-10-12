@@ -17,6 +17,7 @@ const Home = () => {
     height: window.innerHeight,
   });
   const [isMenuOpen, setIsMenuOpen] = useState(false); // Track menu state
+  const [showMiniCircles, setShowMiniCircles] = useState(false); // Control mini circles visibility
   
   const navigate = useNavigate();
 
@@ -42,8 +43,20 @@ const Home = () => {
     const handleResize = () => {
       setWindowSize({ width: window.innerWidth, height: window.innerHeight });
     };
+    
+    const preventTouch = (e) => {
+      if (e.touches.length > 1) {
+        e.preventDefault();
+      }
+    };
+    
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    document.addEventListener('touchstart', preventTouch, { passive: false });
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      document.removeEventListener('touchstart', preventTouch);
+    };
   }, []);
 
   const isMobile = windowSize.width < 768;
@@ -85,8 +98,8 @@ const Home = () => {
   // Handle instant assessment circle tap for mobile and tablet
   const handleInstantAssessmentTap = () => {
     if (isMobile || isTablet) {
-      // On mobile/tablet, show mini circles on tap instead of hover
-      setIs3DButtonHovered(!is3DButtonHovered);
+      // On mobile/tablet, toggle mini circles visibility on tap
+      setShowMiniCircles(prev => !prev);
     } else {
       // On desktop, navigate to assessment page
       handleNavigation('/assessment');
@@ -98,7 +111,7 @@ const Home = () => {
     if (isMobile || isTablet) {
       handleNavigation(href);
       // Close the mini circles after selection
-      setIs3DButtonHovered(false);
+      setShowMiniCircles(false);
     }
   };
 
@@ -108,8 +121,35 @@ const Home = () => {
     // Close instant assessment circles when menu opens
     if (isOpen) {
       setIs3DButtonHovered(false);
+      setShowMiniCircles(false);
     }
   };
+
+  // Prevent unwanted clicks on empty areas
+  const handleContainerClick = (e) => {
+    // If clicking on the main container (not any specific element), close mini circles
+    if (e.target === e.currentTarget && (isMobile || isTablet)) {
+      setShowMiniCircles(false);
+    }
+  };
+
+  // Close mini circles when clicking outside on mobile/tablet
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if ((isMobile || isTablet) && showMiniCircles) {
+        // Check if click is outside the instant assessment button area
+        const buttonContainer = document.querySelector('.instant-assessment-container');
+        if (buttonContainer && !buttonContainer.contains(e.target)) {
+          setShowMiniCircles(false);
+        }
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [showMiniCircles, isMobile, isTablet]);
 
   useEffect(() => {
     if (currentLine < dialogLines.length) {
@@ -194,13 +234,16 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white relative overflow-x-hidden overflow-y-auto">
+    <div 
+      className="min-h-screen bg-white relative overflow-x-hidden overflow-y-auto"
+      onClick={handleContainerClick}
+    >
       {/* Main Content Image as Regular Content */}
       <div className="relative z-0 w-full h-screen">
         <img
           src={getHomeImage()} // Use the function to determine the image
           alt="Educational platform main content"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover pointer-events-none"
           style={{
             imageRendering: '-webkit-optimize-contrast',
             WebkitBackfaceVisibility: 'hidden',
@@ -218,7 +261,8 @@ const Home = () => {
         {/* Game-Style 3D Circular Button with Curved Mini Circles - Hide when menu is open */}
         {!isMenuOpen && (
           <div 
-            className={`fixed z-40 ${getButtonPosition()}`} // Reduced z-index from 50 to 40
+            className={`fixed z-40 instant-assessment-container ${getButtonPosition()}`}
+            style={{ touchAction: 'manipulation' }}
             onMouseEnter={() => !isMobile && setIs3DButtonHovered(true)}
             onMouseLeave={() => {
               if (!isMobile) {
@@ -226,6 +270,7 @@ const Home = () => {
                 setHoveredCircle(null);
               }
             }}
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="relative" style={{ width: getResponsiveSize('200px', '250px', '280px', '180px', '160px'), height: getResponsiveSize('200px', '250px', '280px', '180px', '160px') }}>
               <div className="absolute inset-0">
@@ -234,18 +279,21 @@ const Home = () => {
                   const position = getCirclePosition(category.angle, radius, index);
                   const circleSize = getResponsiveSize('80px', '100px', '112px', '70px', '60px');
                   
+                  // Determine if mini circles should be visible
+                  const shouldShowMiniCircles = isMobile || isTablet ? showMiniCircles : is3DButtonHovered;
+                  
                   return (
-                    <div key={category.title} className={`absolute transition-all duration-700 ease-out ${(is3DButtonHovered || (isMobile || isTablet)) && !isMobile ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
+                    <div key={category.title} className={`absolute transition-all duration-700 ease-out ${shouldShowMiniCircles ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
                       style={{ 
                         left: '50%', 
                         top: '50%', 
                         transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`, 
-                        transitionDelay: (is3DButtonHovered || (isMobile || isTablet)) ? `${index * 120}ms` : '0ms' 
+                        transitionDelay: shouldShowMiniCircles ? `${index * 120}ms` : '0ms' 
                       }}
                       onMouseEnter={() => !isMobile && setHoveredCircle(index)}
                       onMouseLeave={() => !isMobile && setHoveredCircle(null)}>
                       {!isMobile && (
-                        <svg className={`absolute transition-all duration-500 ${(is3DButtonHovered || (isMobile || isTablet)) ? 'opacity-100' : 'opacity-0'}`}
+                        <svg className={`absolute transition-all duration-500 ${shouldShowMiniCircles ? 'opacity-100' : 'opacity-0'}`}
                           style={{ 
                             left: '50%', 
                             top: '50%', 
@@ -253,7 +301,7 @@ const Home = () => {
                             width: isTablet ? `${Math.abs(position.x) * 2 + 50}px` : `${radius + 50}px`, 
                             height: isTablet ? '100px' : `${radius + 50}px`, 
                             pointerEvents: 'none', 
-                            transitionDelay: (is3DButtonHovered || (isMobile || isTablet)) ? `${index * 120 + 200}ms` : '0ms' 
+                            transitionDelay: shouldShowMiniCircles ? `${index * 120 + 200}ms` : '0ms' 
                           }}>
                           {/* Only show connecting lines for tablet in horizontal layout */}
                           {isTablet && (
@@ -350,7 +398,6 @@ const Home = () => {
           </div>
         )}
 
-        {/* Rest of the component remains the same */}
         {/* Floating Plus Menu with Robot and Dialog */}
         <nav className={`btn-pluss-wrapper fixed z-40 flex flex-col items-center transition-all duration-300 ${
           isSmallMobileLandscape ? 'bottom-1 left-1 scale-75' : 
