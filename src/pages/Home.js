@@ -12,6 +12,10 @@ const Home = () => {
   const [isNinjaTyping, setIsNinjaTyping] = useState(true);
   const [is3DButtonHovered, setIs3DButtonHovered] = useState(false);
   const [hoveredCircle, setHoveredCircle] = useState(null);
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
   
   const navigate = useNavigate();
 
@@ -82,9 +86,39 @@ const Home = () => {
     }
   ];
 
-  // Navigation handler
-  const handleNavigation = (href) => {
-    navigate(href);
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Responsive calculations
+  const isMobile = windowSize.width < 768;
+  const isTablet = windowSize.width >= 768 && windowSize.width < 1024;
+  const isLandscape = windowSize.width > windowSize.height;
+  const isSmallScreen = windowSize.width < 640;
+
+  // Get background image based on screen size
+  const getBackgroundImage = () => {
+    if (isMobile) {
+      return "url('/images/home_mob.png')";
+    } else {
+      return "url('/images/homee.png')";
+    }
+  };
+
+  // Responsive sizes
+  const getResponsiveSize = (mobile, tablet, desktop) => {
+    if (isMobile) return mobile;
+    if (isTablet) return tablet;
+    return desktop;
   };
 
   // Calculate position on arc
@@ -94,6 +128,11 @@ const Home = () => {
       x: Math.cos(radian) * radius,
       y: Math.sin(radian) * radius
     };
+  };
+
+  // Navigation handler
+  const handleNavigation = (href) => {
+    navigate(href);
   };
 
   // KAI Robot typing animation
@@ -151,11 +190,11 @@ const Home = () => {
     <div 
       className="min-h-screen bg-white relative overflow-x-hidden"
       style={{
-        backgroundImage: "url('/images/homeee.png')",
+        backgroundImage: getBackgroundImage(),
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
-        backgroundAttachment: 'fixed'
+        backgroundAttachment: isMobile ? 'scroll' : 'fixed'
       }}
     >
       {/* Overlay to ensure content readability */}
@@ -164,28 +203,41 @@ const Home = () => {
       <div className="relative z-10">
         <Navbar />
 
-        {/* Game-Style 3D Circular Button with Curved Mini Circles */}
+        {/* Game-Style 3D Circular Button with Curved Mini Circles - Responsive Positioning */}
         <div 
-          className="fixed top-1/2 right-[15%] transform -translate-y-1/2 z-50"
+          className={`
+            fixed z-50
+            ${isMobile 
+              ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2' // Centered on mobile
+              : 'top-1/2 right-[15%] transform -translate-y-1/2' // Right side on desktop
+            }
+          `}
           onMouseEnter={() => setIs3DButtonHovered(true)}
           onMouseLeave={() => {
             setIs3DButtonHovered(false);
             setHoveredCircle(null);
           }}
         >
-          <div className="relative" style={{ width: '280px', height: '280px' }}>
+          <div 
+            className="relative" 
+            style={{ 
+              width: getResponsiveSize('200px', '250px', '280px'),
+              height: getResponsiveSize('200px', '250px', '280px')
+            }}
+          >
             {/* Mini Circles Container - Following Circular Arc */}
             <div className="absolute inset-0">
               {assessmentCategories.map((category, index) => {
-                const radius = 180;
+                const radius = getResponsiveSize(120, 150, 180);
                 const position = getCirclePosition(category.angle, radius);
+                const circleSize = getResponsiveSize('80px', '100px', '112px');
                 
                 return (
                   <div
                     key={category.title}
                     className={`
                       absolute transition-all duration-700 ease-out
-                      ${is3DButtonHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}
+                      ${is3DButtonHovered && !isMobile ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}
                     `}
                     style={{
                       left: '50%',
@@ -193,62 +245,66 @@ const Home = () => {
                       transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`,
                       transitionDelay: is3DButtonHovered ? `${index * 120}ms` : '0ms'
                     }}
-                    onMouseEnter={() => setHoveredCircle(index)}
-                    onMouseLeave={() => setHoveredCircle(null)}
+                    onMouseEnter={() => !isMobile && setHoveredCircle(index)}
+                    onMouseLeave={() => !isMobile && setHoveredCircle(null)}
                   >
-                    {/* Curved Connection Line */}
-                    <svg 
-                      className={`
-                        absolute transition-all duration-500
-                        ${is3DButtonHovered ? 'opacity-100' : 'opacity-0'}
-                      `}
-                      style={{
-                        left: '50%',
-                        top: '50%',
-                        transform: `translate(-50%, -50%)`,
-                        width: `${radius + 50}px`,
-                        height: `${radius + 50}px`,
-                        pointerEvents: 'none',
-                        transitionDelay: is3DButtonHovered ? `${index * 120 + 200}ms` : '0ms'
-                      }}
-                    >
-                      <path
-                        d={`M ${(radius + 50) / 2} ${(radius + 50) / 2} L ${(radius + 50) / 2 - position.x} ${(radius + 50) / 2 - position.y}`}
-                        stroke="rgba(251, 191, 36, 0.6)"
-                        strokeWidth="3"
-                        fill="none"
-                        strokeDasharray="5,5"
-                      />
-                      <circle
-                        cx={`${(radius + 50) / 2 - position.x}`}
-                        cy={`${(radius + 50) / 2 - position.y}`}
-                        r="4"
-                        fill="#fbbf24"
-                        className="drop-shadow-lg"
+                    {/* Curved Connection Line - Hide on mobile */}
+                    {!isMobile && (
+                      <svg 
+                        className={`
+                          absolute transition-all duration-500
+                          ${is3DButtonHovered ? 'opacity-100' : 'opacity-0'}
+                        `}
                         style={{
-                          filter: 'drop-shadow(0 0 6px rgba(251, 191, 36, 0.8))'
+                          left: '50%',
+                          top: '50%',
+                          transform: `translate(-50%, -50%)`,
+                          width: `${radius + 50}px`,
+                          height: `${radius + 50}px`,
+                          pointerEvents: 'none',
+                          transitionDelay: is3DButtonHovered ? `${index * 120 + 200}ms` : '0ms'
                         }}
-                      />
-                    </svg>
+                      >
+                        <path
+                          d={`M ${(radius + 50) / 2} ${(radius + 50) / 2} L ${(radius + 50) / 2 - position.x} ${(radius + 50) / 2 - position.y}`}
+                          stroke="rgba(251, 191, 36, 0.6)"
+                          strokeWidth="3"
+                          fill="none"
+                          strokeDasharray="5,5"
+                        />
+                        <circle
+                          cx={`${(radius + 50) / 2 - position.x}`}
+                          cy={`${(radius + 50) / 2 - position.y}`}
+                          r="4"
+                          fill="#fbbf24"
+                          className="drop-shadow-lg"
+                          style={{
+                            filter: 'drop-shadow(0 0 6px rgba(251, 191, 36, 0.8))'
+                          }}
+                        />
+                      </svg>
+                    )}
 
                     {/* Category Circle - Game Style with Navigation */}
                     <div 
                       className={`
-                        relative w-28 h-28 rounded-full
+                        relative rounded-full
                         transform transition-all duration-400
                         cursor-pointer
-                        ${hoveredCircle === index ? 'scale-110 rotate-12' : 'scale-100 rotate-0'}
+                        ${!isMobile && hoveredCircle === index ? 'scale-110 rotate-12' : 'scale-100 rotate-0'}
                         bg-gradient-to-br ${category.gradient}
                         shadow-xl ${category.shadow}
-                        ${hoveredCircle === index ? `${category.glow} shadow-2xl` : ''}
+                        ${!isMobile && hoveredCircle === index ? `${category.glow} shadow-2xl` : ''}
                       `}
-                      onClick={() => handleNavigation(category.href)}
                       style={{
+                        width: circleSize,
+                        height: circleSize,
                         border: '4px solid rgba(255, 255, 255, 0.3)',
-                        boxShadow: hoveredCircle === index 
+                        boxShadow: !isMobile && hoveredCircle === index 
                           ? `0 15px 40px ${category.shadow.replace('/50', '/60')}, inset 0 -4px 12px rgba(0,0,0,0.3), inset 0 4px 12px rgba(255,255,255,0.3)`
                           : '0 8px 25px rgba(0,0,0,0.3), inset 0 -3px 10px rgba(0,0,0,0.3), inset 0 3px 10px rgba(255,255,255,0.2)'
                       }}
+                      onClick={() => handleNavigation(category.href)}
                     >
                       {/* Inner ring */}
                       <div className="absolute inset-2 rounded-full border-2 border-white/20"></div>
@@ -258,24 +314,31 @@ const Home = () => {
                       
                       {/* Content */}
                       <div className="relative z-10 flex flex-col items-center justify-center h-full p-2">
-                        <span className="text-white text-lg font-black tracking-wider mb-1 drop-shadow-lg"
-                          style={{textShadow: '2px 2px 4px rgba(0,0,0,0.5)'}}>
+                        <span 
+                          className="text-white font-black tracking-wider mb-1 drop-shadow-lg"
+                          style={{
+                            textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                            fontSize: getResponsiveSize('0.75rem', '0.875rem', '1.125rem')
+                          }}
+                        >
                           {category.title}
                         </span>
                       </div>
 
-                      {/* Orbital ring decoration */}
-                      <div className={`
-                        absolute inset-0 rounded-full transition-all duration-500
-                        ${hoveredCircle === index ? 'opacity-100' : 'opacity-0'}
-                      `}
-                      style={{
-                        border: '2px dashed rgba(255, 255, 255, 0.4)',
-                        animation: hoveredCircle === index ? 'spin 3s linear infinite' : 'none'
-                      }}></div>
+                      {/* Orbital ring decoration - Hide on mobile */}
+                      {!isMobile && (
+                        <div className={`
+                          absolute inset-0 rounded-full transition-all duration-500
+                          ${hoveredCircle === index ? 'opacity-100' : 'opacity-0'}
+                        `}
+                        style={{
+                          border: '2px dashed rgba(255, 255, 255, 0.4)',
+                          animation: hoveredCircle === index ? 'spin 3s linear infinite' : 'none'
+                        }}></div>
+                      )}
 
-                      {/* Hover shine */}
-                      {hoveredCircle === index && (
+                      {/* Hover shine - Hide on mobile */}
+                      {!isMobile && hoveredCircle === index && (
                         <div className="absolute inset-0 rounded-full overflow-hidden">
                           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent shine-animation"></div>
                         </div>
@@ -290,19 +353,20 @@ const Home = () => {
             <button
               className={`
                 absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2
-                w-40 h-40 rounded-full
-                transition-all duration-500
-                ${is3DButtonHovered ? 'scale-110' : 'scale-100'}
+                rounded-full transition-all duration-500
+                ${!isMobile && is3DButtonHovered ? 'scale-110' : 'scale-100'}
                 cursor-pointer group
               `}
-              onClick={() => handleNavigation('/assessment')}
               style={{
+                width: getResponsiveSize('100px', '120px', '160px'),
+                height: getResponsiveSize('100px', '120px', '160px'),
                 background: 'linear-gradient(145deg, #fbbf24, #f59e0b, #d97706)',
-                boxShadow: is3DButtonHovered 
+                boxShadow: !isMobile && is3DButtonHovered 
                   ? '0 20px 50px rgba(251, 191, 36, 0.6), 0 0 80px rgba(251, 191, 36, 0.4), inset 0 -8px 20px rgba(0,0,0,0.4), inset 0 8px 20px rgba(255,255,255,0.3)'
                   : '0 12px 30px rgba(251, 191, 36, 0.4), 0 0 40px rgba(251, 191, 36, 0.2), inset 0 -5px 15px rgba(0,0,0,0.3), inset 0 5px 15px rgba(255,255,255,0.2)',
                 border: '5px solid rgba(255, 255, 255, 0.3)',
               }}
+              onClick={() => handleNavigation('/assessment')}
             >
               {/* Outer game ring */}
               <div 
@@ -313,35 +377,42 @@ const Home = () => {
                 }}
               ></div>
 
-              {/* Rotating outer ring decoration */}
-              <div 
-                className={`
-                  absolute inset-0 rounded-full transition-opacity duration-500
-                  ${is3DButtonHovered ? 'opacity-100' : 'opacity-60'}
-                `}
-                style={{
-                  border: '2px dashed rgba(255, 255, 255, 0.3)',
-                  animation: is3DButtonHovered ? 'spin 4s linear infinite' : 'none'
-                }}
-              ></div>
+              {/* Rotating outer ring decoration - Hide on mobile */}
+              {!isMobile && (
+                <div 
+                  className={`
+                    absolute inset-0 rounded-full transition-opacity duration-500
+                    ${is3DButtonHovered ? 'opacity-100' : 'opacity-60'}
+                  `}
+                  style={{
+                    border: '2px dashed rgba(255, 255, 255, 0.3)',
+                    animation: is3DButtonHovered ? 'spin 4s linear infinite' : 'none'
+                  }}
+                ></div>
+              )}
 
               {/* Inner glow pulse effect */}
               <div className={`
-                absolute inset-6 rounded-full transition-opacity duration-700
-                ${is3DButtonHovered ? 'opacity-100' : 'opacity-60'}
+                absolute rounded-full transition-opacity duration-700
+                ${!isMobile && is3DButtonHovered ? 'opacity-100' : 'opacity-60'}
               `}
               style={{
+                inset: getResponsiveSize('1.5rem', '1.75rem', '1.5rem'),
                 background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 60%)',
-                animation: is3DButtonHovered ? 'pulse 1.5s ease-in-out infinite' : 'none'
+                animation: !isMobile && is3DButtonHovered ? 'pulse 1.5s ease-in-out infinite' : 'none'
               }}></div>
               
               {/* Icon Container */}
               <div className="relative z-10 flex flex-col items-center justify-center h-full">
                 {/* Game-style icon with border */}
-                <div className="relative mb-2">
+                <div className="relative mb-1">
                   <div className="absolute inset-0 bg-white/20 rounded-full blur-md"></div>
                   <svg 
-                    className="w-14 h-14 text-white drop-shadow-lg relative z-10" 
+                    className="text-white drop-shadow-lg relative z-10" 
+                    style={{
+                      width: getResponsiveSize('2rem', '2.5rem', '3.5rem'),
+                      height: getResponsiveSize('2rem', '2.5rem', '3.5rem')
+                    }}
                     fill="none" 
                     stroke="currentColor" 
                     viewBox="0 0 24 24"
@@ -357,60 +428,101 @@ const Home = () => {
                 
                 {/* Game-style text with shadow */}
                 <div className="text-center">
-                  <span className="text-white text-xl font-black tracking-wider drop-shadow-lg" 
-                    style={{textShadow: '2px 2px 4px rgba(0,0,0,0.5), 0 0 10px rgba(255,255,255,0.3)'}}>
+                  <span 
+                    className="text-white font-black tracking-wider drop-shadow-lg block" 
+                    style={{
+                      textShadow: '2px 2px 4px rgba(0,0,0,0.5), 0 0 10px rgba(255,255,255,0.3)',
+                      fontSize: getResponsiveSize('0.75rem', '0.875rem', '1.25rem')
+                    }}
+                  >
                     INSTANT
                   </span>
-                  <div className="text-white text-sm font-bold tracking-wide drop-shadow-lg"
-                    style={{textShadow: '1px 1px 2px rgba(0,0,0,0.5)'}}>
+                  <div 
+                    className="text-white font-bold tracking-wide drop-shadow-lg"
+                    style={{
+                      textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
+                      fontSize: getResponsiveSize('0.6rem', '0.7rem', '0.875rem')
+                    }}
+                  >
                     ASSESS
                   </div>
-                   <span className="text-white/90 text-[8px] font-semibold mt-1"
-                          style={{textShadow: '1px 1px 2px rgba(0,0,0,0.5)'}}>
-                          Powered by KAI
-                        </span>
+                  <span 
+                    className="text-white/90 font-semibold mt-0.5 block"
+                    style={{
+                      textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
+                      fontSize: getResponsiveSize('0.5rem', '0.6rem', '0.5rem')
+                    }}
+                  >
+                    Powered by KAI
+                  </span>
                 </div>
               </div>
 
-              {/* Animated shine effect */}
-              <div 
-                className={`
-                  absolute inset-0 rounded-full overflow-hidden
-                  transition-opacity duration-500
-                  ${is3DButtonHovered ? 'opacity-100' : 'opacity-0'}
-                `}
-              >
+              {/* Animated shine effect - Hide on mobile */}
+              {!isMobile && (
                 <div 
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent shine-animation"
-                ></div>
-              </div>
+                  className={`
+                    absolute inset-0 rounded-full overflow-hidden
+                    transition-opacity duration-500
+                    ${is3DButtonHovered ? 'opacity-100' : 'opacity-0'}
+                  `}
+                >
+                  <div 
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent shine-animation"
+                  ></div>
+                </div>
+              )}
             </button>
           </div>
         </div>
 
-        {/* Floating Plus Menu with Robot and Dialog */}
+        {/* Floating Plus Menu with Robot and Dialog - Responsive Positioning */}
         <nav 
-          className="btn-pluss-wrapper fixed bottom-16 right-10 z-40 flex flex-col items-center"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
+          className={`
+            btn-pluss-wrapper fixed z-40 flex flex-col items-center
+            ${isMobile 
+              ? isLandscape 
+                ? 'bottom-4 left-4'  // Changed from right-4 to left-4 for landscape
+                : 'bottom-20 left-4'  // Changed from right-4 to left-4 for portrait
+              : 'bottom-16 right-10'  // Keep on right for desktop
+            }
+          `}
+          onMouseEnter={() => !isMobile && setIsHovered(true)}
+          onMouseLeave={() => !isMobile && setIsHovered(false)}
+          onClick={() => isMobile && setIsHovered(!isHovered)}
         >
           {/* Robot Image with Cartoon Dialog - Always Visible */}
           <div className="flex flex-col items-center mb-2">
             {/* Cartoon Dialog */}
-            <div className="bg-white rounded-2xl px-4 py-2 shadow-lg border border-gray-200 mb-2 relative min-w-[120px] min-h-[40px]">
-              <div className="text-sm font-medium text-gray-800">
+            <div 
+              className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 mb-2 relative"
+              style={{
+                minWidth: getResponsiveSize('100px', '120px', '120px'),
+                minHeight: getResponsiveSize('35px', '40px', '40px')
+              }}
+            >
+              <div 
+                className="font-medium text-gray-800"
+                style={{
+                  fontSize: getResponsiveSize('0.75rem', '0.875rem', '0.875rem')
+                }}
+              >
                 {displayedText}
-                <span className="inline-block w-1 h-4 bg-gray-800 ml-1 animate-pulse"></span>
+                <span className="inline-block w-1 h-3 bg-gray-800 ml-1 animate-pulse"></span>
               </div>
-              {/* Speech bubble tail */}
-              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-3 h-3 bg-white border-r border-b border-gray-200"></div>
+              {/* Speech bubble tail - adjust position for left side */}
+              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-white border-r border-b border-gray-200"></div>
             </div>
             
             {/* Robot Image */}
             <img 
               src="/images/bot_kai.png" 
               alt="KAI Robot" 
-              className="w-12 h-12 object-contain drop-shadow-lg transition-transform duration-300 hover:scale-110"
+              className="object-contain drop-shadow-lg transition-transform duration-300 hover:scale-110"
+              style={{
+                width: getResponsiveSize('2.5rem', '3rem', '3rem'),
+                height: getResponsiveSize('2.5rem', '3rem', '3rem')
+              }}
             />
           </div>
 
@@ -420,21 +532,28 @@ const Home = () => {
             transition-all duration-600 ease-[cubic-bezier(0.34,1.56,0.64,1)]
             ${isHovered ? 'h-auto rounded-2xl pb-3 pt-3 shadow-2xl' : 'h-12 rounded-full shadow-lg'}
             border border-blue-700
-          `}>
+          `}
+          style={{
+            width: isHovered ? getResponsiveSize('10rem', '11rem', '11rem') : '3rem'
+          }}>
             {/* Plus Button with Jelly Animation Both Ways */}
             <div className={`
-              bg-red-600 w-12 h-12 rounded-full flex items-center justify-center text-white text-xl font-bold
+              bg-red-600 rounded-full flex items-center justify-center text-white font-bold
               transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]
               ${isHovered ? 'rotate-45 scale-105' : 'rotate-0 scale-100'}
-              shadow-lg hover:shadow-xl
-              border border-red-500
-            `}>
+              shadow-lg hover:shadow-xl border border-red-500
+            `}
+            style={{
+              width: getResponsiveSize('2.5rem', '3rem', '3rem'),
+              height: getResponsiveSize('2.5rem', '3rem', '3rem'),
+              fontSize: getResponsiveSize('1rem', '1.25rem', '1.25rem')
+            }}>
               +
             </div>
             
             {/* Menu Items with Jelly Staggered Animation Both Ways */}
             <ul className={`
-              transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] w-44 px-3
+              transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] px-3 w-full
               ${isHovered ? 'opacity-100 max-h-96 mt-4' : 'opacity-0 max-h-0 mt-0'}
             `}>
               {menuItems.map((item, index) => (
@@ -444,22 +563,35 @@ const Home = () => {
                     bg-white rounded-lg transition-all duration-600 ease-[cubic-bezier(0.34,1.56,0.64,1)]
                     transform border border-gray-100 shadow-sm
                     ${isHovered 
-                      ? `h-12 mb-2 opacity-100 translate-x-0 scale-100` 
-                      : 'h-0 opacity-0 translate-x-8 scale-90'
+                      ? `mb-2 opacity-100 translate-x-0 scale-100` 
+                      : 'opacity-0 translate-x-8 scale-90'
                     }
                     hover:bg-blue-50 hover:border-blue-200 hover:scale-105 hover:shadow-md
                     cursor-pointer
                   `}
                   style={{
+                    height: isHovered ? getResponsiveSize('2.5rem', '3rem', '3rem') : '0',
                     transitionDelay: isHovered 
                       ? `${index * 100}ms` 
                       : `${(menuItems.length - index) * 80}ms`
                   }}
                   onClick={() => handleNavigation(item.href)}
                 >
-                  <div className="text-blue-900 text-sm font-medium block w-full h-full flex flex-col items-center justify-center transition-colors duration-300 hover:text-blue-700 p-1">
+                  <div 
+                    className="text-blue-900 font-medium block w-full h-full flex flex-col items-center justify-center transition-colors duration-300 hover:text-blue-700 p-1"
+                    style={{
+                      fontSize: getResponsiveSize('0.7rem', '0.8rem', '0.875rem')
+                    }}
+                  >
                     <span className="font-semibold">{item.text}</span>
-                    <span className="text-xs text-gray-600">{item.description}</span>
+                    <span 
+                      className="text-gray-600"
+                      style={{
+                        fontSize: getResponsiveSize('0.6rem', '0.7rem', '0.75rem')
+                      }}
+                    >
+                      {item.description}
+                    </span>
                   </div>
                 </li>
               ))}
@@ -467,25 +599,74 @@ const Home = () => {
           </div>
         </nav>
 
-        {/* Ninja Image with Cartoon Dialog */}
-        <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 z-30 mb-[-15px] md:mb-[-40px]">
+        {/* Ninja Image with Cartoon Dialog - Responsive Positioning */}
+        <div className={`
+          fixed bottom-0 left-1/2 transform -translate-x-1/2 z-30
+          ${isMobile 
+            ? isLandscape 
+              ? 'mb-[-5px]' 
+              : 'mb-[-15px]'
+            : 'mb-[-40px]'
+          }
+        `}>
           <div className="relative">
             {/* Ninja Image */}
             <img 
               src="/images/ninja.png" 
               alt="Ninja" 
-              className="w-64 h-64 md:w-80 md:h-80 object-contain drop-shadow-lg"
+              className="object-contain drop-shadow-lg"
+              style={{
+                width: getResponsiveSize(
+                  isLandscape ? '8rem' : '12rem',
+                  '14rem',
+                  '20rem'
+                ),
+                height: getResponsiveSize(
+                  isLandscape ? '8rem' : '12rem',
+                  '14rem',
+                  '20rem'
+                )
+              }}
             />
             
-            {/* Ninja Cartoon Dialog - Top Right of Image */}
-            <div className="absolute top-20 -right-2 transform translate-x-full">
-              <div className="bg-white rounded-2xl px-4 py-3 shadow-lg border border-gray-200 relative max-w-[180px] min-h-[80px]">
-                <div className="text-sm font-medium text-gray-800 whitespace-pre-line">
+            {/* Ninja Cartoon Dialog - Responsive Positioning */}
+            <div 
+              className={`
+                absolute transform
+                ${isMobile 
+                  ? isLandscape
+                    ? 'top-4 -right-1 translate-x-full'
+                    : 'top-12 -right-1 translate-x-full'
+                  : 'top-20 -right-2 translate-x-full'
+                }
+              `}
+            >
+              <div 
+                className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 relative"
+                style={{
+                  maxWidth: getResponsiveSize('140px', '160px', '180px'),
+                  minHeight: getResponsiveSize('60px', '70px', '80px')
+                }}
+              >
+                <div 
+                  className="font-medium text-gray-800 whitespace-pre-line"
+                  style={{
+                    fontSize: getResponsiveSize('0.7rem', '0.8rem', '0.875rem')
+                  }}
+                >
                   {ninjaText}
-                  <span className="inline-block w-1 h-4 bg-gray-800 ml-1 animate-pulse"></span>
+                  <span className="inline-block w-1 h-3 bg-gray-800 ml-1 animate-pulse"></span>
                 </div>
                 {/* Speech bubble tail pointing left towards ninja */}
-                <div className="absolute bottom-4 -left-2 transform -translate-y-1/2 rotate-45 w-3 h-3 bg-white border-l border-b border-gray-200"></div>
+                <div 
+                  className="absolute transform -translate-y-1/2 rotate-45 bg-white border-l border-b border-gray-200"
+                  style={{
+                    bottom: getResponsiveSize('1.5rem', '1.75rem', '2rem'),
+                    left: '-0.25rem',
+                    width: getResponsiveSize('0.5rem', '0.6rem', '0.75rem'),
+                    height: getResponsiveSize('0.5rem', '0.6rem', '0.75rem')
+                  }}
+                ></div>
               </div>
             </div>
           </div>
@@ -523,6 +704,20 @@ const Home = () => {
           }
           100% {
             transform: translateX(200%) skewX(-15deg);
+          }
+        }
+
+        /* Mobile-specific optimizations */
+        @media (max-width: 767px) and (orientation: landscape) {
+          .btn-pluss-wrapper {
+            transform: scale(0.9);
+          }
+        }
+
+        /* Prevent text selection on mobile */
+        @media (max-width: 767px) {
+          * {
+            -webkit-tap-highlight-color: transparent;
           }
         }
       `}</style>
