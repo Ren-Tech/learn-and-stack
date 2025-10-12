@@ -52,21 +52,47 @@ const ALevels = () => {
   const isMobile = windowSize.width < 768;
   const isTablet = windowSize.width >= 768 && windowSize.width < 1024;
   const isLandscape = windowSize.width > windowSize.height;
+  const isMobileLandscape = isMobile && isLandscape;
+  const isTabletPortrait = isTablet && !isLandscape;
 
   // Get background image based on screen size
   const getBackgroundImage = () => {
-    if (isMobile) {
-      return "url('/images/a-level.png')";
-    } else {
-      return "url('/images/a-levels.png')";
-    }
+    if (isMobileLandscape) return "/images/home_landscape.png";
+    if (isMobile) return "/images/a-level.png";
+    if (isTabletPortrait) return "/images/tab_alevel.png"; // Tablet portrait image
+    return "/images/a-levels.png"; // Default desktop image
   };
 
   // Responsive sizes
-  const getResponsiveSize = (mobile, tablet, desktop) => {
+  const getResponsiveSize = (mobile, tablet, desktop, landscapeMobile = null, smallLandscape = null) => {
+    if (isMobileLandscape && landscapeMobile !== null) return landscapeMobile;
     if (isMobile) return mobile;
     if (isTablet) return tablet;
     return desktop;
+  };
+
+  // Function to determine ninja position - moved higher for tablet
+  const getNinjaPosition = () => {
+    if (isMobileLandscape) return 'mb-[-5px] scale-75';
+    if (isMobile) return isLandscape ? 'mb-[-5px] scale-90' : 'mb-[-15px]';
+    if (isTablet) return 'mb-[20px]'; // Moved higher for tablet
+    return 'mb-[-40px]';
+  };
+
+  // Function to determine ninja dialog position - adjusted for tablet
+  const getNinjaDialogPosition = () => {
+    if (isMobileLandscape) return 'top-2 -right-1 translate-x-full scale-90';
+    if (isMobile) return isLandscape ? 'top-4 -right-1 translate-x-full' : 'top-12 -right-1 translate-x-full';
+    if (isTablet) return 'top-4 -right-1 translate-x-full'; // Adjusted for higher ninja position
+    return 'top-20 -right-2 translate-x-full';
+  };
+
+  // Function to determine plus menu position
+  const getPlusMenuPosition = () => {
+    if (isMobileLandscape) return 'bottom-2 left-2 scale-85';
+    if (isMobile) return isLandscape ? 'bottom-4 left-4' : 'bottom-20 left-4';
+    if (isTablet) return 'bottom-16 right-10'; // Tablet position
+    return 'bottom-16 right-10'; // Desktop position
   };
 
   // KAI Robot typing animation
@@ -121,33 +147,30 @@ const ALevels = () => {
   }, [ninjaText, isNinjaTyping, ninjaLines]);
 
   return (
-    <div 
-      className="min-h-screen bg-white relative overflow-x-hidden"
-      style={{
-        backgroundImage: getBackgroundImage(),
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundAttachment: isMobile ? 'scroll' : 'fixed'
-      }}
-    >
-      {/* Overlay to ensure content readability */}
-      <div className="absolute inset-0 bg-white/10 pointer-events-none"></div>
+    <div className="min-h-screen bg-white relative overflow-x-hidden">
+      {/* Background Image as Content */}
+      <div className="fixed inset-0 z-0">
+        <img 
+          src={getBackgroundImage()} 
+          alt="A-Levels Background" 
+          className="w-full h-full object-cover"
+          style={{
+            imageRendering: '-webkit-optimize-contrast',
+            WebkitBackfaceVisibility: 'hidden',
+            MozBackfaceVisibility: 'hidden',
+            backfaceVisibility: 'hidden'
+          }}
+        />
+        {/* Overlay to ensure content readability */}
+        <div className="absolute inset-0 bg-white/10 pointer-events-none"></div>
+      </div>
       
       <div className="relative z-10">
         <Navbar />
 
         {/* Floating Plus Menu with Robot and Dialog - Responsive Positioning */}
         <nav 
-          className={`
-            btn-pluss-wrapper fixed z-40 flex flex-col items-center
-            ${isMobile 
-              ? isLandscape 
-                ? 'bottom-4 left-4' 
-                : 'bottom-20 left-4'
-              : 'bottom-16 right-10'
-            }
-          `}
+          className={`btn-pluss-wrapper fixed z-40 flex flex-col items-center transition-all duration-300 ${getPlusMenuPosition()}`}
           onMouseEnter={() => !isMobile && setIsHovered(true)}
           onMouseLeave={() => !isMobile && setIsHovered(false)}
           onClick={() => isMobile && setIsHovered(!isHovered)}
@@ -158,14 +181,14 @@ const ALevels = () => {
             <div 
               className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 mb-2 relative"
               style={{
-                minWidth: getResponsiveSize('100px', '120px', '120px'),
-                minHeight: getResponsiveSize('35px', '40px', '40px')
+                minWidth: getResponsiveSize('100px', '120px', '120px', '90px', '80px'),
+                minHeight: getResponsiveSize('35px', '40px', '40px', '30px', '25px')
               }}
             >
               <div 
                 className="font-medium text-gray-800"
                 style={{
-                  fontSize: getResponsiveSize('0.75rem', '0.875rem', '0.875rem')
+                  fontSize: getResponsiveSize('0.75rem', '0.875rem', '0.875rem', '0.7rem', '0.65rem')
                 }}
               >
                 {displayedText}
@@ -181,8 +204,8 @@ const ALevels = () => {
               alt="KAI Robot" 
               className="object-contain drop-shadow-lg transition-transform duration-300 hover:scale-110"
               style={{
-                width: getResponsiveSize('2.5rem', '3rem', '3rem'),
-                height: getResponsiveSize('2.5rem', '3rem', '3rem')
+                width: getResponsiveSize('2.5rem', '3rem', '3rem', '2rem', '1.75rem'),
+                height: getResponsiveSize('2.5rem', '3rem', '3rem', '2rem', '1.75rem')
               }}
             />
           </div>
@@ -195,7 +218,7 @@ const ALevels = () => {
             border border-blue-700
           `}
           style={{
-            width: isHovered ? getResponsiveSize('10rem', '11rem', '11rem') : '3rem'
+            width: isHovered ? getResponsiveSize('10rem', '11rem', '11rem', '9rem', '8rem') : getResponsiveSize('3rem', '3rem', '3rem', '2.5rem', '2.25rem')
           }}>
             {/* Plus Button with Jelly Animation Both Ways */}
             <div className={`
@@ -205,9 +228,9 @@ const ALevels = () => {
               shadow-lg hover:shadow-xl border border-red-500
             `}
             style={{
-              width: getResponsiveSize('2.5rem', '3rem', '3rem'),
-              height: getResponsiveSize('2.5rem', '3rem', '3rem'),
-              fontSize: getResponsiveSize('1rem', '1.25rem', '1.25rem')
+              width: getResponsiveSize('2.5rem', '3rem', '3rem', '2rem', '1.75rem'),
+              height: getResponsiveSize('2.5rem', '3rem', '3rem', '2rem', '1.75rem'),
+              fontSize: getResponsiveSize('1rem', '1.25rem', '1.25rem', '0.875rem', '0.8rem')
             }}>
               +
             </div>
@@ -238,7 +261,7 @@ const ALevels = () => {
                     cursor-pointer
                   `}
                   style={{
-                    height: isHovered ? getResponsiveSize('2.5rem', '3rem', '3rem') : '0',
+                    height: isHovered ? getResponsiveSize('2.5rem', '3rem', '3rem', '2.25rem', '2rem') : '0',
                     transitionDelay: isHovered 
                       ? `${index * 100}ms` 
                       : `${(5 - index) * 80}ms`
@@ -248,7 +271,7 @@ const ALevels = () => {
                     href={item.href} 
                     className="text-blue-900 font-medium block w-full h-full flex items-center justify-center transition-colors duration-300 hover:text-blue-700 p-1"
                     style={{
-                      fontSize: getResponsiveSize('0.7rem', '0.8rem', '0.875rem')
+                      fontSize: getResponsiveSize('0.7rem', '0.8rem', '0.875rem', '0.65rem', '0.6rem')
                     }}
                   >
                     {item.text}
@@ -260,15 +283,7 @@ const ALevels = () => {
         </nav>
 
         {/* Ninja Image with Cartoon Dialog - Responsive Positioning */}
-        <div className={`
-          fixed bottom-0 left-1/2 transform -translate-x-1/2 z-30
-          ${isMobile 
-            ? isLandscape 
-              ? 'mb-[-5px]' 
-              : 'mb-[-15px]'
-            : 'mb-[-40px]'
-          }
-        `}>
+        <div className={`fixed bottom-0 left-1/2 transform -translate-x-1/2 z-30 transition-all duration-300 ${getNinjaPosition()}`}>
           <div className="relative">
             {/* Ninja Image */}
             <img 
@@ -279,39 +294,33 @@ const ALevels = () => {
                 width: getResponsiveSize(
                   isLandscape ? '8rem' : '12rem',
                   '14rem',
-                  '20rem'
+                  '20rem',
+                  '6rem',
+                  '5rem'
                 ),
                 height: getResponsiveSize(
                   isLandscape ? '8rem' : '12rem',
                   '14rem',
-                  '20rem'
+                  '20rem',
+                  '6rem',
+                  '5rem'
                 )
               }}
             />
             
             {/* Ninja Cartoon Dialog - Responsive Positioning */}
-            <div 
-              className={`
-                absolute transform
-                ${isMobile 
-                  ? isLandscape
-                    ? 'top-4 -right-1 translate-x-full'
-                    : 'top-12 -right-1 translate-x-full'
-                  : 'top-20 -right-2 translate-x-full'
-                }
-              `}
-            >
+            <div className={`absolute transform ${getNinjaDialogPosition()}`}>
               <div 
                 className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 relative"
                 style={{
-                  maxWidth: getResponsiveSize('140px', '160px', '180px'),
-                  minHeight: getResponsiveSize('60px', '70px', '80px')
+                  maxWidth: getResponsiveSize('140px', '160px', '180px', '120px', '100px'),
+                  minHeight: getResponsiveSize('60px', '70px', '80px', '50px', '45px')
                 }}
               >
                 <div 
                   className="font-medium text-gray-800 whitespace-pre-line"
                   style={{
-                    fontSize: getResponsiveSize('0.7rem', '0.8rem', '0.875rem')
+                    fontSize: getResponsiveSize('0.7rem', '0.8rem', '0.875rem', '0.65rem', '0.6rem')
                   }}
                 >
                   {ninjaText}
@@ -321,10 +330,10 @@ const ALevels = () => {
                 <div 
                   className="absolute transform -translate-y-1/2 rotate-45 bg-white border-l border-b border-gray-200"
                   style={{
-                    bottom: getResponsiveSize('1.5rem', '1.75rem', '2rem'),
+                    bottom: getResponsiveSize('1.5rem', '1.75rem', '2rem', '1.25rem', '1rem'),
                     left: '-0.25rem',
-                    width: getResponsiveSize('0.5rem', '0.6rem', '0.75rem'),
-                    height: getResponsiveSize('0.5rem', '0.6rem', '0.75rem')
+                    width: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem'),
+                    height: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem')
                   }}
                 ></div>
               </div>
@@ -339,7 +348,19 @@ const ALevels = () => {
         /* Mobile-specific optimizations */
         @media (max-width: 767px) and (orientation: landscape) {
           .btn-pluss-wrapper {
-            transform: scale(0.9);
+            transform: scale(0.85);
+          }
+        }
+
+        @media (max-width: 640px) and (orientation: landscape) {
+          .btn-pluss-wrapper {
+            transform: scale(0.75);
+          }
+        }
+
+        @media (max-width: 500px) and (orientation: landscape) {
+          .btn-pluss-wrapper {
+            transform: scale(0.65);
           }
         }
 
@@ -347,6 +368,13 @@ const ALevels = () => {
         @media (max-width: 767px) {
           * {
             -webkit-tap-highlight-color: transparent;
+          }
+        }
+
+        /* Enhanced image rendering */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+          .btn-pluss-wrapper, .ninja-container {
+            image-rendering: -webkit-optimize-contrast;
           }
         }
       `}</style>
