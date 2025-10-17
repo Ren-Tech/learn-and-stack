@@ -1,12 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Menu, X, Search, User } from "lucide-react";
+import { Menu, X, Search, User, ChevronUp, ChevronDown, Eye, EyeOff } from "lucide-react";
 
-const Navbar = () => {
+const Navbar = ({ onMenuStateChange, onNavigationVisibilityChange }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isScrollable, setIsScrollable] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [showScrollBottom, setShowScrollBottom] = useState(false);
+  const [showNavigation, setShowNavigation] = useState(true);
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
 
   const navLinks = [
     { path: "/", label: "Home", ageRange: "" },
@@ -17,7 +25,35 @@ const Navbar = () => {
     { path: "/alevels", label: "A-Levels", ageRange: "16-18 Years Old" },
   ];
 
+  // Check window size for responsive behavior
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const isDesktop = windowSize.width >= 1024;
+  const isLandscape = windowSize.width > windowSize.height;
+  const isDesktopLandscape = isDesktop && isLandscape;
+
   const isActive = (path) => location.pathname === path;
+
+  // Toggle navigation visibility
+  const toggleNavigation = () => {
+    const newVisibilityState = !showNavigation;
+    setShowNavigation(newVisibilityState);
+    
+    // Notify parent component about navigation visibility change
+    if (onNavigationVisibilityChange) {
+      onNavigationVisibilityChange(newVisibilityState);
+    }
+  };
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -41,6 +77,74 @@ const Navbar = () => {
     navigate(path);
     setIsMenuOpen(false);
   };
+
+  // Notify parent component when menu state changes
+  useEffect(() => {
+    if (onMenuStateChange) {
+      onMenuStateChange(isMenuOpen);
+    }
+  }, [isMenuOpen, onMenuStateChange]);
+
+  // Check if drawer content is scrollable
+  const checkScrollability = () => {
+    const drawerContent = document.querySelector('.drawer-content');
+    if (drawerContent) {
+      const isContentScrollable = drawerContent.scrollHeight > drawerContent.clientHeight;
+      setIsScrollable(isContentScrollable);
+      updateScrollIndicators(drawerContent);
+    }
+  };
+
+  // Update scroll indicators
+  const updateScrollIndicators = (element) => {
+    if (!element) return;
+    
+    const scrollTop = element.scrollTop;
+    const scrollHeight = element.scrollHeight;
+    const clientHeight = element.clientHeight;
+    
+    setShowScrollTop(scrollTop > 10);
+    setShowScrollBottom(scrollTop + clientHeight < scrollHeight - 10);
+  };
+
+  // Handle drawer scroll
+  const handleDrawerScroll = (e) => {
+    updateScrollIndicators(e.target);
+  };
+
+  // Scroll drawer to top
+  const scrollToTop = () => {
+    const drawerContent = document.querySelector('.drawer-content');
+    if (drawerContent) {
+      drawerContent.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  // Scroll drawer to bottom
+  const scrollToBottom = () => {
+    const drawerContent = document.querySelector('.drawer-content');
+    if (drawerContent) {
+      drawerContent.scrollTo({ 
+        top: drawerContent.scrollHeight, 
+        behavior: 'smooth' 
+      });
+    }
+  };
+
+  // Effect to check scrollability when menu opens/closes or window resizes
+  useEffect(() => {
+    if (isMenuOpen) {
+      // Small delay to ensure DOM is updated
+      setTimeout(checkScrollability, 100);
+      
+      // Add resize listener
+      window.addEventListener('resize', checkScrollability);
+      
+      return () => {
+        window.removeEventListener('resize', checkScrollability);
+      };
+    }
+  }, [isMenuOpen]);
 
   const getPageContent = () => {
     switch (location.pathname) {
@@ -132,6 +236,21 @@ const Navbar = () => {
 
           {/* Right Icons */}
           <div className="hidden sm:flex items-center gap-3 md:gap-4">
+            {/* Hide/Show Navigation Button - Hidden on Desktop Landscape */}
+            {!isDesktopLandscape && (
+              <button
+                onClick={toggleNavigation}
+                className="text-blue-200 hover:text-white transition-colors duration-200 p-2 rounded-full hover:bg-white/10"
+                title={showNavigation ? "Hide Navigation" : "Show Navigation"}
+              >
+                {showNavigation ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
+            )}
+
             {/* Search */}
             <form onSubmit={handleSearch} className="relative">
               <input
@@ -158,6 +277,19 @@ const Navbar = () => {
 
           {/* Mobile + Tablet Drawer Trigger */}
           <div className="flex lg:hidden items-center gap-3">
+            {/* Hide/Show Navigation Button for Mobile - Always visible on mobile/tablet */}
+            <button
+              onClick={toggleNavigation}
+              className="text-white hover:text-blue-200 p-1"
+              title={showNavigation ? "Hide Navigation" : "Show Navigation"}
+            >
+              {showNavigation ? (
+                <EyeOff className="w-5 h-5" />
+              ) : (
+                <Eye className="w-5 h-5" />
+              )}
+            </button>
+
             <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
               className="text-white hover:text-blue-200"
@@ -198,62 +330,131 @@ const Navbar = () => {
       {/* ===== Drawer Menu for Tablets & Mobile ===== */}
       {isMenuOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex justify-end lg:hidden transition-all duration-300">
-          <div className="bg-blue-600 w-4/5 sm:w-3/5 md:w-2/5 h-full p-6 flex flex-col gap-4 transform translate-x-0 transition-transform duration-300">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-white font-bold text-xl">Menu</h2>
-              <X
-                onClick={() => setIsMenuOpen(false)}
-                className="w-6 h-6 text-white cursor-pointer hover:text-blue-200"
-              />
+          <div className="bg-blue-600 w-4/5 sm:w-3/5 md:w-2/5 h-full flex flex-col relative">
+            {/* Scroll to top indicator */}
+            {isScrollable && showScrollTop && (
+              <button
+                onClick={scrollToTop}
+                className="absolute top-2 left-1/2 transform -translate-x-1/2 z-10 bg-blue-700 hover:bg-blue-800 text-white p-1 rounded-full shadow-lg transition-all duration-200"
+              >
+                <ChevronUp className="w-4 h-4" />
+              </button>
+            )}
+
+            {/* Drawer content with scroll */}
+            <div 
+              className="drawer-content flex-1 p-6 overflow-y-auto"
+              onScroll={handleDrawerScroll}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-white font-bold text-xl">Menu</h2>
+                <X
+                  onClick={() => setIsMenuOpen(false)}
+                  className="w-6 h-6 text-white cursor-pointer hover:text-blue-200"
+                />
+              </div>
+
+              {/* Hide/Show Navigation Option in Drawer */}
+              <div className="mb-4">
+                <button
+                  onClick={toggleNavigation}
+                  className={`w-full text-left py-3 px-4 rounded-lg transition-all duration-300 flex items-center gap-3 ${
+                    showNavigation 
+                      ? "bg-red-500/20 text-white border border-red-400/50" 
+                      : "bg-green-500/20 text-white border border-green-400/50"
+                  }`}
+                >
+                  {showNavigation ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                  <div className="flex flex-col">
+                    <span className="text-base font-semibold">
+                      {showNavigation ? "Hide Navigation" : "Show Navigation"}
+                    </span>
+                    <span className="text-xs opacity-80 mt-1">
+                      {showNavigation ? "Temporarily hide all navigation" : "Show navigation elements"}
+                    </span>
+                  </div>
+                </button>
+              </div>
+
+              <ul className="flex flex-col gap-3">
+                {navLinks.map((link) => (
+                  <li key={link.path}>
+                    <button
+                      onClick={() => handleNavClick(link.path)}
+                      className={`w-full text-left py-3 px-4 rounded-lg transition-all duration-300 ${
+                        isActive(link.path)
+                          ? "bg-white/30 text-white font-semibold shadow-lg"
+                          : "text-blue-100 hover:bg-white/20 hover:text-white"
+                      }`}
+                    >
+                      <div className="flex flex-col">
+                        <span className="text-base font-semibold">
+                          {link.label}
+                        </span>
+                        {link.ageRange && (
+                          <span className="text-xs text-blue-200 mt-1">
+                            {link.ageRange}
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+
+              {/* Additional content to demonstrate scrolling */}
+              <div className="mt-6 pt-4 border-t border-blue-500">
+                <h3 className="text-white font-semibold mb-3">Quick Links</h3>
+                <div className="flex flex-col gap-2">
+                  {["About Us", "Contact", "FAQ", "Privacy Policy", "Terms of Service"].map((item, index) => (
+                    <button
+                      key={index}
+                      className="text-blue-100 hover:text-white hover:bg-blue-500/30 py-2 px-3 rounded-lg text-left text-sm transition-all duration-200"
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            <ul className="flex flex-col gap-3">
-              {navLinks.map((link) => (
-                <li key={link.path}>
-                  <button
-                    onClick={() => handleNavClick(link.path)}
-                    className={`w-full text-left py-3 px-4 rounded-lg transition-all duration-300 ${
-                      isActive(link.path)
-                        ? "bg-white/30 text-white font-semibold shadow-lg"
-                        : "text-blue-100 hover:bg-white/20 hover:text-white"
-                    }`}
-                  >
-                    <div className="flex flex-col">
-                      <span className="text-base font-semibold">
-                        {link.label}
-                      </span>
-                      {link.ageRange && (
-                        <span className="text-xs text-blue-200 mt-1">
-                          {link.ageRange}
-                        </span>
-                      )}
-                    </div>
-                  </button>
-                </li>
-              ))}
-            </ul>
+            {/* Scroll to bottom indicator */}
+            {isScrollable && showScrollBottom && (
+              <button
+                onClick={scrollToBottom}
+                className="absolute bottom-2 left-1/2 transform -translate-x-1/2 z-10 bg-blue-700 hover:bg-blue-800 text-white p-1 rounded-full shadow-lg transition-all duration-200"
+              >
+                <ChevronDown className="w-4 h-4" />
+              </button>
+            )}
           </div>
         </div>
       )}
 
       {/* ===== Bottom Info Banner ===== */}
-      <div className="bg-gradient-to-r from-green-500 to-green-600 py-3 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10">
-          <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
-            <div className="text-white font-bold text-base sm:text-lg md:text-xl flex items-center gap-2">
-              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-              {pageContent.title}
-            </div>
-            <div className="flex flex-wrap gap-3 md:gap-6">
-              {pageContent.items.map((item, i) => (
-                <div key={i} className="text-white text-xs sm:text-sm font-medium">
-                  {item}
-                </div>
-              ))}
+      {showNavigation && (
+        <div className="bg-gradient-to-r from-green-500 to-green-600 py-3 shadow-lg">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10">
+            <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
+              <div className="text-white font-bold text-base sm:text-lg md:text-xl flex items-center gap-2">
+                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                {pageContent.title}
+              </div>
+              <div className="flex flex-wrap gap-3 md:gap-6">
+                {pageContent.items.map((item, i) => (
+                  <div key={i} className="text-white text-xs sm:text-sm font-medium">
+                    {item}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 };

@@ -18,6 +18,7 @@ const Home = () => {
   });
   const [isMenuOpen, setIsMenuOpen] = useState(false); // Track menu state
   const [showMiniCircles, setShowMiniCircles] = useState(false); // Control mini circles visibility
+  const [showNavigation, setShowNavigation] = useState(true); // Control navbar and bottom nav visibility
   
   const navigate = useNavigate();
 
@@ -61,9 +62,11 @@ const Home = () => {
 
   const isMobile = windowSize.width < 768;
   const isTablet = windowSize.width >= 768 && windowSize.width < 1024;
+  const isDesktop = windowSize.width >= 1024;
   const isLandscape = windowSize.width > windowSize.height;
   const isMobileLandscape = isMobile && isLandscape;
   const isSmallMobileLandscape = isMobileLandscape && windowSize.width < 700;
+  const isDesktopLandscape = isDesktop && isLandscape;
   // Add tablet portrait detection
   const isTabletPortrait = isTablet && !isLandscape;
 
@@ -123,6 +126,16 @@ const Home = () => {
       setIs3DButtonHovered(false);
       setShowMiniCircles(false);
     }
+  };
+
+  // Handle navigation visibility change from Navbar
+  const handleNavigationVisibilityChange = (isVisible) => {
+    setShowNavigation(isVisible);
+  };
+
+  // Toggle navigation visibility
+  const toggleNavigation = () => {
+    setShowNavigation(prev => !prev);
   };
 
   // Prevent unwanted clicks on empty areas
@@ -233,6 +246,14 @@ const Home = () => {
     return 'top-20 -right-2 translate-x-full';
   };
 
+  // Function to determine hide/show button position
+  const getHideShowButtonPosition = () => {
+    if (isMobileLandscape) return 'top-2 right-2';
+    if (isMobile) return 'top-4 right-4';
+    if (isTablet) return 'top-6 right-6';
+    return 'top-8 right-8';
+  };
+
   return (
     <div 
       className="min-h-screen bg-white relative overflow-x-hidden overflow-y-auto"
@@ -255,8 +276,38 @@ const Home = () => {
 
       {/* Content Overlay */}
       <div className="absolute inset-0 z-10">
-        {/* Pass menu state handler to Navbar */}
-        <Navbar onMenuStateChange={handleMenuStateChange} />
+        {/* Hide/Show Navigation Button - Hidden on Desktop Landscape */}
+        {!isDesktopLandscape && (
+          <button
+            className={`fixed z-50 bg-gray-800 hover:bg-gray-700 text-white rounded-full p-2 shadow-lg transition-all duration-300 border border-gray-600 ${getHideShowButtonPosition()}`}
+            onClick={toggleNavigation}
+            title={showNavigation ? "Hide Navigation" : "Show Navigation"}
+            style={{
+              width: getResponsiveSize('2.5rem', '3rem', '3.5rem', '2.25rem', '2rem'),
+              height: getResponsiveSize('2.5rem', '3rem', '3.5rem', '2.25rem', '2rem')
+            }}
+          >
+            <div className="flex items-center justify-center w-full h-full">
+              {showNavigation ? (
+                <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
+            </div>
+          </button>
+        )}
+
+        {/* Pass menu state handler to Navbar and control visibility */}
+        {showNavigation && (
+          <Navbar 
+            onMenuStateChange={handleMenuStateChange} 
+            onNavigationVisibilityChange={handleNavigationVisibilityChange}
+          />
+        )}
 
         {/* Game-Style 3D Circular Button with Curved Mini Circles - Hide when menu is open */}
         {!isMenuOpen && (
@@ -518,7 +569,8 @@ const Home = () => {
           </div>
         </div>
 
-        <BottomNav />
+        {/* Conditionally render BottomNav based on showNavigation state */}
+        {showNavigation && <BottomNav />}
       </div>
 
       <style jsx>{`
