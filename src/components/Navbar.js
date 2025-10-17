@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Menu, X, Search, User } from "lucide-react";
 
@@ -7,6 +7,8 @@ const Navbar = () => {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isNavVisible, setIsNavVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   const navLinks = [
     { path: "/", label: "Home", ageRange: "" },
@@ -84,10 +86,51 @@ const Navbar = () => {
 
   const pageContent = getPageContent();
 
+  // Handle scroll behavior for landscape mobile
+  useEffect(() => {
+    const isLandscape = () => {
+      return window.innerHeight < 500 && window.innerWidth < 900;
+    };
+
+    const handleScroll = () => {
+      if (!isLandscape()) {
+        setIsNavVisible(true);
+        return;
+      }
+
+      const currentScrollY = window.scrollY;
+      
+      if (currentScrollY < lastScrollY || currentScrollY < 50) {
+        // Scrolling up or at top
+        setIsNavVisible(true);
+      } else if (currentScrollY > lastScrollY && currentScrollY > 50) {
+        // Scrolling down
+        setIsNavVisible(false);
+        setIsSearchOpen(false);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    const handleResize = () => {
+      if (!isLandscape()) setIsNavVisible(true);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [lastScrollY]);
+
   return (
     <>
       {/* ===== Top Navbar ===== */}
-      <nav className="bg-gradient-to-r from-blue-600 to-blue-700 py-3 px-4 sm:px-6 md:px-8 lg:px-10 shadow-2xl sticky top-0 z-50">
+      <nav className={`bg-gradient-to-r from-blue-600 to-blue-700 py-3 px-4 sm:px-6 md:px-8 lg:px-10 shadow-2xl sticky top-0 z-50 transition-transform duration-300 ${
+        isNavVisible ? "translate-y-0" : "-translate-y-full"
+      }`}>
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           {/* Logo + Title */}
           <div className="flex items-center gap-3">
