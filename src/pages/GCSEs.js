@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import BottomNav from '../components/BottomNav';
 
@@ -14,8 +15,19 @@ const GCSEs = () => {
     height: window.innerHeight,
   });
 
+  const navigate = useNavigate();
+
   const dialogLines = ["I'm KAI", "Can I help?"];
   const ninjaLines = ["Ready", "Steady", "Succeed"];
+
+  // Navigation menu items - same as home page
+  const menuItems = [
+    { href: "/primary", text: "Primary", description: "6-11 Years Old" },
+    { href: "/preschool", text: "Pre-School", description: "2-5 Years Old" },
+    { href: "/11plus", text: "11+", description: "11 Years Old" },
+    { href: "/gcses", text: "GCSEs", description: "14-16 Years Old" },
+    { href: "/alevels", text: "A-Levels", description: "16-18 Years Old" },
+  ];
 
   // Handle window resize
   useEffect(() => {
@@ -37,12 +49,17 @@ const GCSEs = () => {
   const isMobileLandscape = isMobile && isLandscape;
   const isTabletPortrait = isTablet && !isLandscape;
 
+  // Navigation handler
+  const handleNavigation = (href) => {
+    navigate(href);
+  };
+
   // Get background image based on screen size
   const getBackgroundImage = () => {
     if (isMobileLandscape) return "/images/home_landscape.png";
     if (isMobile) return "/images/gcse_mob.png";
-    if (isTabletPortrait) return "/images/tab_gcse.png"; // Tablet portrait image
-    return "/images/gcses.png"; // Default desktop image
+    if (isTabletPortrait) return "/images/tab_gcse.png";
+    return "/images/gcses.png";
   };
 
   // Responsive sizes
@@ -57,7 +74,7 @@ const GCSEs = () => {
   const getNinjaPosition = () => {
     if (isMobileLandscape) return 'mb-[-5px] scale-75';
     if (isMobile) return isLandscape ? 'mb-[-5px] scale-90' : 'mb-[-15px]';
-    if (isTablet) return 'mb-[20px]'; // Moved higher for tablet
+    if (isTablet) return 'mb-[20px]';
     return 'mb-[-40px]';
   };
 
@@ -65,7 +82,7 @@ const GCSEs = () => {
   const getNinjaDialogPosition = () => {
     if (isMobileLandscape) return 'top-2 -right-1 translate-x-full scale-90';
     if (isMobile) return isLandscape ? 'top-4 -right-1 translate-x-full' : 'top-12 -right-1 translate-x-full';
-    if (isTablet) return 'top-4 -right-1 translate-x-full'; // Adjusted for higher ninja position
+    if (isTablet) return 'top-4 -right-1 translate-x-full';
     return 'top-20 -right-2 translate-x-full';
   };
 
@@ -73,8 +90,13 @@ const GCSEs = () => {
   const getPlusMenuPosition = () => {
     if (isMobileLandscape) return 'bottom-2 left-2 scale-85';
     if (isMobile) return isLandscape ? 'bottom-4 left-4' : 'bottom-20 left-4';
-    if (isTablet) return 'bottom-16 right-10'; // Tablet position
-    return 'bottom-16 right-10'; // Desktop position
+    if (isTablet) return 'bottom-16 right-10';
+    return 'bottom-16 right-10';
+  };
+
+  const getJellyMenuMaxHeight = () => {
+    if (isMobileLandscape) return 'max-h-32';
+    return 'max-h-96';
   };
 
   // KAI Robot typing animation
@@ -219,17 +241,14 @@ const GCSEs = () => {
             
             {/* Menu Items with Jelly Staggered Animation Both Ways */}
             <ul className={`
-              transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] px-3 w-full
-              ${isHovered ? 'opacity-100 max-h-96 mt-4' : 'opacity-0 max-h-0 mt-0'}
-            `}>
-              {[
-                { href: "#past-papers", text: "Past Papers" },
-                { href: "#practice", text: "Practice" },
-                { href: "#tutorial", text: "Tutorial Videos" },
-                { href: "#contact", text: "Master Classes" },
-                { href: "freetrial.php", text: "Free Trial" },
-                { href: "#CreateaccountModal", text: "Be a Member" }
-              ].map((item, index) => (
+              transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] px-3 w-full overflow-y-auto ${getJellyMenuMaxHeight()}
+              ${isHovered ? 'opacity-100 mt-4' : 'opacity-0 mt-0'}
+            `}
+            style={{ 
+              scrollbarWidth: 'thin',
+              scrollbarColor: 'rgba(255,255,255,0.3) transparent'
+            }}>
+              {menuItems.map((item, index) => (
                 <li 
                   key={index}
                   className={`
@@ -246,18 +265,26 @@ const GCSEs = () => {
                     height: isHovered ? getResponsiveSize('2.5rem', '3rem', '3rem', '2.25rem', '2rem') : '0',
                     transitionDelay: isHovered 
                       ? `${index * 100}ms` 
-                      : `${(5 - index) * 80}ms`
+                      : `${(menuItems.length - index) * 80}ms`
                   }}
+                  onClick={() => handleNavigation(item.href)}
                 >
-                  <a 
-                    href={item.href} 
-                    className="text-blue-900 font-medium block w-full h-full flex items-center justify-center transition-colors duration-300 hover:text-blue-700 p-1"
+                  <div 
+                    className="text-blue-900 font-medium block w-full h-full flex flex-col items-center justify-center transition-colors duration-300 hover:text-blue-700 p-1"
                     style={{
                       fontSize: getResponsiveSize('0.7rem', '0.8rem', '0.875rem', '0.65rem', '0.6rem')
                     }}
                   >
-                    {item.text}
-                  </a>
+                    <span className="font-semibold">{item.text}</span>
+                    <span 
+                      className="text-gray-600"
+                      style={{
+                        fontSize: getResponsiveSize('0.6rem', '0.7rem', '0.75rem', '0.55rem', '0.5rem')
+                      }}
+                    >
+                      {item.description}
+                    </span>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -358,6 +385,23 @@ const GCSEs = () => {
           .btn-pluss-wrapper, .ninja-container {
             image-rendering: -webkit-optimize-contrast;
           }
+        }
+
+        .btn-pluss ul::-webkit-scrollbar {
+          width: 4px;
+        }
+        
+        .btn-pluss ul::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        
+        .btn-pluss ul::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.3);
+          border-radius: 2px;
+        }
+        
+        .btn-pluss ul::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.5);
         }
       `}</style>
     </div>

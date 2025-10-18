@@ -16,9 +16,9 @@ const Home = () => {
     width: window.innerWidth,
     height: window.innerHeight,
   });
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // Track menu state
-  const [showMiniCircles, setShowMiniCircles] = useState(false); // Control mini circles visibility
-  const [showNavigation, setShowNavigation] = useState(true); // Control navbar and bottom nav visibility
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showMiniCircles, setShowMiniCircles] = useState(false);
+  const [showNavigation, setShowNavigation] = useState(true);
   
   const navigate = useNavigate();
 
@@ -67,7 +67,6 @@ const Home = () => {
   const isMobileLandscape = isMobile && isLandscape;
   const isSmallMobileLandscape = isMobileLandscape && windowSize.width < 700;
   const isDesktopLandscape = isDesktop && isLandscape;
-  // Add tablet portrait detection
   const isTabletPortrait = isTablet && !isLandscape;
 
   const getResponsiveSize = (mobile, tablet, desktop, landscapeMobile = null, smallLandscape = null) => {
@@ -78,16 +77,14 @@ const Home = () => {
     return desktop;
   };
 
-  // Updated circle positions for tablet - left to right arrangement
   const getCirclePosition = (angle, radius, index) => {
     if (isTablet) {
-      // For tablet, arrange circles in a horizontal line from left to right
       const totalCircles = assessmentCategories.length;
-      const spacing = 180; // Horizontal spacing between circles
+      const spacing = 180;
       const startX = -((totalCircles - 1) * spacing) / 2;
       return { 
         x: startX + (index * spacing), 
-        y: -80 // Position circles above the main button
+        y: -80
       };
     }
     const radian = (angle * Math.PI) / 180;
@@ -98,59 +95,49 @@ const Home = () => {
     navigate(href);
   };
 
-  // Handle instant assessment circle tap for mobile and tablet
   const handleInstantAssessmentTap = () => {
+    // Only allow click functionality on mobile and tablet, not on desktop
     if (isMobile || isTablet) {
-      // On mobile/tablet, toggle mini circles visibility on tap
       setShowMiniCircles(prev => !prev);
-    } else {
-      // On desktop, navigate to assessment page
-      handleNavigation('/assessment');
     }
+    // Remove navigation to /assessment on desktop
   };
 
-  // Handle mini circle tap for mobile and tablet
   const handleMiniCircleTap = (href) => {
     if (isMobile || isTablet) {
       handleNavigation(href);
-      // Close the mini circles after selection
       setShowMiniCircles(false);
+    } else {
+      // On desktop, directly navigate without toggling mini circles state
+      handleNavigation(href);
     }
   };
 
-  // Handle menu state from Navbar
   const handleMenuStateChange = (isOpen) => {
     setIsMenuOpen(isOpen);
-    // Close instant assessment circles when menu opens
     if (isOpen) {
       setIs3DButtonHovered(false);
       setShowMiniCircles(false);
     }
   };
 
-  // Handle navigation visibility change from Navbar
   const handleNavigationVisibilityChange = (isVisible) => {
     setShowNavigation(isVisible);
   };
 
-  // Toggle navigation visibility
   const toggleNavigation = () => {
     setShowNavigation(prev => !prev);
   };
 
-  // Prevent unwanted clicks on empty areas
   const handleContainerClick = (e) => {
-    // If clicking on the main container (not any specific element), close mini circles
     if (e.target === e.currentTarget && (isMobile || isTablet)) {
       setShowMiniCircles(false);
     }
   };
 
-  // Close mini circles when clicking outside on mobile/tablet
   useEffect(() => {
     const handleClickOutside = (e) => {
       if ((isMobile || isTablet) && showMiniCircles) {
-        // Check if click is outside the instant assessment button area
         const buttonContainer = document.querySelector('.instant-assessment-container');
         if (buttonContainer && !buttonContainer.contains(e.target)) {
           setShowMiniCircles(false);
@@ -212,41 +199,37 @@ const Home = () => {
     }
   }, [ninjaText, isNinjaTyping, ninjaLines]);
 
-  // Function to determine which image to use
   const getHomeImage = () => {
     if (isMobileLandscape) return '/images/home_landscape.png';
     if (isMobile) return '/images/home_mob.png';
-    if (isTabletPortrait) return '/images/tab_home.png'; // Use the tablet portrait image
-    return '/images/homee.png'; // Default desktop image
+    if (isTabletPortrait) return '/images/tab_home.png';
+    return '/images/homee.png';
   };
 
-  // Function to determine button position - moved slightly up for tablet
   const getButtonPosition = () => {
-    if (isMobileLandscape) return 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 scale-90';
+    if (isSmallMobileLandscape) return 'bottom-4 right-2 transform scale-50';
+    if (isMobileLandscape) return 'bottom-4 right-4 transform scale-60';
     if (isMobile) return 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2';
-    if (isTablet) return 'top-[45%] left-1/2 transform -translate-x-1/2 -translate-y-1/2'; // Moved slightly up for tablet
-    return 'top-1/2 right-[15%] transform -translate-y-1/2'; // Right side for desktop
+    if (isTablet) return 'top-[45%] left-1/2 transform -translate-x-1/2 -translate-y-1/2';
+    return 'top-1/2 right-[15%] transform -translate-y-1/2';
   };
 
-  // Function to determine ninja position - moved higher for tablet
   const getNinjaPosition = () => {
     if (isSmallMobileLandscape) return 'mb-[-8px] scale-65';
     if (isMobileLandscape) return 'mb-[-5px] scale-75';
     if (isMobile) return isLandscape ? 'mb-[-5px] scale-90' : 'mb-[-15px]';
-    if (isTablet) return 'mb-[20px]'; // Moved higher for tablet
+    if (isTablet) return 'mb-[20px]';
     return 'mb-[-40px]';
   };
 
-  // Function to determine ninja dialog position - adjusted for tablet
   const getNinjaDialogPosition = () => {
     if (isSmallMobileLandscape) return 'top-1 -right-2 translate-x-full scale-75';
     if (isMobileLandscape) return 'top-2 -right-1 translate-x-full scale-90';
     if (isMobile) return isLandscape ? 'top-4 -right-1 translate-x-full' : 'top-12 -right-1 translate-x-full';
-    if (isTablet) return 'top-4 -right-1 translate-x-full'; // Adjusted for higher ninja position
+    if (isTablet) return 'top-4 -right-1 translate-x-full';
     return 'top-20 -right-2 translate-x-full';
   };
 
-  // Function to determine hide/show button position
   const getHideShowButtonPosition = () => {
     if (isMobileLandscape) return 'top-2 right-2';
     if (isMobile) return 'top-4 right-4';
@@ -254,15 +237,19 @@ const Home = () => {
     return 'top-8 right-8';
   };
 
+  const getJellyMenuMaxHeight = () => {
+    if (isMobileLandscape) return 'max-h-32';
+    return 'max-h-96';
+  };
+
   return (
     <div 
       className="min-h-screen bg-white relative overflow-x-hidden overflow-y-auto"
       onClick={handleContainerClick}
     >
-      {/* Main Content Image as Regular Content */}
       <div className="relative z-0 w-full h-screen">
         <img
-          src={getHomeImage()} // Use the function to determine the image
+          src={getHomeImage()}
           alt="Educational platform main content"
           className="w-full h-full object-cover pointer-events-none"
           style={{
@@ -274,9 +261,7 @@ const Home = () => {
         />
       </div>
 
-      {/* Content Overlay */}
       <div className="absolute inset-0 z-10">
-        {/* Hide/Show Navigation Button - Hidden on Desktop Landscape */}
         {!isDesktopLandscape && (
           <button
             className={`fixed z-50 bg-gray-800 hover:bg-gray-700 text-white rounded-full p-2 shadow-lg transition-all duration-300 border border-gray-600 ${getHideShowButtonPosition()}`}
@@ -301,7 +286,6 @@ const Home = () => {
           </button>
         )}
 
-        {/* Pass menu state handler to Navbar and control visibility */}
         {showNavigation && (
           <Navbar 
             onMenuStateChange={handleMenuStateChange} 
@@ -309,7 +293,6 @@ const Home = () => {
           />
         )}
 
-        {/* Game-Style 3D Circular Button with Curved Mini Circles - Hide when menu is open */}
         {!isMenuOpen && (
           <div 
             className={`fixed z-40 instant-assessment-container ${getButtonPosition()}`}
@@ -323,14 +306,16 @@ const Home = () => {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="relative" style={{ width: getResponsiveSize('200px', '250px', '280px', '180px', '160px'), height: getResponsiveSize('200px', '250px', '280px', '180px', '160px') }}>
+            <div className="relative" style={{ 
+              width: getResponsiveSize('200px', '250px', '280px', '120px', '110px'), 
+              height: getResponsiveSize('200px', '250px', '280px', '120px', '110px') 
+            }}>
               <div className="absolute inset-0">
                 {assessmentCategories.map((category, index) => {
-                  const radius = getResponsiveSize(120, 150, 180, 100, 90);
+                  const radius = getResponsiveSize(120, 150, 180, 65, 60);
                   const position = getCirclePosition(category.angle, radius, index);
-                  const circleSize = getResponsiveSize('80px', '100px', '112px', '70px', '60px');
+                  const circleSize = getResponsiveSize('80px', '100px', '112px', '50px', '45px');
                   
-                  // Determine if mini circles should be visible
                   const shouldShowMiniCircles = isMobile || isTablet ? showMiniCircles : is3DButtonHovered;
                   
                   return (
@@ -354,7 +339,6 @@ const Home = () => {
                             pointerEvents: 'none', 
                             transitionDelay: shouldShowMiniCircles ? `${index * 120 + 200}ms` : '0ms' 
                           }}>
-                          {/* Only show connecting lines for tablet in horizontal layout */}
                           {isTablet && (
                             <path 
                               d={`M ${(Math.abs(position.x) * 2 + 50) / 2} ${50} L ${(Math.abs(position.x) * 2 + 50) / 2 + position.x} ${50 + position.y}`} 
@@ -396,7 +380,7 @@ const Home = () => {
                         <div className="absolute inset-2 rounded-full border-2 border-white/20"></div>
                         <div className="absolute inset-4 rounded-full bg-gradient-to-br from-white/30 to-transparent"></div>
                         <div className="relative z-10 flex flex-col items-center justify-center h-full p-2">
-                          <span className="text-white font-black tracking-wider mb-1 drop-shadow-lg" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)', fontSize: getResponsiveSize('0.75rem', '0.875rem', '1.125rem', '0.7rem', '0.65rem') }}>{category.title}</span>
+                          <span className="text-white font-black tracking-wider mb-1 drop-shadow-lg" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)', fontSize: getResponsiveSize('0.75rem', '0.875rem', '1.125rem', '0.5rem', '0.45rem') }}>{category.title}</span>
                         </div>
                         {!isMobile && <div className={`absolute inset-0 rounded-full transition-all duration-500 ${hoveredCircle === index ? 'opacity-100' : 'opacity-0'}`} style={{ border: '2px dashed rgba(255, 255, 255, 0.4)', animation: hoveredCircle === index ? 'spin 3s linear infinite' : 'none' }}></div>}
                         {!isMobile && hoveredCircle === index && (
@@ -411,10 +395,10 @@ const Home = () => {
               </div>
 
               <button 
-                className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-500 ${!isMobile && is3DButtonHovered ? 'scale-110' : 'scale-100'} cursor-pointer group`}
+                className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-500 ${!isMobile && is3DButtonHovered ? 'scale-110' : 'scale-100'} ${isDesktop ? 'cursor-default' : 'cursor-pointer'} group`}
                 style={{ 
-                  width: getResponsiveSize('100px', '120px', '160px', '90px', '80px'), 
-                  height: getResponsiveSize('100px', '120px', '160px', '90px', '80px'), 
+                  width: getResponsiveSize('100px', '120px', '160px', '60px', '55px'), 
+                  height: getResponsiveSize('100px', '120px', '160px', '60px', '55px'), 
                   background: 'linear-gradient(145deg, #fbbf24, #f59e0b, #d97706)', 
                   boxShadow: !isMobile && is3DButtonHovered ? '0 20px 50px rgba(251, 191, 36, 0.6), 0 0 80px rgba(251, 191, 36, 0.4), inset 0 -8px 20px rgba(0,0,0,0.4), inset 0 8px 20px rgba(255,255,255,0.3)' : '0 12px 30px rgba(251, 191, 36, 0.4), 0 0 40px rgba(251, 191, 36, 0.2), inset 0 -5px 15px rgba(0,0,0,0.3), inset 0 5px 15px rgba(255,255,255,0.2)', 
                   border: '5px solid rgba(255, 255, 255, 0.3)' 
@@ -425,18 +409,18 @@ const Home = () => {
               >
                 <div className="absolute inset-0 rounded-full" style={{ border: '3px solid rgba(0, 0, 0, 0.2)', boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.5), inset 0 -2px 4px rgba(0,0,0,0.3)' }}></div>
                 {!isMobile && <div className={`absolute inset-0 rounded-full transition-opacity duration-500 ${is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ border: '2px dashed rgba(255, 255, 255, 0.3)', animation: is3DButtonHovered ? 'spin 4s linear infinite' : 'none' }}></div>}
-                <div className={`absolute rounded-full transition-opacity duration-700 ${!isMobile && is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ inset: getResponsiveSize('1.5rem', '1.75rem', '1.5rem', '1rem', '0.875rem'), background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 60%)', animation: !isMobile && is3DButtonHovered ? 'pulse 1.5s ease-in-out infinite' : 'none' }}></div>
+                <div className={`absolute rounded-full transition-opacity duration-700 ${!isMobile && is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ inset: getResponsiveSize('1.5rem', '1.75rem', '1.5rem', '0.6rem', '0.55rem'), background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 60%)', animation: !isMobile && is3DButtonHovered ? 'pulse 1.5s ease-in-out infinite' : 'none' }}></div>
                 <div className="relative z-10 flex flex-col items-center justify-center h-full">
                   <div className="relative mb-1">
                     <div className="absolute inset-0 bg-white/20 rounded-full blur-md"></div>
-                    <svg className="text-white drop-shadow-lg relative z-10" style={{ width: getResponsiveSize('2rem', '2.5rem', '3.5rem', '1.75rem', '1.5rem'), height: getResponsiveSize('2rem', '2.5rem', '3.5rem', '1.75rem', '1.5rem') }} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                    <svg className="text-white drop-shadow-lg relative z-10" style={{ width: getResponsiveSize('2rem', '2.5rem', '3.5rem', '1rem', '0.9rem'), height: getResponsiveSize('2rem', '2.5rem', '3.5rem', '1rem', '0.9rem') }} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                     </svg>
                   </div>
                   <div className="text-center">
-                    <span className="text-white font-black tracking-wider drop-shadow-lg block" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5), 0 0 10px rgba(255,255,255,0.3)', fontSize: getResponsiveSize('0.75rem', '0.875rem', '1.25rem', '0.7rem', '0.65rem') }}>INSTANT</span>
-                    <div className="text-white font-bold tracking-wide drop-shadow-lg" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)', fontSize: getResponsiveSize('0.6rem', '0.7rem', '0.875rem', '0.55rem', '0.5rem') }}>ASSESS</div>
-                    <span className="text-white/90 font-semibold mt-0.5 block" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)', fontSize: getResponsiveSize('0.5rem', '0.6rem', '0.5rem', '0.45rem', '0.4rem') }}>Powered by KAI</span>
+                    <span className="text-white font-black tracking-wider drop-shadow-lg block" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5), 0 0 10px rgba(255,255,255,0.3)', fontSize: getResponsiveSize('0.75rem', '0.875rem', '1.25rem', '0.45rem', '0.4rem') }}>INSTANT</span>
+                    <div className="text-white font-bold tracking-wide drop-shadow-lg" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)', fontSize: getResponsiveSize('0.6rem', '0.7rem', '0.875rem', '0.35rem', '0.32rem') }}>ASSESS</div>
+                    <span className="text-white/90 font-semibold mt-0.5 block" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)', fontSize: getResponsiveSize('0.5rem', '0.6rem', '0.5rem', '0.28rem', '0.25rem') }}>Powered by KAI</span>
                   </div>
                 </div>
                 {!isMobile && (
@@ -449,7 +433,6 @@ const Home = () => {
           </div>
         )}
 
-        {/* Floating Plus Menu with Robot and Dialog */}
         <nav className={`btn-pluss-wrapper fixed z-40 flex flex-col items-center transition-all duration-300 ${
           isSmallMobileLandscape ? 'bottom-1 left-1 scale-75' : 
           isMobileLandscape ? 'bottom-2 left-2 scale-85' : 
@@ -460,7 +443,6 @@ const Home = () => {
           onMouseLeave={() => !isMobile && setIsHovered(false)}
           onClick={() => isMobile && setIsHovered(!isHovered)}>
           
-          {/* Robot Dialog */}
           <div className="flex flex-col items-center mb-2">
             <div className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 mb-2 relative" style={{ 
               minWidth: getResponsiveSize('100px', '120px', '120px', '90px', '80px'), 
@@ -483,7 +465,6 @@ const Home = () => {
             />
           </div>
 
-          {/* Jelly Menu */}
           <div className={`btn-pluss bg-blue-900 overflow-hidden flex flex-col items-center transition-all duration-600 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
             isHovered ? 'h-auto rounded-2xl pb-3 pt-3 shadow-2xl' : 'h-12 rounded-full shadow-lg'
           } border border-blue-700`} style={{ 
@@ -497,9 +478,13 @@ const Home = () => {
               fontSize: getResponsiveSize('1rem', '1.25rem', '1.25rem', '0.875rem', '0.8rem') 
             }}>+</div>
             
-            <ul className={`transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] px-3 w-full ${
-              isHovered ? 'opacity-100 max-h-96 mt-4' : 'opacity-0 max-h-0 mt-0'
-            }`}>
+            <ul className={`transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] px-3 w-full overflow-y-auto ${getJellyMenuMaxHeight()} ${
+              isHovered ? 'opacity-100 mt-4' : 'opacity-0 mt-0'
+            }`}
+            style={{ 
+              scrollbarWidth: 'thin',
+              scrollbarColor: 'rgba(255,255,255,0.3) transparent'
+            }}>
               {menuItems.map((item, index) => (
                 <li key={index} className={`bg-white rounded-lg transition-all duration-600 ease-[cubic-bezier(0.34,1.56,0.64,1)] transform border border-gray-100 shadow-sm ${
                   isHovered ? `mb-2 opacity-100 translate-x-0 scale-100` : 'opacity-0 translate-x-8 scale-90'
@@ -523,7 +508,6 @@ const Home = () => {
           </div>
         </nav>
 
-        {/* Ninja Image with Cartoon Dialog */}
         <div className={`fixed bottom-0 left-1/2 transform -translate-x-1/2 z-30 transition-all duration-300 ${getNinjaPosition()}`}>
           <div className="relative">
             <img 
@@ -569,7 +553,6 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Conditionally render BottomNav based on showNavigation state */}
         {showNavigation && <BottomNav />}
       </div>
 
@@ -588,7 +571,6 @@ const Home = () => {
           100% { transform: translateX(200%) skewX(-15deg); }
         }
         
-        /* Enhanced landscape responsiveness */
         @media (max-width: 767px) and (orientation: landscape) {
           .btn-pluss-wrapper { 
             transform: scale(0.85); 
@@ -620,6 +602,23 @@ const Home = () => {
         
         @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
           .btn-pluss-wrapper, .ninja-container { image-rendering: -webkit-optimize-contrast; }
+        }
+
+        .btn-pluss ul::-webkit-scrollbar {
+          width: 4px;
+        }
+        
+        .btn-pluss ul::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        
+        .btn-pluss ul::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.3);
+          border-radius: 2px;
+        }
+        
+        .btn-pluss ul::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.5);
         }
       `}</style>
     </div>
