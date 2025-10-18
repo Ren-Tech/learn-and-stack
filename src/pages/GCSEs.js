@@ -54,12 +54,12 @@ const GCSEs = () => {
     navigate(href);
   };
 
-  // Get background image based on screen size
+  // Get background image based on screen size - using public folder paths
   const getBackgroundImage = () => {
-    if (isMobileLandscape) return "/images/home_landscape.png";
-    if (isMobile) return "/images/gcse_mob.png";
-    if (isTabletPortrait) return "/images/tab_gcse.png";
-    return "/images/gcses.png";
+    if (isMobileLandscape) return `${process.env.PUBLIC_URL}/images/home_landscape.png`;
+    if (isMobile) return `${process.env.PUBLIC_URL}/images/gcse_mob.png`;
+    if (isTabletPortrait) return `${process.env.PUBLIC_URL}/images/tab_gcse.png`;
+    return `${process.env.PUBLIC_URL}/images/gcses.png`;
   };
 
   // Responsive sizes
@@ -204,7 +204,7 @@ const GCSEs = () => {
             
             {/* Robot Image */}
             <img 
-              src="/images/bot_kai.png" 
+              src={`${process.env.PUBLIC_URL}/images/bot_kai.png`}
               alt="KAI Robot" 
               className="object-contain drop-shadow-lg transition-transform duration-300 hover:scale-110"
               style={{
@@ -296,7 +296,7 @@ const GCSEs = () => {
           <div className="relative">
             {/* Ninja Image */}
             <img 
-              src="/images/ninja.png" 
+              src={`${process.env.PUBLIC_URL}/images/ninja.png`}
               alt="Ninja" 
               className="object-contain drop-shadow-lg"
               style={{
