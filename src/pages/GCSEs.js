@@ -56,7 +56,7 @@ const GCSEs = () => {
 
   // Get background image based on screen size - using public folder paths
   const getBackgroundImage = () => {
-    if (isMobileLandscape) return `${process.env.PUBLIC_URL}/images/home_landscape.png`;
+    if (isMobileLandscape) return `${process.env.PUBLIC_URL}/images/GCSEs.png`;
     if (isMobile) return `${process.env.PUBLIC_URL}/images/gcse_mob.png`;
     if (isTabletPortrait) return `${process.env.PUBLIC_URL}/images/tab_gcse.png`;
     return `${process.env.PUBLIC_URL}/images/gcses.png`;
