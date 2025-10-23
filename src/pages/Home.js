@@ -18,12 +18,54 @@ const Home = () => {
   });
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showMiniCircles, setShowMiniCircles] = useState(false);
-  const [showNavigation, setShowNavigation] = useState(true);
   
   const navigate = useNavigate();
 
   const dialogLines = ["I'm KAI", "Can I help?"];
   const ninjaLines = ["Our knowledge team", "are always ready", "to help!"];
+
+  const landscapeContent = [
+    { 
+      image: '/images/landscape/home1.jpg', 
+      alt: 'Learning experience 1',
+      position: 'left',
+      type: 'image'
+    },
+    { 
+      text: "Our Commitment to Excellence",
+      type: 'header'
+    },
+    { 
+      image: '/images/landscape/home2.png', 
+      alt: 'Learning experience 2',
+      position: 'right',
+      type: 'image'
+    },
+    { 
+      commitment: "Empowering every child to discover the joy of learning & achieve their full potential.",
+      type: 'commitment'
+    },
+    { 
+      image: '/images/landscape/home3.png', 
+      alt: 'Learning experience 3',
+      position: 'left',
+      type: 'image'
+    },
+    { 
+      commitment: "To inspire and equip children with the skills and confidence to learn effectively & pursue their curiosity.",
+      type: 'commitment'
+    },
+    { 
+      commitment: "Guiding children to become confident, lifelong learners who love to explore & grow.",
+      type: 'commitment'
+    }
+  ];
+
+  const commitments = [
+    "Empowering every child to discover the joy of learning & achieve their full potential.",
+    "To inspire and equip children with the skills and confidence to learn effectively & pursue their curiosity.",
+    "Guiding children to become confident, lifelong learners who love to explore & grow."
+  ];
 
   const menuItems = [
     { href: "/primary", text: "Primary", description: "6-11 Years Old" },
@@ -96,11 +138,9 @@ const Home = () => {
   };
 
   const handleInstantAssessmentTap = () => {
-    // Only allow click functionality on mobile and tablet, not on desktop
     if (isMobile || isTablet) {
       setShowMiniCircles(prev => !prev);
     }
-    // Remove navigation to /assessment on desktop
   };
 
   const handleMiniCircleTap = (href) => {
@@ -108,7 +148,6 @@ const Home = () => {
       handleNavigation(href);
       setShowMiniCircles(false);
     } else {
-      // On desktop, directly navigate without toggling mini circles state
       handleNavigation(href);
     }
   };
@@ -119,14 +158,6 @@ const Home = () => {
       setIs3DButtonHovered(false);
       setShowMiniCircles(false);
     }
-  };
-
-  const handleNavigationVisibilityChange = (isVisible) => {
-    setShowNavigation(isVisible);
-  };
-
-  const toggleNavigation = () => {
-    setShowNavigation(prev => !prev);
   };
 
   const handleContainerClick = (e) => {
@@ -200,7 +231,7 @@ const Home = () => {
   }, [ninjaText, isNinjaTyping, ninjaLines]);
 
   const getHomeImage = () => {
-    if (isMobileLandscape) return '/images/home_landscape.png';
+    if (isMobileLandscape) return '/images/landscape/home1.jpg';
     if (isMobile) return '/images/home_mob.png';
     if (isTabletPortrait) return '/images/tab_home.png';
     return '/images/homee.png';
@@ -230,16 +261,69 @@ const Home = () => {
     return 'top-20 -right-2 translate-x-full';
   };
 
-  const getHideShowButtonPosition = () => {
-    if (isMobileLandscape) return 'top-2 right-2';
-    if (isMobile) return 'top-4 right-4';
-    if (isTablet) return 'top-6 right-6';
-    return 'top-8 right-8';
-  };
-
   const getJellyMenuMaxHeight = () => {
     if (isMobileLandscape) return 'max-h-32';
     return 'max-h-96';
+  };
+
+  const renderLandscapeContent = (item, index) => {
+    switch (item.type) {
+      case 'image':
+        return (
+          <div 
+            key={index} 
+            className={`flex ${item.position === 'left' ? 'justify-start' : 'justify-end'} mb-6 animate-fade-in-up`}
+            style={{ animationDelay: `${index * 200}ms` }}
+          >
+            <div className={`relative group ${item.position === 'left' ? 'mr-4' : 'ml-4'}`}>
+              <img
+                src={item.image}
+                alt={item.alt}
+                className="w-48 h-32 object-cover rounded-lg shadow-lg group-hover:scale-105 transition-transform duration-300 border-2 border-white/20"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-lg"></div>
+              <div className="absolute bottom-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs font-medium">
+                {index === 0 ? 'Active Learning' : index === 2 ? 'Creative Space' : 'Team Work'}
+              </div>
+            </div>
+          </div>
+        );
+      
+      case 'header':
+        return (
+          <div 
+            key={index} 
+            className="text-center mb-6 animate-fade-in"
+            style={{ animationDelay: `${index * 200}ms` }}
+          >
+            <h2 className="text-2xl font-bold text-gray-900 mb-2 tracking-tight">
+              {item.text}
+            </h2>
+            <div className="w-16 h-1 bg-red-600 mx-auto"></div>
+          </div>
+        );
+      
+      case 'commitment':
+        return (
+          <div 
+            key={index} 
+            className="mb-4 animate-fade-in-right"
+            style={{ animationDelay: `${index * 200}ms` }}
+          >
+            <div className="flex items-start gap-3 group hover:bg-blue-50/50 p-3 rounded-lg transition-all duration-300">
+              <div className="flex-shrink-0 mt-1">
+                <div className="w-3 h-3 bg-red-600 rounded-full group-hover:scale-125 transition-transform duration-300"></div>
+              </div>
+              <p className="text-gray-800 text-sm leading-relaxed font-normal group-hover:text-gray-900 transition-colors duration-300">
+                {item.commitment}
+              </p>
+            </div>
+          </div>
+        );
+      
+      default:
+        return null;
+    }
   };
 
   return (
@@ -247,51 +331,121 @@ const Home = () => {
       className="min-h-screen bg-white relative overflow-x-hidden overflow-y-auto"
       onClick={handleContainerClick}
     >
+      {/* Main Content Area */}
       <div className="relative z-0 w-full h-screen">
-        <img
-          src={getHomeImage()}
-          alt="Educational platform main content"
-          className="w-full h-full object-cover pointer-events-none"
-          style={{
-            imageRendering: '-webkit-optimize-contrast',
-            WebkitBackfaceVisibility: 'hidden',
-            MozBackfaceVisibility: 'hidden',
-            backfaceVisibility: 'hidden'
-          }}
-        />
+        {isMobileLandscape ? (
+          // BBC-Style Scrollable Layout for Mobile Landscape
+          <div className="w-full h-full bg-gradient-to-br from-blue-50 via-white to-purple-50">
+            {/* BBC-style header bar */}
+            <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-r from-blue-800 to-purple-800 z-20 flex items-center px-4">
+              <div className="flex items-center space-x-2">
+                <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                  <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
+                </div>
+                <span className="text-white font-bold text-sm tracking-tight">EDUPLATFORM</span>
+              </div>
+              <div className="ml-auto flex items-center space-x-3">
+                <div className="w-4 h-4 bg-white/20 rounded"></div>
+                <div className="w-4 h-4 bg-white/20 rounded"></div>
+                <div className="w-4 h-4 bg-white/20 rounded"></div>
+              </div>
+            </div>
+
+            {/* Scrollable Content Area */}
+            <div className="h-full pt-8 pb-4 overflow-y-auto">
+              <div className="max-w-4xl mx-auto px-4 py-6">
+                {/* Main content grid */}
+                <div className="grid grid-cols-1 gap-6">
+                  {/* Hero Section */}
+                  <div className="text-center mb-8 animate-fade-in">
+                    <h1 className="text-3xl font-black text-gray-900 mb-3 tracking-tight">
+                      Excellence in <span className="text-blue-600">Education</span>
+                    </h1>
+                    <p className="text-gray-600 text-sm max-w-md mx-auto leading-relaxed">
+                      Transforming learning experiences through innovation and dedication
+                    </p>
+                  </div>
+
+                  {/* Content Blocks */}
+                  {landscapeContent.map((item, index) => renderLandscapeContent(item, index))}
+
+                  {/* Additional Features Section */}
+                  <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 shadow-sm mt-4 animate-fade-in-up">
+                    <h3 className="text-lg font-bold text-gray-900 mb-4 text-center">
+                      Why Choose Us?
+                    </h3>
+                    <div className="grid grid-cols-2 gap-4 text-center">
+                      <div className="p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors duration-300">
+                        <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-2">
+                          <span className="text-white text-sm font-bold">✓</span>
+                        </div>
+                        <span className="text-xs font-medium text-gray-800">Proven Results</span>
+                      </div>
+                      <div className="p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors duration-300">
+                        <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-2">
+                          <span className="text-white text-sm font-bold">★</span>
+                        </div>
+                        <span className="text-xs font-medium text-gray-800">Expert Tutors</span>
+                      </div>
+                      <div className="p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors duration-300">
+                        <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-2">
+                          <span className="text-white text-sm font-bold">⚡</span>
+                        </div>
+                        <span className="text-xs font-medium text-gray-800">Fast Progress</span>
+                      </div>
+                      <div className="p-3 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors duration-300">
+                        <div className="w-8 h-8 bg-orange-600 rounded-full flex items-center justify-center mx-auto mb-2">
+                          <span className="text-white text-sm font-bold">❤️</span>
+                        </div>
+                        <span className="text-xs font-medium text-gray-800">Caring Support</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Call to Action */}
+                  <div className="text-center mt-8 animate-fade-in">
+                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl p-6 shadow-lg">
+                      <h3 className="text-xl font-bold mb-2">Ready to Begin?</h3>
+                      <p className="text-blue-100 text-sm mb-4">
+                        Start your learning journey today with our expert guidance
+                      </p>
+                      <button className="bg-white text-blue-600 px-6 py-2 rounded-full font-bold text-sm hover:bg-blue-50 transition-colors duration-300 shadow-md">
+                        Get Started
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Scroll indicator */}
+            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2">
+              <div className="flex items-center space-x-2 bg-black/70 text-white px-4 py-2 rounded-full">
+                <svg className="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+                <span className="text-xs font-medium">Scroll to explore</span>
+              </div>
+            </div>
+          </div>
+        ) : (
+          // Original layout for other screen sizes
+          <img
+            src={getHomeImage()}
+            alt="Educational platform main content"
+            className="w-full h-full object-cover pointer-events-none"
+            style={{
+              imageRendering: '-webkit-optimize-contrast',
+              WebkitBackfaceVisibility: 'hidden',
+              MozBackfaceVisibility: 'hidden',
+              backfaceVisibility: 'hidden'
+            }}
+          />
+        )}
       </div>
 
       <div className="absolute inset-0 z-10">
-        {!isDesktopLandscape && (
-          <button
-            className={`fixed z-50 bg-gray-800 hover:bg-gray-700 text-white rounded-full p-2 shadow-lg transition-all duration-300 border border-gray-600 ${getHideShowButtonPosition()}`}
-            onClick={toggleNavigation}
-            title={showNavigation ? "Hide Navigation" : "Show Navigation"}
-            style={{
-              width: getResponsiveSize('2.5rem', '3rem', '3.5rem', '2.25rem', '2rem'),
-              height: getResponsiveSize('2.5rem', '3rem', '3.5rem', '2.25rem', '2rem')
-            }}
-          >
-            <div className="flex items-center justify-center w-full h-full">
-              {showNavigation ? (
-                <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              ) : (
-                <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              )}
-            </div>
-          </button>
-        )}
-
-        {showNavigation && (
-          <Navbar 
-            onMenuStateChange={handleMenuStateChange} 
-            onNavigationVisibilityChange={handleNavigationVisibilityChange}
-          />
-        )}
+        <Navbar onMenuStateChange={handleMenuStateChange} />
 
         {!isMenuOpen && (
           <div 
@@ -553,7 +707,7 @@ const Home = () => {
           </div>
         </div>
 
-        {showNavigation && <BottomNav />}
+        <BottomNav />
       </div>
 
       <style jsx>{`
@@ -569,6 +723,54 @@ const Home = () => {
         @keyframes shine {
           0% { transform: translateX(-100%) skewX(-15deg); }
           100% { transform: translateX(200%) skewX(-15deg); }
+        }
+        
+        @keyframes fade-in {
+          from { 
+            opacity: 0; 
+            transform: translateY(20px); 
+          }
+          to { 
+            opacity: 1; 
+            transform: translateY(0); 
+          }
+        }
+        
+        @keyframes fade-in-up {
+          from { 
+            opacity: 0; 
+            transform: translateY(30px); 
+          }
+          to { 
+            opacity: 1; 
+            transform: translateY(0); 
+          }
+        }
+        
+        @keyframes fade-in-right {
+          from { 
+            opacity: 0; 
+            transform: translateX(20px); 
+          }
+          to { 
+            opacity: 1; 
+            transform: translateX(0); 
+          }
+        }
+        
+        .animate-fade-in {
+          animation: fade-in 0.6s ease-out forwards;
+          opacity: 0;
+        }
+        
+        .animate-fade-in-up {
+          animation: fade-in-up 0.6s ease-out forwards;
+          opacity: 0;
+        }
+        
+        .animate-fade-in-right {
+          animation: fade-in-right 0.6s ease-out forwards;
+          opacity: 0;
         }
         
         @media (max-width: 767px) and (orientation: landscape) {

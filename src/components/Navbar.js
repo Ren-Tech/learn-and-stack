@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Menu, X, Search, User, ChevronUp, ChevronDown, Eye, EyeOff } from "lucide-react";
+import { Menu, X, Search, User, ChevronUp, ChevronDown } from "lucide-react";
 
-const Navbar = ({ onMenuStateChange, onNavigationVisibilityChange }) => {
+const Navbar = ({ onMenuStateChange }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -10,7 +10,6 @@ const Navbar = ({ onMenuStateChange, onNavigationVisibilityChange }) => {
   const [isScrollable, setIsScrollable] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [showScrollBottom, setShowScrollBottom] = useState(false);
-  const [showNavigation, setShowNavigation] = useState(true);
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -43,17 +42,6 @@ const Navbar = ({ onMenuStateChange, onNavigationVisibilityChange }) => {
   const isDesktopLandscape = isDesktop && isLandscape;
 
   const isActive = (path) => location.pathname === path;
-
-  // Toggle navigation visibility
-  const toggleNavigation = () => {
-    const newVisibilityState = !showNavigation;
-    setShowNavigation(newVisibilityState);
-    
-    // Notify parent component about navigation visibility change
-    if (onNavigationVisibilityChange) {
-      onNavigationVisibilityChange(newVisibilityState);
-    }
-  };
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -236,21 +224,6 @@ const Navbar = ({ onMenuStateChange, onNavigationVisibilityChange }) => {
 
           {/* Right Icons */}
           <div className="hidden sm:flex items-center gap-3 md:gap-4">
-            {/* Hide/Show Navigation Button - Hidden on Desktop Landscape */}
-            {!isDesktopLandscape && (
-              <button
-                onClick={toggleNavigation}
-                className="text-blue-200 hover:text-white transition-colors duration-200 p-2 rounded-full hover:bg-white/10"
-                title={showNavigation ? "Hide Navigation" : "Show Navigation"}
-              >
-                {showNavigation ? (
-                  <EyeOff className="w-5 h-5" />
-                ) : (
-                  <Eye className="w-5 h-5" />
-                )}
-              </button>
-            )}
-
             {/* Search */}
             <form onSubmit={handleSearch} className="relative">
               <input
@@ -277,19 +250,6 @@ const Navbar = ({ onMenuStateChange, onNavigationVisibilityChange }) => {
 
           {/* Mobile + Tablet Drawer Trigger */}
           <div className="flex lg:hidden items-center gap-3">
-            {/* Hide/Show Navigation Button for Mobile - Always visible on mobile/tablet */}
-            <button
-              onClick={toggleNavigation}
-              className="text-white hover:text-blue-200 p-1"
-              title={showNavigation ? "Hide Navigation" : "Show Navigation"}
-            >
-              {showNavigation ? (
-                <EyeOff className="w-5 h-5" />
-              ) : (
-                <Eye className="w-5 h-5" />
-              )}
-            </button>
-
             <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
               className="text-white hover:text-blue-200"
@@ -354,32 +314,6 @@ const Navbar = ({ onMenuStateChange, onNavigationVisibilityChange }) => {
                 />
               </div>
 
-              {/* Hide/Show Navigation Option in Drawer */}
-              <div className="mb-4">
-                <button
-                  onClick={toggleNavigation}
-                  className={`w-full text-left py-3 px-4 rounded-lg transition-all duration-300 flex items-center gap-3 ${
-                    showNavigation 
-                      ? "bg-red-500/20 text-white border border-red-400/50" 
-                      : "bg-green-500/20 text-white border border-green-400/50"
-                  }`}
-                >
-                  {showNavigation ? (
-                    <EyeOff className="w-5 h-5" />
-                  ) : (
-                    <Eye className="w-5 h-5" />
-                  )}
-                  <div className="flex flex-col">
-                    <span className="text-base font-semibold">
-                      {showNavigation ? "Hide Navigation" : "Show Navigation"}
-                    </span>
-                    <span className="text-xs opacity-80 mt-1">
-                      {showNavigation ? "Temporarily hide all navigation" : "Show navigation elements"}
-                    </span>
-                  </div>
-                </button>
-              </div>
-
               <ul className="flex flex-col gap-3">
                 {navLinks.map((link) => (
                   <li key={link.path}>
@@ -436,25 +370,23 @@ const Navbar = ({ onMenuStateChange, onNavigationVisibilityChange }) => {
       )}
 
       {/* ===== Bottom Info Banner ===== */}
-      {showNavigation && (
-        <div className="bg-gradient-to-r from-green-500 to-green-600 py-3 shadow-lg">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10">
-            <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
-              <div className="text-white font-bold text-base sm:text-lg md:text-xl flex items-center gap-2">
-                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                {pageContent.title}
-              </div>
-              <div className="flex flex-wrap gap-3 md:gap-6">
-                {pageContent.items.map((item, i) => (
-                  <div key={i} className="text-white text-xs sm:text-sm font-medium">
-                    {item}
-                  </div>
-                ))}
-              </div>
+      <div className="bg-gradient-to-r from-green-500 to-green-600 py-3 shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10">
+          <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
+            <div className="text-white font-bold text-base sm:text-lg md:text-xl flex items-center gap-2">
+              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              {pageContent.title}
+            </div>
+            <div className="flex flex-wrap gap-3 md:gap-6">
+              {pageContent.items.map((item, i) => (
+                <div key={i} className="text-white text-xs sm:text-sm font-medium">
+                  {item}
+                </div>
+              ))}
             </div>
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 };
