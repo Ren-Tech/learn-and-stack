@@ -20,6 +20,20 @@ const Primary = () => {
   const dialogLines = ["I'm KAI", "Can I help?"];
   const ninjaLines = ["Ready", "Steady", "Succeed"];
 
+  // Primary specific images for landscape mobile - using PNGs
+  const primaryImages = [
+    { src: '/images/landscape/prim1.png', alt: 'Primary Activity 1', title: 'Math Skills' },
+    { src: '/images/landscape/prim2.png', alt: 'Primary Activity 2', title: 'Science Exploration' },
+    { src: '/images/landscape/prim3.png', alt: 'Primary Activity 3', title: 'Reading & Writing' },
+    { src: '/images/landscape/prim4.png', alt: 'Primary Activity 4', title: 'Creative Arts' },
+    { src: '/images/landscape/prim5.png', alt: 'Primary Activity 5', title: 'Group Projects' },
+    { src: '/images/landscape/prim6.png', alt: 'Primary Activity 6', title: 'Sports & Fitness' },
+    { src: '/images/landscape/prim7.png', alt: 'Primary Activity 7', title: 'Technology Skills' },
+    { src: '/images/landscape/prim8.jpg', alt: 'Primary Activity 8', title: 'Music & Drama' },
+    { src: '/images/landscape/prim9.jpg', alt: 'Primary Activity 9', title: 'Outdoor Learning' },
+    { src: '/images/landscape/prim10.png', alt: 'Primary Activity 10', title: 'Problem Solving' }
+  ];
+
   // Navigation menu items - same as home page
   const menuItems = [
     { href: "/primary", text: "Primary", description: "6-11 Years Old" },
@@ -56,7 +70,7 @@ const Primary = () => {
 
   // Get appropriate image based on screen size
   const getBackgroundImage = () => {
-    if (isMobileLandscape) return "/images/home_landscape.png";
+    if (isMobileLandscape) return "/images/landscape/prim1.png";
     if (isMobile) return "/images/home_primary.png";
     if (isTabletPortrait) return "/images/tab_primary.png";
     return "/images/primary.png";
@@ -152,29 +166,133 @@ const Primary = () => {
 
   return (
     <div className="min-h-screen bg-white relative overflow-x-hidden">
-      {/* Background Image as Content */}
-      <div className="fixed inset-0 z-0">
-        <img 
-          src={getBackgroundImage()} 
-          alt="Background" 
-          className="w-full h-full object-cover"
-          style={{
-            imageRendering: '-webkit-optimize-contrast',
-            WebkitBackfaceVisibility: 'hidden',
-            MozBackfaceVisibility: 'hidden',
-            backfaceVisibility: 'hidden'
-          }}
-        />
-        {/* Overlay to ensure content readability */}
-        <div className="absolute inset-0 bg-white/10 pointer-events-none"></div>
-      </div>
-      
-      <div className="relative z-10">
-        <Navbar />
+      {isMobileLandscape ? (
+        // Single Scrolling Layout for Mobile Landscape - Everything scrolls together
+        <div className="w-full h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 overflow-y-auto">
+          {/* Green Navbar - Now part of scrollable content */}
+          <div className="relative z-50">
+            <Navbar />
+          </div>
 
+          {/* BBC-style header bar */}
+          <div className="sticky top-0 left-0 right-0 h-8 bg-gradient-to-r from-green-500 to-blue-600 z-40 flex items-center px-4">
+            <div className="flex items-center space-x-2">
+              <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              </div>
+              <span className="text-white font-bold text-sm tracking-tight">PRIMARY SCHOOL</span>
+            </div>
+            <div className="ml-auto flex items-center space-x-3">
+              <div className="w-4 h-4 bg-white/20 rounded"></div>
+              <div className="w-4 h-4 bg-white/20 rounded"></div>
+              <div className="w-4 h-4 bg-white/20 rounded"></div>
+            </div>
+          </div>
+
+          <div className="p-4 space-y-6">
+            {/* Hero Image */}
+            <div className="relative group mt-2">
+              <img
+                src="/images/landscape/prim1.png"
+                alt="Primary School Hero"
+                className="w-full h-48 object-cover rounded-lg shadow-lg group-hover:scale-105 transition-transform duration-300 border-2 border-white/20"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-lg"></div>
+              <div className="absolute bottom-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs font-medium">
+                Welcome to Primary School
+              </div>
+            </div>
+
+            {/* BBC-style section header */}
+            <div className="border-b-2 border-orange-400 pb-2 mb-3">
+              <h2 className="text-gray-900 font-bold text-lg tracking-tight uppercase">
+                Primary School Activities Gallery
+              </h2>
+              <div className="w-12 h-1 bg-orange-400 mt-1"></div>
+            </div>
+            
+            {/* Primary Images Grid */}
+            <div className="space-y-4">
+              {primaryImages.slice(1).map((image, index) => (
+                <div 
+                  key={index}
+                  className="group animate-fade-in"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  <div className="relative group-hover:scale-[1.02] transition-transform duration-300">
+                    <img
+                      src={image.src}
+                      alt={image.alt}
+                      className="w-full h-48 object-cover rounded-lg shadow-lg border-2 border-white/20"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent rounded-lg"></div>
+                    <div className="absolute bottom-2 left-2 bg-black/70 text-white px-3 py-1 rounded text-sm font-medium">
+                      {image.title}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* BBC-style "More" indicator */}
+            <div className="mt-6 flex items-center justify-between pt-3 border-t border-gray-200">
+              <span className="text-xs text-gray-600 font-medium">Ages 6-11 • Building Strong Foundations</span>
+              <div className="flex items-center space-x-1">
+                <span className="text-xs text-gray-500">Scroll</span>
+                <svg className="w-3 h-3 text-gray-500 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          {/* BBC-style branding */}
+          <div className="flex-shrink-0 bg-white border-t border-gray-200 px-3 py-2 mt-6">
+            <div className="text-xs text-gray-400 font-medium tracking-wide text-center">
+              PRIMARY SCHOOL • AGES 6-11
+            </div>
+          </div>
+
+          {/* Bottom Navigation - Now part of scrollable content */}
+          <div className="sticky bottom-0 left-0 right-0 z-40">
+            <BottomNav />
+          </div>
+        </div>
+      ) : (
+        // Original layout for other screen sizes
+        <div className="relative">
+          {/* Green Navbar */}
+          <div className="relative z-50">
+            <Navbar />
+          </div>
+
+          {/* Background Image */}
+          <div className="relative z-0 w-full" style={{ height: 'calc(100vh - 120px)' }}>
+            <img 
+              src={getBackgroundImage()} 
+              alt="Primary Background" 
+              className="w-full h-full object-cover"
+              style={{
+                imageRendering: '-webkit-optimize-contrast',
+                WebkitBackfaceVisibility: 'hidden',
+                MozBackfaceVisibility: 'hidden',
+                backfaceVisibility: 'hidden'
+              }}
+            />
+          </div>
+
+          {/* Bottom Navigation */}
+          <div className="relative z-40">
+            <BottomNav />
+          </div>
+        </div>
+      )}
+
+      {/* Interactive Elements - Fixed position elements that stay visible */}
+      <div className="fixed inset-0 z-40 pointer-events-none">
         {/* Floating Plus Menu with Robot and Dialog - Responsive Positioning */}
         <nav 
-          className={`btn-pluss-wrapper fixed z-40 flex flex-col items-center transition-all duration-300 ${getPlusMenuPosition()}`}
+          className={`btn-pluss-wrapper fixed z-50 flex flex-col items-center transition-all duration-300 pointer-events-auto ${getPlusMenuPosition()}`}
           onMouseEnter={() => !isMobile && setIsHovered(true)}
           onMouseLeave={() => !isMobile && setIsHovered(false)}
           onClick={() => isMobile && setIsHovered(!isHovered)}
@@ -292,7 +410,7 @@ const Primary = () => {
         </nav>
 
         {/* Ninja Image with Cartoon Dialog - Responsive Positioning */}
-        <div className={`fixed bottom-0 left-1/2 transform -translate-x-1/2 z-30 transition-all duration-300 ${getNinjaPosition()}`}>
+        <div className={`fixed bottom-0 left-1/2 transform -translate-x-1/2 z-40 transition-all duration-300 pointer-events-auto ${getNinjaPosition()}`}>
           <div className="relative">
             {/* Ninja Image */}
             <img 
@@ -349,11 +467,50 @@ const Primary = () => {
             </div>
           </div>
         </div>
-
-        <BottomNav />
       </div>
 
       <style jsx>{`
+        @keyframes fade-in {
+          from { 
+            opacity: 0; 
+            transform: translateY(10px); 
+          }
+          to { 
+            opacity: 1; 
+            transform: translateY(0); 
+          }
+        }
+        
+        .animate-fade-in {
+          animation: fade-in 0.6s ease-out forwards;
+          opacity: 0;
+        }
+
+        /* Custom scrollbar for primary theme */
+        .overflow-y-auto::-webkit-scrollbar {
+          width: 6px;
+        }
+        
+        .overflow-y-auto::-webkit-scrollbar-track {
+          background: #dcfce7;
+          border-radius: 3px;
+        }
+        
+        .overflow-y-auto::-webkit-scrollbar-thumb {
+          background: #16a34a;
+          border-radius: 3px;
+        }
+        
+        .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+          background: #15803d;
+        }
+        
+        /* For Firefox */
+        .overflow-y-auto {
+          scrollbar-width: thin;
+          scrollbar-color: #16a34a #dcfce7;
+        }
+
         /* Mobile-specific optimizations */
         @media (max-width: 767px) and (orientation: landscape) {
           .btn-pluss-wrapper {

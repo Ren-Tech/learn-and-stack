@@ -20,6 +20,20 @@ const ElevenPlus = () => {
   const dialogLines = ["I'm KAI", "Can I help?"];
   const ninjaLines = ["Ready", "Steady", "Succeed"];
 
+  // 11+ specific images for landscape mobile - using PNGs
+  const elevenPlusImages = [
+    { src: '/images/landscape/el1.png', alt: '11+ Preparation 1', title: 'Verbal Reasoning' },
+    { src: '/images/landscape/el2.png', alt: '11+ Preparation 2', title: 'Non-Verbal Reasoning' },
+    { src: '/images/landscape/el3.png', alt: '11+ Preparation 3', title: 'Math Skills' },
+    { src: '/images/landscape/el4.png', alt: '11+ Preparation 4', title: 'English Comprehension' },
+    { src: '/images/landscape/el5.png', alt: '11+ Preparation 5', title: 'Practice Tests' },
+    { src: '/images/landscape/el6.png', alt: '11+ Preparation 6', title: 'Time Management' },
+    { src: '/images/landscape/el7.png', alt: '11+ Preparation 7', title: 'Problem Solving' },
+    { src: '/images/landscape/el8.png', alt: '11+ Preparation 8', title: 'Creative Writing' },
+    { src: '/images/landscape/el9.png', alt: '11+ Preparation 9', title: 'Exam Strategies' },
+    { src: '/images/landscape/el10.png', alt: '11+ Preparation 10', title: 'Confidence Building' }
+  ];
+
   // Navigation menu items - same as home page
   const menuItems = [
     { href: "/primary", text: "Primary", description: "6-11 Years Old" },
@@ -56,7 +70,7 @@ const ElevenPlus = () => {
 
   // Get background image based on screen size
   const getBackgroundImage = () => {
-    if (isMobileLandscape) return "/images/home_landscape.png";
+    if (isMobileLandscape) return "/images/landscape/el1.png";
     if (isMobile) return "/images/11.png";
     if (isTabletPortrait) return "/images/tab_11.png";
     return "/images/11+.png";
@@ -152,29 +166,133 @@ const ElevenPlus = () => {
 
   return (
     <div className="min-h-screen bg-white relative overflow-x-hidden">
-      {/* Background Image as Content */}
-      <div className="fixed inset-0 z-0">
-        <img 
-          src={getBackgroundImage()} 
-          alt="11+ Background" 
-          className="w-full h-full object-cover"
-          style={{
-            imageRendering: '-webkit-optimize-contrast',
-            WebkitBackfaceVisibility: 'hidden',
-            MozBackfaceVisibility: 'hidden',
-            backfaceVisibility: 'hidden'
-          }}
-        />
-        {/* Overlay to ensure content readability */}
-        <div className="absolute inset-0 bg-white/10 pointer-events-none"></div>
-      </div>
-      
-      <div className="relative z-10">
-        <Navbar />
+      {isMobileLandscape ? (
+        // Single Scrolling Layout for Mobile Landscape - Everything scrolls together
+        <div className="w-full h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 overflow-y-auto">
+          {/* Green Navbar - Now part of scrollable content */}
+          <div className="relative z-50">
+            <Navbar />
+          </div>
 
+          {/* BBC-style header bar */}
+          <div className="sticky top-0 left-0 right-0 h-8 bg-gradient-to-r from-purple-600 to-indigo-600 z-40 flex items-center px-4">
+            <div className="flex items-center space-x-2">
+              <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+              </div>
+              <span className="text-white font-bold text-sm tracking-tight">11+ PREPARATION</span>
+            </div>
+            <div className="ml-auto flex items-center space-x-3">
+              <div className="w-4 h-4 bg-white/20 rounded"></div>
+              <div className="w-4 h-4 bg-white/20 rounded"></div>
+              <div className="w-4 h-4 bg-white/20 rounded"></div>
+            </div>
+          </div>
+
+          <div className="p-4 space-y-6">
+            {/* Hero Image */}
+            <div className="relative group mt-2">
+              <img
+                src="/images/landscape/el1.png"
+                alt="11+ Preparation Hero"
+                className="w-full h-48 object-cover rounded-lg shadow-lg group-hover:scale-105 transition-transform duration-300 border-2 border-white/20"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-lg"></div>
+              <div className="absolute bottom-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs font-medium">
+                11+ Exam Preparation
+              </div>
+            </div>
+
+            {/* BBC-style section header */}
+            <div className="border-b-2 border-blue-400 pb-2 mb-3">
+              <h2 className="text-gray-900 font-bold text-lg tracking-tight uppercase">
+                11+ Preparation Gallery
+              </h2>
+              <div className="w-12 h-1 bg-blue-400 mt-1"></div>
+            </div>
+            
+            {/* 11+ Images Grid */}
+            <div className="space-y-4">
+              {elevenPlusImages.slice(1).map((image, index) => (
+                <div 
+                  key={index}
+                  className="group animate-fade-in"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  <div className="relative group-hover:scale-[1.02] transition-transform duration-300">
+                    <img
+                      src={image.src}
+                      alt={image.alt}
+                      className="w-full h-48 object-cover rounded-lg shadow-lg border-2 border-white/20"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent rounded-lg"></div>
+                    <div className="absolute bottom-2 left-2 bg-black/70 text-white px-3 py-1 rounded text-sm font-medium">
+                      {image.title}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* BBC-style "More" indicator */}
+            <div className="mt-6 flex items-center justify-between pt-3 border-t border-gray-200">
+              <span className="text-xs text-gray-600 font-medium">Age 11 • Grammar School Preparation</span>
+              <div className="flex items-center space-x-1">
+                <span className="text-xs text-gray-500">Scroll</span>
+                <svg className="w-3 h-3 text-gray-500 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          {/* BBC-style branding */}
+          <div className="flex-shrink-0 bg-white border-t border-gray-200 px-3 py-2 mt-6">
+            <div className="text-xs text-gray-400 font-medium tracking-wide text-center">
+              11+ PREPARATION • AGE 11
+            </div>
+          </div>
+
+          {/* Bottom Navigation - Now part of scrollable content */}
+          <div className="sticky bottom-0 left-0 right-0 z-40">
+            <BottomNav />
+          </div>
+        </div>
+      ) : (
+        // Original layout for other screen sizes
+        <div className="relative">
+          {/* Green Navbar */}
+          <div className="relative z-50">
+            <Navbar />
+          </div>
+
+          {/* Background Image */}
+          <div className="relative z-0 w-full" style={{ height: 'calc(100vh - 120px)' }}>
+            <img 
+              src={getBackgroundImage()} 
+              alt="11+ Background" 
+              className="w-full h-full object-cover"
+              style={{
+                imageRendering: '-webkit-optimize-contrast',
+                WebkitBackfaceVisibility: 'hidden',
+                MozBackfaceVisibility: 'hidden',
+                backfaceVisibility: 'hidden'
+              }}
+            />
+          </div>
+
+          {/* Bottom Navigation */}
+          <div className="relative z-40">
+            <BottomNav />
+          </div>
+        </div>
+      )}
+
+      {/* Interactive Elements - Fixed position elements that stay visible */}
+      <div className="fixed inset-0 z-40 pointer-events-none">
         {/* Floating Plus Menu with Robot and Dialog - Responsive Positioning */}
         <nav 
-          className={`btn-pluss-wrapper fixed z-40 flex flex-col items-center transition-all duration-300 ${getPlusMenuPosition()}`}
+          className={`btn-pluss-wrapper fixed z-50 flex flex-col items-center transition-all duration-300 pointer-events-auto ${getPlusMenuPosition()}`}
           onMouseEnter={() => !isMobile && setIsHovered(true)}
           onMouseLeave={() => !isMobile && setIsHovered(false)}
           onClick={() => isMobile && setIsHovered(!isHovered)}
@@ -292,7 +410,7 @@ const ElevenPlus = () => {
         </nav>
 
         {/* Ninja Image with Cartoon Dialog - Responsive Positioning */}
-        <div className={`fixed bottom-0 left-1/2 transform -translate-x-1/2 z-30 transition-all duration-300 ${getNinjaPosition()}`}>
+        <div className={`fixed bottom-0 left-1/2 transform -translate-x-1/2 z-40 transition-all duration-300 pointer-events-auto ${getNinjaPosition()}`}>
           <div className="relative">
             {/* Ninja Image */}
             <img 
@@ -349,11 +467,50 @@ const ElevenPlus = () => {
             </div>
           </div>
         </div>
-
-        <BottomNav />
       </div>
 
       <style jsx>{`
+        @keyframes fade-in {
+          from { 
+            opacity: 0; 
+            transform: translateY(10px); 
+          }
+          to { 
+            opacity: 1; 
+            transform: translateY(0); 
+          }
+        }
+        
+        .animate-fade-in {
+          animation: fade-in 0.6s ease-out forwards;
+          opacity: 0;
+        }
+
+        /* Custom scrollbar for 11+ theme */
+        .overflow-y-auto::-webkit-scrollbar {
+          width: 6px;
+        }
+        
+        .overflow-y-auto::-webkit-scrollbar-track {
+          background: #f3e8ff;
+          border-radius: 3px;
+        }
+        
+        .overflow-y-auto::-webkit-scrollbar-thumb {
+          background: #9333ea;
+          border-radius: 3px;
+        }
+        
+        .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+          background: #7e22ce;
+        }
+        
+        /* For Firefox */
+        .overflow-y-auto {
+          scrollbar-width: thin;
+          scrollbar-color: #9333ea #f3e8ff;
+        }
+
         /* Mobile-specific optimizations */
         @media (max-width: 767px) and (orientation: landscape) {
           .btn-pluss-wrapper {

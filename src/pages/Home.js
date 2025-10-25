@@ -24,43 +24,6 @@ const Home = () => {
   const dialogLines = ["I'm KAI", "Can I help?"];
   const ninjaLines = ["Our knowledge team", "are always ready", "to help!"];
 
-  const landscapeContent = [
-    { 
-      image: '/images/landscape/home1.jpg', 
-      alt: 'Learning experience 1',
-      position: 'left',
-      type: 'image'
-    },
-    { 
-      text: "Our Commitment to Excellence",
-      type: 'header'
-    },
-    { 
-      image: '/images/landscape/home2.png', 
-      alt: 'Learning experience 2',
-      position: 'right',
-      type: 'image'
-    },
-    { 
-      commitment: "Empowering every child to discover the joy of learning & achieve their full potential.",
-      type: 'commitment'
-    },
-    { 
-      image: '/images/landscape/home3.png', 
-      alt: 'Learning experience 3',
-      position: 'left',
-      type: 'image'
-    },
-    { 
-      commitment: "To inspire and equip children with the skills and confidence to learn effectively & pursue their curiosity.",
-      type: 'commitment'
-    },
-    { 
-      commitment: "Guiding children to become confident, lifelong learners who love to explore & grow.",
-      type: 'commitment'
-    }
-  ];
-
   const commitments = [
     "Empowering every child to discover the joy of learning & achieve their full potential.",
     "To inspire and equip children with the skills and confidence to learn effectively & pursue their curiosity.",
@@ -266,75 +229,27 @@ const Home = () => {
     return 'max-h-96';
   };
 
-  const renderLandscapeContent = (item, index) => {
-    switch (item.type) {
-      case 'image':
-        return (
-          <div 
-            key={index} 
-            className={`flex ${item.position === 'left' ? 'justify-start' : 'justify-end'} mb-6 animate-fade-in-up`}
-            style={{ animationDelay: `${index * 200}ms` }}
-          >
-            <div className={`relative group ${item.position === 'left' ? 'mr-4' : 'ml-4'}`}>
-              <img
-                src={item.image}
-                alt={item.alt}
-                className="w-48 h-32 object-cover rounded-lg shadow-lg group-hover:scale-105 transition-transform duration-300 border-2 border-white/20"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-lg"></div>
-              <div className="absolute bottom-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs font-medium">
-                {index === 0 ? 'Active Learning' : index === 2 ? 'Creative Space' : 'Team Work'}
-              </div>
-            </div>
-          </div>
-        );
-      
-      case 'header':
-        return (
-          <div 
-            key={index} 
-            className="text-center mb-6 animate-fade-in"
-            style={{ animationDelay: `${index * 200}ms` }}
-          >
-            <h2 className="text-2xl font-bold text-gray-900 mb-2 tracking-tight">
-              {item.text}
-            </h2>
-            <div className="w-16 h-1 bg-red-600 mx-auto"></div>
-          </div>
-        );
-      
-      case 'commitment':
-        return (
-          <div 
-            key={index} 
-            className="mb-4 animate-fade-in-right"
-            style={{ animationDelay: `${index * 200}ms` }}
-          >
-            <div className="flex items-start gap-3 group hover:bg-blue-50/50 p-3 rounded-lg transition-all duration-300">
-              <div className="flex-shrink-0 mt-1">
-                <div className="w-3 h-3 bg-red-600 rounded-full group-hover:scale-125 transition-transform duration-300"></div>
-              </div>
-              <p className="text-gray-800 text-sm leading-relaxed font-normal group-hover:text-gray-900 transition-colors duration-300">
-                {item.commitment}
-              </p>
-            </div>
-          </div>
-        );
-      
-      default:
-        return null;
-    }
-  };
-
   return (
     <div 
       className="min-h-screen bg-white relative overflow-x-hidden overflow-y-auto"
       onClick={handleContainerClick}
     >
-      {/* Main Content Area */}
-      <div className="relative z-0 w-full h-screen">
+      {/* Navbar - Placed at the top with proper z-index */}
+      <div className="relative z-50">
+        <Navbar onMenuStateChange={handleMenuStateChange} />
+      </div>
+
+      {/* Main Content Area - Adjusted for navbar height */}
+      <div 
+        className="relative z-0 w-full"
+        style={{ 
+          height: isMobileLandscape 
+            ? 'calc(100vh - 80px)'  // Adjusted for mobile landscape
+            : 'calc(100vh - 120px)' // Adjusted for other screen sizes
+        }}
+      >
         {isMobileLandscape ? (
-          // BBC-Style Scrollable Layout for Mobile Landscape
+          // BBC-Style Layout for Mobile Landscape
           <div className="w-full h-full bg-gradient-to-br from-blue-50 via-white to-purple-50">
             {/* BBC-style header bar */}
             <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-r from-blue-800 to-purple-800 z-20 flex items-center px-4">
@@ -351,80 +266,108 @@ const Home = () => {
               </div>
             </div>
 
-            {/* Scrollable Content Area */}
-            <div className="h-full pt-8 pb-4 overflow-y-auto">
-              <div className="max-w-4xl mx-auto px-4 py-6">
-                {/* Main content grid */}
-                <div className="grid grid-cols-1 gap-6">
-                  {/* Hero Section */}
-                  <div className="text-center mb-8 animate-fade-in">
-                    <h1 className="text-3xl font-black text-gray-900 mb-3 tracking-tight">
-                      Excellence in <span className="text-blue-600">Education</span>
-                    </h1>
-                    <p className="text-gray-600 text-sm max-w-md mx-auto leading-relaxed">
-                      Transforming learning experiences through innovation and dedication
-                    </p>
-                  </div>
-
-                  {/* Content Blocks */}
-                  {landscapeContent.map((item, index) => renderLandscapeContent(item, index))}
-
-                  {/* Additional Features Section */}
-                  <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 shadow-sm mt-4 animate-fade-in-up">
-                    <h3 className="text-lg font-bold text-gray-900 mb-4 text-center">
-                      Why Choose Us?
-                    </h3>
-                    <div className="grid grid-cols-2 gap-4 text-center">
-                      <div className="p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors duration-300">
-                        <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-2">
-                          <span className="text-white text-sm font-bold">✓</span>
-                        </div>
-                        <span className="text-xs font-medium text-gray-800">Proven Results</span>
-                      </div>
-                      <div className="p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors duration-300">
-                        <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-2">
-                          <span className="text-white text-sm font-bold">★</span>
-                        </div>
-                        <span className="text-xs font-medium text-gray-800">Expert Tutors</span>
-                      </div>
-                      <div className="p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors duration-300">
-                        <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-2">
-                          <span className="text-white text-sm font-bold">⚡</span>
-                        </div>
-                        <span className="text-xs font-medium text-gray-800">Fast Progress</span>
-                      </div>
-                      <div className="p-3 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors duration-300">
-                        <div className="w-8 h-8 bg-orange-600 rounded-full flex items-center justify-center mx-auto mb-2">
-                          <span className="text-white text-sm font-bold">❤️</span>
-                        </div>
-                        <span className="text-xs font-medium text-gray-800">Caring Support</span>
-                      </div>
+            <div className="grid grid-cols-2 h-full pt-8">
+              {/* Left Side - Static Images */}
+              <div className="h-full overflow-y-auto">
+                <div className="p-4 space-y-6">
+                  {/* Image 1 */}
+                  <div className="relative group">
+                    <img
+                      src="/images/landscape/home1.jpg"
+                      alt="Learning experience 1"
+                      className="w-full h-48 object-cover rounded-lg shadow-lg group-hover:scale-105 transition-transform duration-300 border-2 border-white/20"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-lg"></div>
+                    <div className="absolute bottom-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs font-medium">
+                      Active Learning
                     </div>
                   </div>
 
-                  {/* Call to Action */}
-                  <div className="text-center mt-8 animate-fade-in">
-                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl p-6 shadow-lg">
-                      <h3 className="text-xl font-bold mb-2">Ready to Begin?</h3>
-                      <p className="text-blue-100 text-sm mb-4">
-                        Start your learning journey today with our expert guidance
-                      </p>
-                      <button className="bg-white text-blue-600 px-6 py-2 rounded-full font-bold text-sm hover:bg-blue-50 transition-colors duration-300 shadow-md">
-                        Get Started
-                      </button>
+                  {/* Image 2 */}
+                  <div className="relative group mt-8">
+                    <img
+                      src="/images/landscape/home2.png"
+                      alt="Learning experience 2"
+                      className="w-full h-48 object-cover rounded-lg shadow-lg group-hover:scale-105 transition-transform duration-300 border-2 border-white/20"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-lg"></div>
+                    <div className="absolute bottom-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs font-medium">
+                      Creative Space
+                    </div>
+                  </div>
+
+                  {/* Image 3 */}
+                  <div className="relative group mt-8">
+                    <img
+                      src="/images/landscape/home3.png"
+                      alt="Learning experience 3"
+                      className="w-full h-48 object-cover rounded-lg shadow-lg group-hover:scale-105 transition-transform duration-300 border-2 border-white/20"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-lg"></div>
+                    <div className="absolute bottom-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs font-medium">
+                      Team Work
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Scroll indicator */}
-            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2">
-              <div className="flex items-center space-x-2 bg-black/70 text-white px-4 py-2 rounded-full">
-                <svg className="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                </svg>
-                <span className="text-xs font-medium">Scroll to explore</span>
+              {/* Right Side - Scrollable Commitments Text */}
+              <div className="h-full flex flex-col">
+                <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-blue-100">
+                  <div className="px-4 py-3 bg-white">
+                    {/* BBC-style section header */}
+                    <div className="border-b-2 border-red-600 pb-2 mb-3 sticky top-0 bg-white z-10">
+                      <h2 className="text-gray-900 font-bold text-lg tracking-tight uppercase">
+                        Our Commitment to Excellence
+                      </h2>
+                      <div className="w-12 h-1 bg-red-600 mt-1"></div>
+                    </div>
+                    
+                    {/* Commitments list with BBC-style bullet points */}
+                    <div className="space-y-3 pb-4">
+                      {commitments.map((commitment, index) => (
+                        <div 
+                          key={index}
+                          className="group animate-fade-in"
+                          style={{ animationDelay: `${index * 150}ms` }}
+                        >
+                          {/* BBC-style list item */}
+                          <div className="flex items-start gap-3 p-3 bg-gray-50/50 rounded-lg hover:bg-blue-50/70 transition-all duration-300">
+                            {/* BBC-style red bullet */}
+                            <div className="flex-shrink-0 mt-1.5">
+                              <div className="w-3 h-3 bg-red-600 rounded-full group-hover:scale-125 transition-transform duration-300"></div>
+                            </div>
+                            
+                            {/* Text content */}
+                            <div className="flex-1">
+                              <p className="text-gray-800 text-sm leading-relaxed font-normal group-hover:text-gray-900 transition-colors duration-300">
+                                {commitment}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* BBC-style "More" indicator */}
+                    <div className="mt-6 flex items-center justify-between pt-3 border-t border-gray-200">
+                      <span className="text-xs text-gray-600 font-medium">Education Excellence</span>
+                      <div className="flex items-center space-x-1">
+                        <span className="text-xs text-gray-500">Scroll</span>
+                        <svg className="w-3 h-3 text-gray-500 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* BBC-style branding */}
+                <div className="flex-shrink-0 bg-white border-t border-gray-200 px-3 py-2">
+                  <div className="text-xs text-gray-400 font-medium tracking-wide text-center">
+                    EDU • PLATFORM
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -444,12 +387,11 @@ const Home = () => {
         )}
       </div>
 
-      <div className="absolute inset-0 z-10">
-        <Navbar onMenuStateChange={handleMenuStateChange} />
-
+      {/* Interactive Elements - Placed above the image but below navbar */}
+      <div className="absolute inset-0 z-40 pointer-events-none">
         {!isMenuOpen && (
           <div 
-            className={`fixed z-40 instant-assessment-container ${getButtonPosition()}`}
+            className={`fixed instant-assessment-container ${getButtonPosition()} pointer-events-auto`}
             style={{ touchAction: 'manipulation' }}
             onMouseEnter={() => !isMobile && setIs3DButtonHovered(true)}
             onMouseLeave={() => {
@@ -587,7 +529,8 @@ const Home = () => {
           </div>
         )}
 
-        <nav className={`btn-pluss-wrapper fixed z-40 flex flex-col items-center transition-all duration-300 ${
+        {/* KAI Assistant */}
+        <nav className={`btn-pluss-wrapper fixed z-40 flex flex-col items-center transition-all duration-300 pointer-events-auto ${
           isSmallMobileLandscape ? 'bottom-1 left-1 scale-75' : 
           isMobileLandscape ? 'bottom-2 left-2 scale-85' : 
           isMobile ? isLandscape ? 'bottom-4 left-4' : 'bottom-20 left-4' : 
@@ -662,7 +605,8 @@ const Home = () => {
           </div>
         </nav>
 
-        <div className={`fixed bottom-0 left-1/2 transform -translate-x-1/2 z-30 transition-all duration-300 ${getNinjaPosition()}`}>
+        {/* Ninja Character */}
+        <div className={`fixed bottom-0 left-1/2 transform -translate-x-1/2 z-30 transition-all duration-300 pointer-events-auto ${getNinjaPosition()}`}>
           <div className="relative">
             <img 
               src="/images/ninja.png" 
@@ -707,7 +651,10 @@ const Home = () => {
           </div>
         </div>
 
-        <BottomNav />
+        {/* Bottom Navigation */}
+        <div className="pointer-events-auto">
+          <BottomNav />
+        </div>
       </div>
 
       <style jsx>{`
@@ -725,52 +672,29 @@ const Home = () => {
           100% { transform: translateX(200%) skewX(-15deg); }
         }
         
-        @keyframes fade-in {
-          from { 
-            opacity: 0; 
-            transform: translateY(20px); 
-          }
-          to { 
-            opacity: 1; 
-            transform: translateY(0); 
-          }
+        /* Custom scrollbar for masonry layout */
+        .overflow-y-auto::-webkit-scrollbar {
+          width: 6px;
         }
         
-        @keyframes fade-in-up {
-          from { 
-            opacity: 0; 
-            transform: translateY(30px); 
-          }
-          to { 
-            opacity: 1; 
-            transform: translateY(0); 
-          }
+        .overflow-y-auto::-webkit-scrollbar-track {
+          background: #dbeafe;
+          border-radius: 3px;
         }
         
-        @keyframes fade-in-right {
-          from { 
-            opacity: 0; 
-            transform: translateX(20px); 
-          }
-          to { 
-            opacity: 1; 
-            transform: translateX(0); 
-          }
+        .overflow-y-auto::-webkit-scrollbar-thumb {
+          background: #3b82f6;
+          border-radius: 3px;
         }
         
-        .animate-fade-in {
-          animation: fade-in 0.6s ease-out forwards;
-          opacity: 0;
+        .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+          background: #2563eb;
         }
         
-        .animate-fade-in-up {
-          animation: fade-in-up 0.6s ease-out forwards;
-          opacity: 0;
-        }
-        
-        .animate-fade-in-right {
-          animation: fade-in-right 0.6s ease-out forwards;
-          opacity: 0;
+        /* For Firefox */
+        .overflow-y-auto {
+          scrollbar-width: thin;
+          scrollbar-color: #3b82f6 #dbeafe;
         }
         
         @media (max-width: 767px) and (orientation: landscape) {
@@ -779,7 +703,6 @@ const Home = () => {
             bottom: 1rem !important; 
             left: 1rem !important; 
           }
-          body { overflow-x: hidden; }
         }
         
         @media (max-width: 640px) and (orientation: landscape) {
@@ -800,27 +723,6 @@ const Home = () => {
         
         @media (max-width: 767px) {
           * { -webkit-tap-highlight-color: transparent; }
-        }
-        
-        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-          .btn-pluss-wrapper, .ninja-container { image-rendering: -webkit-optimize-contrast; }
-        }
-
-        .btn-pluss ul::-webkit-scrollbar {
-          width: 4px;
-        }
-        
-        .btn-pluss ul::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        
-        .btn-pluss ul::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.3);
-          border-radius: 2px;
-        }
-        
-        .btn-pluss ul::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 255, 255, 0.5);
         }
       `}</style>
     </div>

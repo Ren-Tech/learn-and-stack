@@ -20,6 +20,18 @@ const ALevels = () => {
   const dialogLines = ["I'm KAI", "Can I help?"];
   const ninjaLines = ["Ready", "Steady", "Succeed"];
 
+  // A-Levels specific images for landscape mobile - using level PNGs
+  const aLevelImages = [
+    { src: '/images/landscape/level1.png', alt: 'A-Level Preparation 1', title: 'Advanced Mathematics' },
+    { src: '/images/landscape/level2.jpg', alt: 'A-Level Preparation 2', title: 'Science Research' },
+    { src: '/images/landscape/level3.png', alt: 'A-Level Preparation 3', title: 'Literature Analysis' },
+    { src: '/images/landscape/level4.png', alt: 'A-Level Preparation 4', title: 'History Depth Studies' },
+    { src: '/images/landscape/level5.png', alt: 'A-Level Preparation 5', title: 'Economics Theory' },
+    { src: '/images/landscape/level6.png', alt: 'A-Level Preparation 6', title: 'Art Portfolio' },
+    { src: '/images/landscape/level7.png', alt: 'A-Level Preparation 7', title: 'Language Fluency' },
+  
+  ];
+
   // Navigation menu items - same as home page
   const menuItems = [
     { href: "/primary", text: "Primary", description: "6-11 Years Old" },
@@ -27,24 +39,6 @@ const ALevels = () => {
     { href: "/11plus", text: "11+", description: "11 Years Old" },
     { href: "/gcses", text: "GCSEs", description: "14-16 Years Old" },
     { href: "/alevels", text: "A-Levels", description: "16-18 Years Old" },
-  ];
-
-  const pathways = [
-    {
-      name: 'Sciences',
-      subjects: ['Biology', 'Chemistry', 'Physics', 'Mathematics', 'Further Mathematics'],
-      color: 'bg-blue-50 border-blue-200'
-    },
-    {
-      name: 'Humanities',
-      subjects: ['History', 'Geography', 'Politics', 'Economics', 'Psychology'],
-      color: 'bg-green-50 border-green-200'
-    },
-    {
-      name: 'Arts & Languages',
-      subjects: ['English Literature', 'Art', 'Music', 'French', 'Spanish'],
-      color: 'bg-purple-50 border-purple-200'
-    }
   ];
 
   // Handle window resize
@@ -74,7 +68,7 @@ const ALevels = () => {
 
   // Get background image based on screen size
   const getBackgroundImage = () => {
-    if (isMobileLandscape) return "/images/home_landscape.png";
+    if (isMobileLandscape) return "/images/landscape/level1.png";
     if (isMobile) return "/images/a-level.png";
     if (isTabletPortrait) return "/images/tab_alevel.png";
     return "/images/a-levels.png";
@@ -170,29 +164,133 @@ const ALevels = () => {
 
   return (
     <div className="min-h-screen bg-white relative overflow-x-hidden">
-      {/* Background Image as Content */}
-      <div className="fixed inset-0 z-0">
-        <img 
-          src={getBackgroundImage()} 
-          alt="A-Levels Background" 
-          className="w-full h-full object-cover"
-          style={{
-            imageRendering: '-webkit-optimize-contrast',
-            WebkitBackfaceVisibility: 'hidden',
-            MozBackfaceVisibility: 'hidden',
-            backfaceVisibility: 'hidden'
-          }}
-        />
-        {/* Overlay to ensure content readability */}
-        <div className="absolute inset-0 bg-white/10 pointer-events-none"></div>
-      </div>
-      
-      <div className="relative z-10">
-        <Navbar />
+      {isMobileLandscape ? (
+        // Single Scrolling Layout for Mobile Landscape - Everything scrolls together
+        <div className="w-full h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 overflow-y-auto">
+          {/* Green Navbar - Now part of scrollable content */}
+          <div className="relative z-50">
+            <Navbar />
+          </div>
 
+          {/* BBC-style header bar */}
+          <div className="sticky top-0 left-0 right-0 h-8 bg-gradient-to-r from-gray-700 to-indigo-700 z-40 flex items-center px-4">
+            <div className="flex items-center space-x-2">
+              <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                <div className="w-3 h-3 bg-indigo-500 rounded-full"></div>
+              </div>
+              <span className="text-white font-bold text-sm tracking-tight">A-LEVEL PREPARATION</span>
+            </div>
+            <div className="ml-auto flex items-center space-x-3">
+              <div className="w-4 h-4 bg-white/20 rounded"></div>
+              <div className="w-4 h-4 bg-white/20 rounded"></div>
+              <div className="w-4 h-4 bg-white/20 rounded"></div>
+            </div>
+          </div>
+
+          <div className="p-4 space-y-6">
+            {/* Hero Image */}
+            <div className="relative group mt-2">
+              <img
+                src="/images/landscape/level1.png"
+                alt="A-Level Preparation Hero"
+                className="w-full h-48 object-cover rounded-lg shadow-lg group-hover:scale-105 transition-transform duration-300 border-2 border-white/20"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-lg"></div>
+              <div className="absolute bottom-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs font-medium">
+                A-Level Advanced Studies
+              </div>
+            </div>
+
+            {/* BBC-style section header */}
+            <div className="border-b-2 border-orange-500 pb-2 mb-3">
+              <h2 className="text-gray-900 font-bold text-lg tracking-tight uppercase">
+                A-Level Preparation Gallery
+              </h2>
+              <div className="w-12 h-1 bg-orange-500 mt-1"></div>
+            </div>
+            
+            {/* A-Level Images Grid */}
+            <div className="space-y-4">
+              {aLevelImages.slice(1).map((image, index) => (
+                <div 
+                  key={index}
+                  className="group animate-fade-in"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  <div className="relative group-hover:scale-[1.02] transition-transform duration-300">
+                    <img
+                      src={image.src}
+                      alt={image.alt}
+                      className="w-full h-48 object-cover rounded-lg shadow-lg border-2 border-white/20"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent rounded-lg"></div>
+                    <div className="absolute bottom-2 left-2 bg-black/70 text-white px-3 py-1 rounded text-sm font-medium">
+                      {image.title}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* BBC-style "More" indicator */}
+            <div className="mt-6 flex items-center justify-between pt-3 border-t border-gray-200">
+              <span className="text-xs text-gray-600 font-medium">Ages 16-18 • University Preparation</span>
+              <div className="flex items-center space-x-1">
+                <span className="text-xs text-gray-500">Scroll</span>
+                <svg className="w-3 h-3 text-gray-500 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          {/* BBC-style branding */}
+          <div className="flex-shrink-0 bg-white border-t border-gray-200 px-3 py-2 mt-6">
+            <div className="text-xs text-gray-400 font-medium tracking-wide text-center">
+              A-LEVEL PREPARATION • AGES 16-18
+            </div>
+          </div>
+
+          {/* Bottom Navigation - Now part of scrollable content */}
+          <div className="sticky bottom-0 left-0 right-0 z-40">
+            <BottomNav />
+          </div>
+        </div>
+      ) : (
+        // Original layout for other screen sizes
+        <div className="relative">
+          {/* Green Navbar */}
+          <div className="relative z-50">
+            <Navbar />
+          </div>
+
+          {/* Background Image */}
+          <div className="relative z-0 w-full" style={{ height: 'calc(100vh - 120px)' }}>
+            <img 
+              src={getBackgroundImage()} 
+              alt="A-Levels Background" 
+              className="w-full h-full object-cover"
+              style={{
+                imageRendering: '-webkit-optimize-contrast',
+                WebkitBackfaceVisibility: 'hidden',
+                MozBackfaceVisibility: 'hidden',
+                backfaceVisibility: 'hidden'
+              }}
+            />
+          </div>
+
+          {/* Bottom Navigation */}
+          <div className="relative z-40">
+            <BottomNav />
+          </div>
+        </div>
+      )}
+
+      {/* Interactive Elements - Fixed position elements that stay visible */}
+      <div className="fixed inset-0 z-40 pointer-events-none">
         {/* Floating Plus Menu with Robot and Dialog - Responsive Positioning */}
         <nav 
-          className={`btn-pluss-wrapper fixed z-40 flex flex-col items-center transition-all duration-300 ${getPlusMenuPosition()}`}
+          className={`btn-pluss-wrapper fixed z-50 flex flex-col items-center transition-all duration-300 pointer-events-auto ${getPlusMenuPosition()}`}
           onMouseEnter={() => !isMobile && setIsHovered(true)}
           onMouseLeave={() => !isMobile && setIsHovered(false)}
           onClick={() => isMobile && setIsHovered(!isHovered)}
@@ -310,7 +408,7 @@ const ALevels = () => {
         </nav>
 
         {/* Ninja Image with Cartoon Dialog - Responsive Positioning */}
-        <div className={`fixed bottom-0 left-1/2 transform -translate-x-1/2 z-30 transition-all duration-300 ${getNinjaPosition()}`}>
+        <div className={`fixed bottom-0 left-1/2 transform -translate-x-1/2 z-40 transition-all duration-300 pointer-events-auto ${getNinjaPosition()}`}>
           <div className="relative">
             {/* Ninja Image */}
             <img 
@@ -367,11 +465,50 @@ const ALevels = () => {
             </div>
           </div>
         </div>
-
-        <BottomNav />
       </div>
 
       <style jsx>{`
+        @keyframes fade-in {
+          from { 
+            opacity: 0; 
+            transform: translateY(10px); 
+          }
+          to { 
+            opacity: 1; 
+            transform: translateY(0); 
+          }
+        }
+        
+        .animate-fade-in {
+          animation: fade-in 0.6s ease-out forwards;
+          opacity: 0;
+        }
+
+        /* Custom scrollbar for A-Level theme */
+        .overflow-y-auto::-webkit-scrollbar {
+          width: 6px;
+        }
+        
+        .overflow-y-auto::-webkit-scrollbar-track {
+          background: #f1f5f9;
+          border-radius: 3px;
+        }
+        
+        .overflow-y-auto::-webkit-scrollbar-thumb {
+          background: #475569;
+          border-radius: 3px;
+        }
+        
+        .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+          background: #334155;
+        }
+        
+        /* For Firefox */
+        .overflow-y-auto {
+          scrollbar-width: thin;
+          scrollbar-color: #475569 #f1f5f9;
+        }
+
         /* Mobile-specific optimizations */
         @media (max-width: 767px) and (orientation: landscape) {
           .btn-pluss-wrapper {
