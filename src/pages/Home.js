@@ -250,9 +250,9 @@ const Home = () => {
       >
         {isMobileLandscape ? (
           // BBC-Style Layout for Mobile Landscape
-          <div className="w-full h-full bg-gradient-to-br from-blue-50 via-white to-purple-50">
+          <div className="w-full h-full bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-y-auto">
             {/* BBC-style header bar */}
-            <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-r from-blue-800 to-purple-800 z-20 flex items-center px-4">
+            <div className="sticky top-0 left-0 right-0 h-8 bg-gradient-to-r from-blue-800 to-purple-800 z-20 flex items-center px-4">
               <div className="flex items-center space-x-2">
                 <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
                   <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
@@ -266,109 +266,113 @@ const Home = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 h-full pt-8">
-              {/* Left Side - Static Images */}
-              <div className="h-full overflow-y-auto">
-                <div className="p-4 space-y-6">
-                  {/* Image 1 */}
-                  <div className="relative group">
-                    <img
-                      src="/images/landscape/home1.jpg"
-                      alt="Learning experience 1"
-                      className="w-full h-48 object-cover rounded-lg shadow-lg group-hover:scale-105 transition-transform duration-300 border-2 border-white/20"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-lg"></div>
-                    <div className="absolute bottom-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs font-medium">
-                      Active Learning
-                    </div>
-                  </div>
-
-                  {/* Image 2 */}
-                  <div className="relative group mt-8">
-                    <img
-                      src="/images/landscape/home2.png"
-                      alt="Learning experience 2"
-                      className="w-full h-48 object-cover rounded-lg shadow-lg group-hover:scale-105 transition-transform duration-300 border-2 border-white/20"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-lg"></div>
-                    <div className="absolute bottom-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs font-medium">
-                      Creative Space
-                    </div>
-                  </div>
-
-                  {/* Image 3 */}
-                  <div className="relative group mt-8">
-                    <img
-                      src="/images/landscape/home3.png"
-                      alt="Learning experience 3"
-                      className="w-full h-48 object-cover rounded-lg shadow-lg group-hover:scale-105 transition-transform duration-300 border-2 border-white/20"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-lg"></div>
-                    <div className="absolute bottom-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs font-medium">
-                      Team Work
+            {/* BBC-style main content grid */}
+            <div className="p-4">
+              {/* Main featured story - BBC style */}
+              <div className="mb-6">
+                <div className="bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200">
+                  <img
+                    src="/images/landscape/home1.jpg"
+                    alt="Educational Platform Hero"
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="p-4">
+                    <h1 className="text-xl font-bold text-gray-900 mb-2">Welcome to EduPlatform</h1>
+                    <p className="text-gray-600 text-sm mb-3">Comprehensive learning solutions for all educational stages</p>
+                    <div className="flex items-center text-xs text-gray-500">
+                      <span>All Ages</span>
+                      <span className="mx-2">•</span>
+                      <span>Comprehensive</span>
+                      <span className="mx-2">•</span>
+                      <span>Interactive</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Right Side - Scrollable Commitments Text */}
-              <div className="h-full flex flex-col">
-                <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-blue-100">
-                  <div className="px-4 py-3 bg-white">
-                    {/* BBC-style section header */}
-                    <div className="border-b-2 border-red-600 pb-2 mb-3 sticky top-0 bg-white z-10">
-                      <h2 className="text-gray-900 font-bold text-lg tracking-tight uppercase">
-                        Our Commitment to Excellence
-                      </h2>
-                      <div className="w-12 h-1 bg-red-600 mt-1"></div>
-                    </div>
-                    
-                    {/* Commitments list with BBC-style bullet points */}
-                    <div className="space-y-3 pb-4">
-                      {commitments.map((commitment, index) => (
-                        <div 
-                          key={index}
-                          className="group animate-fade-in"
-                          style={{ animationDelay: `${index * 150}ms` }}
-                        >
-                          {/* BBC-style list item */}
-                          <div className="flex items-start gap-3 p-3 bg-gray-50/50 rounded-lg hover:bg-blue-50/70 transition-all duration-300">
-                            {/* BBC-style red bullet */}
-                            <div className="flex-shrink-0 mt-1.5">
-                              <div className="w-3 h-3 bg-red-600 rounded-full group-hover:scale-125 transition-transform duration-300"></div>
-                            </div>
-                            
-                            {/* Text content */}
-                            <div className="flex-1">
-                              <p className="text-gray-800 text-sm leading-relaxed font-normal group-hover:text-gray-900 transition-colors duration-300">
-                                {commitment}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+              {/* BBC-style secondary stories grid */}
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200">
+                  <img
+                    src="/images/landscape/home2.png"
+                    alt="Creative Learning"
+                    className="w-full h-32 object-cover"
+                  />
+                  <div className="p-3">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-1">Creative Learning</h3>
+                    <div className="w-8 h-1 bg-purple-500 mb-2"></div>
+                    <p className="text-xs text-gray-600">Innovative teaching methods</p>
+                  </div>
+                </div>
+                <div className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200">
+                  <img
+                    src="/images/landscape/home3.png"
+                    alt="Team Collaboration"
+                    className="w-full h-32 object-cover"
+                  />
+                  <div className="p-3">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-1">Team Collaboration</h3>
+                    <div className="w-8 h-1 bg-blue-500 mb-2"></div>
+                    <p className="text-xs text-gray-600">Group learning activities</p>
+                  </div>
+                </div>
+              </div>
 
-                    {/* BBC-style "More" indicator */}
-                    <div className="mt-6 flex items-center justify-between pt-3 border-t border-gray-200">
-                      <span className="text-xs text-gray-600 font-medium">Education Excellence</span>
-                      <div className="flex items-center space-x-1">
-                        <span className="text-xs text-gray-500">Scroll</span>
-                        <svg className="w-3 h-3 text-gray-500 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                        </svg>
+              {/* BBC-style more stories section */}
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-bold text-gray-900">Our Commitments</h2>
+                  <div className="w-12 h-1 bg-red-600"></div>
+                </div>
+                
+                <div className="space-y-4">
+                  {commitments.map((commitment, index) => (
+                    <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
+                      <div className="p-3">
+                        <div className="flex items-start space-x-3">
+                          <div className="flex-shrink-0 mt-0.5">
+                            <div className="w-2 h-2 bg-red-600 rounded-full"></div>
+                          </div>
+                          <p className="text-xs text-gray-600 flex-1">
+                            {commitment}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
+              </div>
 
-                {/* BBC-style branding */}
-                <div className="flex-shrink-0 bg-white border-t border-gray-200 px-3 py-2">
-                  <div className="text-xs text-gray-400 font-medium tracking-wide text-center">
-                    EDU • PLATFORM
+              {/* BBC-style trending section */}
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-6">
+                <div className="flex items-center mb-3">
+                  <div className="w-3 h-6 bg-blue-600 mr-2"></div>
+                  <h3 className="text-md font-bold text-gray-900">Quick Access</h3>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {assessmentCategories.map((item, index) => (
+                    <div key={index} className="bg-white rounded p-2 text-center border border-gray-300">
+                      <span className="text-xs font-medium text-gray-700">{item.title}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* BBC-style footer section */}
+              <div className="border-t border-gray-300 pt-4">
+                <div className="text-center">
+                  <div className="inline-flex items-center space-x-2 bg-gray-100 px-4 py-2 rounded-full">
+                    <span className="text-xs text-gray-600 font-medium">EDUPLATFORM</span>
+                    <span className="text-xs text-gray-400">•</span>
+                    <span className="text-xs text-gray-600">COMPREHENSIVE LEARNING</span>
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Bottom Navigation - Now part of scrollable content */}
+            <div className="sticky bottom-0 left-0 right-0 z-40 mt-6">
+              <BottomNav />
             </div>
           </div>
         ) : (

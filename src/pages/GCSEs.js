@@ -164,7 +164,7 @@ const GCSEs = () => {
   return (
     <div className="min-h-screen bg-white relative overflow-x-hidden">
       {isMobileLandscape ? (
-        // Single Scrolling Layout for Mobile Landscape - Everything scrolls together
+        // BBC-style Layout for Mobile Landscape
         <div className="w-full h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 overflow-y-auto">
           {/* Green Navbar - Now part of scrollable content */}
           <div className="relative z-50">
@@ -186,72 +186,108 @@ const GCSEs = () => {
             </div>
           </div>
 
-          <div className="p-4 space-y-6">
-            {/* Hero Image */}
-            <div className="relative group mt-2">
-              <img
-                src="/images/landscape/gc1.png"
-                alt="GCSE Preparation Hero"
-                className="w-full h-48 object-cover rounded-lg shadow-lg group-hover:scale-105 transition-transform duration-300 border-2 border-white/20"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-lg"></div>
-              <div className="absolute bottom-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs font-medium">
-                GCSE Exam Preparation
+          {/* BBC-style main content grid */}
+          <div className="p-4">
+            {/* Main featured story - BBC style */}
+            <div className="mb-6">
+              <div className="bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200">
+                <img
+                  src="/images/landscape/gc1.png"
+                  alt="GCSE Preparation Hero"
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-4">
+                  <h1 className="text-xl font-bold text-gray-900 mb-2">GCSE Exam Preparation</h1>
+                  <p className="text-gray-600 text-sm mb-3">Comprehensive revision and exam strategies for Key Stage 4</p>
+                  <div className="flex items-center text-xs text-gray-500">
+                    <span>Ages 14-16</span>
+                    <span className="mx-2">•</span>
+                    <span>Key Stage 4</span>
+                    <span className="mx-2">•</span>
+                    <span>Core Subjects</span>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* BBC-style section header */}
-            <div className="border-b-2 border-red-400 pb-2 mb-3">
-              <h2 className="text-gray-900 font-bold text-lg tracking-tight uppercase">
-                GCSE Preparation Gallery
-              </h2>
-              <div className="w-12 h-1 bg-red-400 mt-1"></div>
-            </div>
-            
-            {/* GCSE Images Grid */}
-            <div className="space-y-4">
-              {gcseImages.slice(1).map((image, index) => (
-                <div 
-                  key={index}
-                  className="group animate-fade-in"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <div className="relative group-hover:scale-[1.02] transition-transform duration-300">
-                    <img
-                      src={image.src}
-                      alt={image.alt}
-                      className="w-full h-48 object-cover rounded-lg shadow-lg border-2 border-white/20"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent rounded-lg"></div>
-                    <div className="absolute bottom-2 left-2 bg-black/70 text-white px-3 py-1 rounded text-sm font-medium">
-                      {image.title}
-                    </div>
+            {/* BBC-style secondary stories grid */}
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              {gcseImages.slice(1, 3).map((image, index) => (
+                <div key={index} className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200">
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    className="w-full h-32 object-cover"
+                  />
+                  <div className="p-3">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-1">{image.title}</h3>
+                    <div className="w-8 h-1 bg-red-500 mb-2"></div>
+                    <p className="text-xs text-gray-600">Essential exam preparation</p>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* BBC-style "More" indicator */}
-            <div className="mt-6 flex items-center justify-between pt-3 border-t border-gray-200">
-              <span className="text-xs text-gray-600 font-medium">Ages 14-16 • Key Stage 4</span>
-              <div className="flex items-center space-x-1">
-                <span className="text-xs text-gray-500">Scroll</span>
-                <svg className="w-3 h-3 text-gray-500 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                </svg>
+            {/* BBC-style more stories section */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-gray-900">More GCSE Subjects</h2>
+                <div className="w-12 h-1 bg-blue-500"></div>
+              </div>
+              
+              <div className="space-y-4">
+                {gcseImages.slice(3).map((image, index) => (
+                  <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
+                    <div className="flex">
+                      <img
+                        src={image.src}
+                        alt={image.alt}
+                        className="w-24 h-24 object-cover flex-shrink-0"
+                      />
+                      <div className="p-3 flex-1">
+                        <h3 className="text-sm font-semibold text-gray-900 mb-2">{image.title}</h3>
+                        <p className="text-xs text-gray-600 line-clamp-2">Master key concepts and exam techniques for success</p>
+                        <div className="flex items-center mt-2 text-xs text-gray-500">
+                          <span>Revision</span>
+                          <span className="mx-2">•</span>
+                          <span>Practice</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* BBC-style trending section */}
+            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-6">
+              <div className="flex items-center mb-3">
+                <div className="w-3 h-6 bg-blue-600 mr-2"></div>
+                <h3 className="text-md font-bold text-gray-900">Core Subjects</h3>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {['Mathematics', 'Science', 'English', 'Languages'].map((item, index) => (
+                  <div key={index} className="bg-white rounded p-2 text-center border border-gray-300">
+                    <span className="text-xs font-medium text-gray-700">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* BBC-style footer section */}
+            <div className="border-t border-gray-300 pt-4">
+              <div className="text-center">
+                <div className="inline-flex items-center space-x-2 bg-gray-100 px-4 py-2 rounded-full">
+                  <span className="text-xs text-gray-600 font-medium">GCSE PREPARATION</span>
+                  <span className="text-xs text-gray-400">•</span>
+                  <span className="text-xs text-gray-600">AGES 14-16</span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* BBC-style branding */}
-          <div className="flex-shrink-0 bg-white border-t border-gray-200 px-3 py-2 mt-6">
-            <div className="text-xs text-gray-400 font-medium tracking-wide text-center">
-              GCSE PREPARATION • AGES 14-16
-            </div>
-          </div>
-
           {/* Bottom Navigation - Now part of scrollable content */}
-          <div className="sticky bottom-0 left-0 right-0 z-40">
+          <div className="sticky bottom-0 left-0 right-0 z-40 mt-6">
             <BottomNav />
           </div>
         </div>
@@ -467,20 +503,11 @@ const GCSEs = () => {
       </div>
 
       <style jsx>{`
-        @keyframes fade-in {
-          from { 
-            opacity: 0; 
-            transform: translateY(10px); 
-          }
-          to { 
-            opacity: 1; 
-            transform: translateY(0); 
-          }
-        }
-        
-        .animate-fade-in {
-          animation: fade-in 0.6s ease-out forwards;
-          opacity: 0;
+        .line-clamp-2 {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
 
         /* Custom scrollbar for GCSE theme */

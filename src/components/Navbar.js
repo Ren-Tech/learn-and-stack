@@ -179,7 +179,8 @@ const Navbar = ({ onMenuStateChange }) => {
   return (
     <>
       {/* ===== Top Navbar ===== */}
-      <nav className="bg-gradient-to-r from-blue-600 to-blue-700 py-3 px-4 sm:px-6 md:px-8 lg:px-10 shadow-2xl sticky top-0 z-50">
+      {/* REMOVED: sticky top-0 - Now it will scroll with content */}
+      <nav className="bg-gradient-to-r from-blue-600 to-blue-700 py-3 px-4 sm:px-6 md:px-8 lg:px-10 shadow-2xl z-50">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           {/* Logo + Title */}
           <div className="flex items-center gap-3">
@@ -287,6 +288,26 @@ const Navbar = ({ onMenuStateChange }) => {
         )}
       </nav>
 
+      {/* ===== Bottom Info Banner ===== */}
+      {/* REMOVED: This is now part of the scrollable content flow */}
+      <div className="bg-gradient-to-r from-green-500 to-green-600 py-3 shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10">
+          <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
+            <div className="text-white font-bold text-base sm:text-lg md:text-xl flex items-center gap-2">
+              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              {pageContent.title}
+            </div>
+            <div className="flex flex-wrap gap-3 md:gap-6">
+              {pageContent.items.map((item, i) => (
+                <div key={i} className="text-white text-xs sm:text-sm font-medium">
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* ===== Drawer Menu for Tablets & Mobile ===== */}
       {isMenuOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex justify-end lg:hidden transition-all duration-300">
@@ -368,25 +389,6 @@ const Navbar = ({ onMenuStateChange }) => {
           </div>
         </div>
       )}
-
-      {/* ===== Bottom Info Banner ===== */}
-      <div className="bg-gradient-to-r from-green-500 to-green-600 py-3 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10">
-          <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
-            <div className="text-white font-bold text-base sm:text-lg md:text-xl flex items-center gap-2">
-              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-              {pageContent.title}
-            </div>
-            <div className="flex flex-wrap gap-3 md:gap-6">
-              {pageContent.items.map((item, i) => (
-                <div key={i} className="text-white text-xs sm:text-sm font-medium">
-                  {item}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
     </>
   );
 };

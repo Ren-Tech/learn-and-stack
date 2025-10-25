@@ -29,7 +29,6 @@ const ALevels = () => {
     { src: '/images/landscape/level5.png', alt: 'A-Level Preparation 5', title: 'Economics Theory' },
     { src: '/images/landscape/level6.png', alt: 'A-Level Preparation 6', title: 'Art Portfolio' },
     { src: '/images/landscape/level7.png', alt: 'A-Level Preparation 7', title: 'Language Fluency' },
-  
   ];
 
   // Navigation menu items - same as home page
@@ -165,7 +164,7 @@ const ALevels = () => {
   return (
     <div className="min-h-screen bg-white relative overflow-x-hidden">
       {isMobileLandscape ? (
-        // Single Scrolling Layout for Mobile Landscape - Everything scrolls together
+        // BBC-style Layout for Mobile Landscape
         <div className="w-full h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 overflow-y-auto">
           {/* Green Navbar - Now part of scrollable content */}
           <div className="relative z-50">
@@ -187,72 +186,108 @@ const ALevels = () => {
             </div>
           </div>
 
-          <div className="p-4 space-y-6">
-            {/* Hero Image */}
-            <div className="relative group mt-2">
-              <img
-                src="/images/landscape/level1.png"
-                alt="A-Level Preparation Hero"
-                className="w-full h-48 object-cover rounded-lg shadow-lg group-hover:scale-105 transition-transform duration-300 border-2 border-white/20"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-lg"></div>
-              <div className="absolute bottom-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs font-medium">
-                A-Level Advanced Studies
+          {/* BBC-style main content grid */}
+          <div className="p-4">
+            {/* Main featured story - BBC style */}
+            <div className="mb-6">
+              <div className="bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200">
+                <img
+                  src="/images/landscape/level1.png"
+                  alt="A-Level Preparation Hero"
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-4">
+                  <h1 className="text-xl font-bold text-gray-900 mb-2">A-Level Advanced Studies</h1>
+                  <p className="text-gray-600 text-sm mb-3">In-depth preparation for university entrance and advanced subjects</p>
+                  <div className="flex items-center text-xs text-gray-500">
+                    <span>Ages 16-18</span>
+                    <span className="mx-2">•</span>
+                    <span>University Prep</span>
+                    <span className="mx-2">•</span>
+                    <span>Advanced Level</span>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* BBC-style section header */}
-            <div className="border-b-2 border-orange-500 pb-2 mb-3">
-              <h2 className="text-gray-900 font-bold text-lg tracking-tight uppercase">
-                A-Level Preparation Gallery
-              </h2>
-              <div className="w-12 h-1 bg-orange-500 mt-1"></div>
-            </div>
-            
-            {/* A-Level Images Grid */}
-            <div className="space-y-4">
-              {aLevelImages.slice(1).map((image, index) => (
-                <div 
-                  key={index}
-                  className="group animate-fade-in"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <div className="relative group-hover:scale-[1.02] transition-transform duration-300">
-                    <img
-                      src={image.src}
-                      alt={image.alt}
-                      className="w-full h-48 object-cover rounded-lg shadow-lg border-2 border-white/20"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent rounded-lg"></div>
-                    <div className="absolute bottom-2 left-2 bg-black/70 text-white px-3 py-1 rounded text-sm font-medium">
-                      {image.title}
-                    </div>
+            {/* BBC-style secondary stories grid */}
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              {aLevelImages.slice(1, 3).map((image, index) => (
+                <div key={index} className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200">
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    className="w-full h-32 object-cover"
+                  />
+                  <div className="p-3">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-1">{image.title}</h3>
+                    <div className="w-8 h-1 bg-orange-500 mb-2"></div>
+                    <p className="text-xs text-gray-600">Advanced level preparation</p>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* BBC-style "More" indicator */}
-            <div className="mt-6 flex items-center justify-between pt-3 border-t border-gray-200">
-              <span className="text-xs text-gray-600 font-medium">Ages 16-18 • University Preparation</span>
-              <div className="flex items-center space-x-1">
-                <span className="text-xs text-gray-500">Scroll</span>
-                <svg className="w-3 h-3 text-gray-500 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                </svg>
+            {/* BBC-style more stories section */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-gray-900">More A-Level Subjects</h2>
+                <div className="w-12 h-1 bg-indigo-500"></div>
+              </div>
+              
+              <div className="space-y-4">
+                {aLevelImages.slice(3).map((image, index) => (
+                  <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
+                    <div className="flex">
+                      <img
+                        src={image.src}
+                        alt={image.alt}
+                        className="w-24 h-24 object-cover flex-shrink-0"
+                      />
+                      <div className="p-3 flex-1">
+                        <h3 className="text-sm font-semibold text-gray-900 mb-2">{image.title}</h3>
+                        <p className="text-xs text-gray-600 line-clamp-2">Develop advanced analytical skills and subject mastery</p>
+                        <div className="flex items-center mt-2 text-xs text-gray-500">
+                          <span>Advanced</span>
+                          <span className="mx-2">•</span>
+                          <span>University Level</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* BBC-style trending section */}
+            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-6">
+              <div className="flex items-center mb-3">
+                <div className="w-3 h-6 bg-indigo-600 mr-2"></div>
+                <h3 className="text-md font-bold text-gray-900">Popular A-Level Choices</h3>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {['Mathematics', 'Sciences', 'Humanities', 'Languages'].map((item, index) => (
+                  <div key={index} className="bg-white rounded p-2 text-center border border-gray-300">
+                    <span className="text-xs font-medium text-gray-700">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* BBC-style footer section */}
+            <div className="border-t border-gray-300 pt-4">
+              <div className="text-center">
+                <div className="inline-flex items-center space-x-2 bg-gray-100 px-4 py-2 rounded-full">
+                  <span className="text-xs text-gray-600 font-medium">A-LEVEL PREPARATION</span>
+                  <span className="text-xs text-gray-400">•</span>
+                  <span className="text-xs text-gray-600">AGES 16-18</span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* BBC-style branding */}
-          <div className="flex-shrink-0 bg-white border-t border-gray-200 px-3 py-2 mt-6">
-            <div className="text-xs text-gray-400 font-medium tracking-wide text-center">
-              A-LEVEL PREPARATION • AGES 16-18
-            </div>
-          </div>
-
           {/* Bottom Navigation - Now part of scrollable content */}
-          <div className="sticky bottom-0 left-0 right-0 z-40">
+          <div className="sticky bottom-0 left-0 right-0 z-40 mt-6">
             <BottomNav />
           </div>
         </div>
@@ -468,20 +503,11 @@ const ALevels = () => {
       </div>
 
       <style jsx>{`
-        @keyframes fade-in {
-          from { 
-            opacity: 0; 
-            transform: translateY(10px); 
-          }
-          to { 
-            opacity: 1; 
-            transform: translateY(0); 
-          }
-        }
-        
-        .animate-fade-in {
-          animation: fade-in 0.6s ease-out forwards;
-          opacity: 0;
+        .line-clamp-2 {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
 
         /* Custom scrollbar for A-Level theme */
