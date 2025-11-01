@@ -88,20 +88,25 @@ const Primary = () => {
     return desktop;
   };
 
-  // Function to determine ninja position - moved higher for tablet
+  // Function to determine ninja position - moved lower in portrait
   const getNinjaPosition = () => {
     if (useBbcLayout) return 'mb-[-5px] scale-75';
-    if (isMobile) return isLandscape ? 'mb-[-5px] scale-90' : 'mb-[-15px]';
+    if (isMobile) return isLandscape ? 'mb-[-5px] scale-90' : 'mb-[-30px]'; // Lowered from -15px to -30px for portrait
     if (isTablet) return 'mb-[20px]';
     return 'mb-[-40px]';
   };
 
-  // Function to determine ninja dialog position - adjusted for tablet
+  // Function to determine ninja dialog position - positioned above ninja for both orientations
   const getNinjaDialogPosition = () => {
-    if (useBbcLayout) return 'top-2 -right-1 translate-x-full scale-90';
-    if (isMobile) return isLandscape ? 'top-4 -right-1 translate-x-full' : 'top-12 -right-1 translate-x-full';
-    if (isTablet) return 'top-4 -right-1 translate-x-full';
-    return 'top-20 -right-2 translate-x-full';
+    if (useBbcLayout) return 'top-0 -right-1 translate-x-full scale-90';
+    if (isMobile) {
+      // Position dialog above ninja for both landscape and portrait
+      return isLandscape 
+        ? 'top-0 -right-1 translate-x-full' 
+        : 'top-0 -right-1 translate-x-full'; // Changed from top-12 to top-0
+    }
+    if (isTablet) return 'top-0 -right-1 translate-x-full'; // Changed from top-4 to top-0
+    return 'top-0 -right-2 translate-x-full'; // Changed from top-20 to top-0
   };
 
   // Function to determine plus menu position
@@ -475,7 +480,7 @@ const Primary = () => {
               }}
             />
             
-            {/* Ninja Cartoon Dialog - Responsive Positioning */}
+            {/* Ninja Cartoon Dialog - Positioned above ninja for both orientations */}
             <div className={`absolute transform ${getNinjaDialogPosition()}`}>
               <div 
                 className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 relative"
@@ -493,12 +498,12 @@ const Primary = () => {
                   {ninjaText}
                   <span className="inline-block w-1 h-3 bg-gray-800 ml-1 animate-pulse"></span>
                 </div>
-                {/* Speech bubble tail pointing left towards ninja */}
+                {/* Speech bubble tail pointing down towards ninja */}
                 <div 
-                  className="absolute transform -translate-y-1/2 rotate-45 bg-white border-l border-b border-gray-200"
+                  className="absolute transform -translate-y-1/2 rotate-45 bg-white border-r border-b border-gray-200"
                   style={{
-                    bottom: getResponsiveSize('1.5rem', '1.75rem', '2rem', '1.25rem', '1rem'),
-                    left: '-0.25rem',
+                    bottom: '-0.25rem', // Positioned at bottom of dialog
+                    left: getResponsiveSize('1.5rem', '1.75rem', '2rem', '1.25rem', '1rem'),
                     width: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem'),
                     height: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem')
                   }}
