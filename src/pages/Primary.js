@@ -57,7 +57,7 @@ const Primary = () => {
   }, []);
 
   // Responsive calculations - Updated breakpoints for larger phones
-  const isMobile = windowSize.width < 1024; // Increased from 768 to 1024
+  const isMobile = windowSize.width < 1100; // Increased from 768 to 1024
   const isTablet = windowSize.width >= 1024 && windowSize.width < 1280;
   const isLandscape = windowSize.width > windowSize.height;
   const isMobileLandscape = isMobile && isLandscape;
