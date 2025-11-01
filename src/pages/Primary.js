@@ -56,9 +56,9 @@ const Primary = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Responsive calculations - KEEP ORIGINAL BREAKPOINTS for PC/laptop
-  const isMobile = windowSize.width < 768; // KEEP original 768px breakpoint
-  const isTablet = windowSize.width >= 768 && windowSize.width < 1024;
+  // Responsive calculations - Updated breakpoints for larger phones
+  const isMobile = windowSize.width < 1024; // Increased from 768 to 1024
+  const isTablet = windowSize.width >= 1024 && windowSize.width < 1280;
   const isLandscape = windowSize.width > windowSize.height;
   const isMobileLandscape = isMobile && isLandscape;
   const isMobilePortrait = isMobile && !isLandscape;
@@ -80,7 +80,7 @@ const Primary = () => {
     return "/images/primary.png";
   };
 
-  // Responsive sizes - ENHANCED only for mobile landscape
+  // Responsive sizes - Increased sizes for mobile landscape
   const getResponsiveSize = (mobile, tablet, desktop, landscapeMobile = null, smallLandscape = null) => {
     if (isMobileLandscape && landscapeMobile !== null) return landscapeMobile;
     if (isMobile) return mobile;
@@ -88,32 +88,32 @@ const Primary = () => {
     return desktop;
   };
 
-  // Function to determine ninja position - ENHANCED only for mobile
+  // Function to determine ninja position - adjusted for larger screens
   const getNinjaPosition = () => {
-    if (useBbcLayout) return 'mb-[-10px] scale-100'; // Increased from scale-75
-    if (isMobile) return isLandscape ? 'mb-[-10px] scale-100' : 'mb-[-15px]'; // Enhanced landscape
-    if (isTablet) return 'mb-[20px]'; // UNCHANGED for tablet
-    return 'mb-[-40px]'; // UNCHANGED for desktop
+    if (useBbcLayout) return 'mb-[-10px] scale-90'; // Increased scale
+    if (isMobile) return isLandscape ? 'mb-[-10px] scale-100' : 'mb-[-20px] scale-110';
+    if (isTablet) return 'mb-[30px] scale-125';
+    return 'mb-[-50px] scale-150';
   };
 
-  // Function to determine ninja dialog position - ENHANCED only for mobile
+  // Function to determine ninja dialog position - adjusted for larger screens
   const getNinjaDialogPosition = () => {
-    if (useBbcLayout) return 'top-4 -right-2 translate-x-full scale-100'; // Enhanced from scale-90
-    if (isMobile) return isLandscape ? 'top-6 -right-2 translate-x-full' : 'top-12 -right-1 translate-x-full'; // Enhanced landscape
-    if (isTablet) return 'top-4 -right-1 translate-x-full'; // UNCHANGED for tablet
-    return 'top-20 -right-2 translate-x-full'; // UNCHANGED for desktop
+    if (useBbcLayout) return 'top-4 -right-2 translate-x-full scale-100'; // Increased scale and position
+    if (isMobile) return isLandscape ? 'top-6 -right-2 translate-x-full scale-110' : 'top-16 -right-2 translate-x-full scale-110';
+    if (isTablet) return 'top-6 -right-2 translate-x-full scale-125';
+    return 'top-24 -right-4 translate-x-full scale-150';
   };
 
-  // Function to determine plus menu position - ENHANCED only for mobile
+  // Function to determine plus menu position
   const getPlusMenuPosition = () => {
-    if (useBbcLayout) return 'bottom-4 left-4 scale-100'; // Enhanced from scale-85
-    if (isMobile) return isLandscape ? 'bottom-6 left-6' : 'bottom-20 left-4'; // Enhanced landscape
-    if (isTablet) return 'bottom-16 right-10'; // UNCHANGED for tablet
-    return 'bottom-16 right-10'; // UNCHANGED for desktop
+    if (useBbcLayout) return 'bottom-4 left-4 scale-100'; // Increased scale and position
+    if (isMobile) return isLandscape ? 'bottom-6 left-6 scale-110' : 'bottom-24 left-6 scale-110';
+    if (isTablet) return 'bottom-20 right-12 scale-125';
+    return 'bottom-20 right-12 scale-150';
   };
 
   const getJellyMenuMaxHeight = () => {
-    if (useBbcLayout) return 'max-h-48'; // Increased from max-h-32
+    if (useBbcLayout) return 'max-h-48'; // Increased max height
     return 'max-h-96';
   };
 
@@ -178,34 +178,34 @@ const Primary = () => {
             <Navbar />
           </div>
 
-          {/* BBC-style header bar - Enhanced for mobile */}
-          <div className="sticky top-0 left-0 right-0 h-10 bg-gradient-to-r from-green-600 to-blue-600 z-40 flex items-center px-5">
+          {/* BBC-style header bar - Increased height */}
+          <div className="sticky top-0 left-0 right-0 h-12 bg-gradient-to-r from-green-600 to-blue-600 z-40 flex items-center px-6">
             <div className="flex items-center space-x-3">
-              <div className="w-7 h-7 bg-white rounded-full flex items-center justify-center">
-                <div className="w-3.5 h-3.5 bg-green-500 rounded-full"></div>
+              <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                <div className="w-4 h-4 bg-green-500 rounded-full"></div>
               </div>
-              <span className="text-white font-bold text-base tracking-tight">PRIMARY EDUCATION</span>
+              <span className="text-white font-bold text-lg tracking-tight">PRIMARY EDUCATION</span>
             </div>
-            <div className="ml-auto flex items-center space-x-3">
-              <div className="w-5 h-5 bg-white/20 rounded"></div>
-              <div className="w-5 h-5 bg-white/20 rounded"></div>
-              <div className="w-5 h-5 bg-white/20 rounded"></div>
+            <div className="ml-auto flex items-center space-x-4">
+              <div className="w-6 h-6 bg-white/20 rounded"></div>
+              <div className="w-6 h-6 bg-white/20 rounded"></div>
+              <div className="w-6 h-6 bg-white/20 rounded"></div>
             </div>
           </div>
 
-          {/* BBC-style main content grid - Enhanced for mobile */}
-          <div className="p-5">
-            {/* Main featured story - BBC style with enhanced sizes */}
-            <div className="mb-7">
-              <div className="bg-white rounded-xl overflow-hidden shadow-xl border border-gray-200">
+          {/* BBC-style main content grid - Enhanced sizes for larger phones */}
+          <div className="p-6">
+            {/* Main featured story - BBC style with larger sizes */}
+            <div className="mb-8">
+              <div className="bg-white rounded-xl overflow-hidden shadow-2xl border border-gray-200">
                 <img
                   src="/images/landscape/prim1.png"
                   alt="Primary Education Hero"
-                  className={`w-full ${isMobilePortrait ? 'h-72' : 'h-56'} object-cover`}
+                  className={`w-full ${isMobilePortrait ? 'h-80' : 'h-64'} object-cover`}
                 />
-                <div className="p-5">
-                  <h1 className={`${isMobilePortrait ? 'text-2xl' : 'text-xl'} font-bold text-gray-900 mb-3`}>Primary School Education</h1>
-                  <p className="text-gray-600 text-sm mb-3">Building strong foundations in core subjects and life skills</p>
+                <div className="p-6">
+                  <h1 className={`${isMobilePortrait ? 'text-3xl' : 'text-2xl'} font-bold text-gray-900 mb-3`}>Primary School Education</h1>
+                  <p className="text-gray-600 text-base mb-4">Building strong foundations in core subjects and life skills</p>
                   <div className="flex items-center text-sm text-gray-500">
                     <span>Ages 6-11</span>
                     <span className="mx-3">•</span>
@@ -218,45 +218,45 @@ const Primary = () => {
             </div>
 
             {/* BBC-style secondary stories grid - Enhanced sizes */}
-            <div className={`grid ${isMobilePortrait ? 'grid-cols-2' : 'grid-cols-2'} gap-5 mb-7`}>
-              {primaryImages.slice(1, isMobilePortrait ? 5 : 3).map((image, index) => (
-                <div key={index} className="bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200">
+            <div className={`grid ${isMobilePortrait ? 'grid-cols-2' : 'grid-cols-3'} gap-6 mb-8`}>
+              {primaryImages.slice(1, isMobilePortrait ? 5 : 4).map((image, index) => (
+                <div key={index} className="bg-white rounded-xl overflow-hidden shadow-lg border border-gray-200">
                   <img
                     src={image.src}
                     alt={image.alt}
-                    className={`w-full ${isMobilePortrait ? 'h-48' : 'h-40'} object-cover`}
+                    className={`w-full ${isMobilePortrait ? 'h-52' : 'h-48'} object-cover`}
                   />
                   <div className="p-4">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-2">{image.title}</h3>
-                    <div className="w-10 h-1 bg-orange-500 mb-2"></div>
-                    <p className="text-xs text-gray-600">Essential learning skills</p>
+                    <h3 className="text-base font-semibold text-gray-900 mb-2">{image.title}</h3>
+                    <div className="w-12 h-1 bg-orange-500 mb-3"></div>
+                    <p className="text-sm text-gray-600">Essential learning skills</p>
                   </div>
                 </div>
               ))}
             </div>
 
             {/* BBC-style more stories section - Enhanced sizes */}
-            <div className="mb-7">
-              <div className="flex items-center justify-between mb-5">
-                <h2 className="text-lg font-bold text-gray-900">More Learning Areas</h2>
-                <div className="w-14 h-1 bg-blue-500"></div>
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-900">More Learning Areas</h2>
+                <div className="w-16 h-1 bg-blue-500"></div>
               </div>
               
-              <div className="space-y-5">
-                {primaryImages.slice(isMobilePortrait ? 5 : 3).map((image, index) => (
-                  <div key={index} className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200">
+              <div className="space-y-6">
+                {primaryImages.slice(isMobilePortrait ? 5 : 4).map((image, index) => (
+                  <div key={index} className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-200">
                     <div className="flex">
                       <img
                         src={image.src}
                         alt={image.alt}
-                        className={`${isMobilePortrait ? 'w-36 h-36' : 'w-28 h-28'} object-cover flex-shrink-0`}
+                        className={`${isMobilePortrait ? 'w-40 h-40' : 'w-32 h-32'} object-cover flex-shrink-0`}
                       />
                       <div className="p-4 flex-1">
-                        <h3 className="text-sm font-semibold text-gray-900 mb-2">{image.title}</h3>
-                        <p className="text-xs text-gray-600 line-clamp-2">Develop essential skills and knowledge for academic success</p>
-                        <div className="flex items-center mt-2 text-xs text-gray-500">
+                        <h3 className="text-base font-semibold text-gray-900 mb-3">{image.title}</h3>
+                        <p className="text-sm text-gray-600 line-clamp-2">Develop essential skills and knowledge for academic success</p>
+                        <div className="flex items-center mt-3 text-sm text-gray-500">
                           <span>Learning</span>
-                          <span className="mx-2">•</span>
+                          <span className="mx-3">•</span>
                           <span>Development</span>
                         </div>
                       </div>
@@ -267,39 +267,39 @@ const Primary = () => {
             </div>
 
             {/* BBC-style trending section - Enhanced sizes */}
-            <div className="bg-gray-50 rounded-lg p-5 border border-gray-200 mb-7">
+            <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 mb-8">
               <div className="flex items-center mb-4">
-                <div className="w-3 h-6 bg-green-600 mr-2"></div>
-                <h3 className="text-base font-bold text-gray-900">Core Subjects</h3>
+                <div className="w-4 h-8 bg-green-600 mr-3"></div>
+                <h3 className="text-lg font-bold text-gray-900">Core Subjects</h3>
               </div>
-              <div className={`grid ${isMobilePortrait ? 'grid-cols-2' : 'grid-cols-2'} gap-3`}>
+              <div className={`grid ${isMobilePortrait ? 'grid-cols-2' : 'grid-cols-4'} gap-4`}>
                 {['Mathematics', 'Science', 'English', 'Creative Arts'].map((item, index) => (
-                  <div key={index} className="bg-white rounded p-3 text-center border border-gray-300">
-                    <span className="text-xs font-medium text-gray-700">{item}</span>
+                  <div key={index} className="bg-white rounded-lg p-3 text-center border border-gray-300 shadow-sm">
+                    <span className="text-sm font-medium text-gray-700">{item}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* BBC-style footer section */}
-            <div className="border-t border-gray-300 pt-5">
+            <div className="border-t border-gray-300 pt-6">
               <div className="text-center">
-                <div className="inline-flex items-center space-x-3 bg-gray-100 px-5 py-2 rounded-full">
-                  <span className="text-xs text-gray-600 font-medium">PRIMARY EDUCATION</span>
-                  <span className="text-xs text-gray-400">•</span>
-                  <span className="text-xs text-gray-600">AGES 6-11</span>
+                <div className="inline-flex items-center space-x-3 bg-gray-100 px-6 py-3 rounded-full">
+                  <span className="text-sm text-gray-600 font-medium">PRIMARY EDUCATION</span>
+                  <span className="text-sm text-gray-400">•</span>
+                  <span className="text-sm text-gray-600">AGES 6-11</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Bottom Navigation - Now part of scrollable content */}
-          <div className="sticky bottom-0 left-0 right-0 z-40 mt-7">
+          <div className="sticky bottom-0 left-0 right-0 z-40 mt-8">
             <BottomNav />
           </div>
         </div>
       ) : (
-        // Original layout for other screen sizes - COMPLETELY UNCHANGED
+        // Original layout for other screen sizes
         <div className="relative">
           {/* Green Navbar */}
           <div className="relative z-50">
@@ -330,34 +330,34 @@ const Primary = () => {
 
       {/* Interactive Elements - Fixed position elements that stay visible */}
       <div className="fixed inset-0 z-40 pointer-events-none">
-        {/* Floating Plus Menu with Robot and Dialog - Enhanced only for mobile */}
+        {/* Floating Plus Menu with Robot and Dialog - Responsive Positioning */}
         <nav 
           className={`btn-pluss-wrapper fixed z-50 flex flex-col items-center transition-all duration-300 pointer-events-auto ${getPlusMenuPosition()}`}
           onMouseEnter={() => !isMobile && setIsHovered(true)}
           onMouseLeave={() => !isMobile && setIsHovered(false)}
           onClick={() => isMobile && setIsHovered(!isHovered)}
         >
-          {/* Robot Image with Cartoon Dialog - Enhanced for mobile */}
-          <div className="flex flex-col items-center mb-2">
+          {/* Robot Image with Cartoon Dialog - Always Visible */}
+          <div className="flex flex-col items-center mb-3">
             {/* Cartoon Dialog */}
             <div 
-              className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 mb-2 relative"
+              className="bg-white rounded-2xl px-4 py-3 shadow-xl border border-gray-200 mb-3 relative"
               style={{
-                minWidth: getResponsiveSize('110px', '120px', '120px', '100px', '90px'), // Enhanced mobile
-                minHeight: getResponsiveSize('40px', '40px', '40px', '35px', '30px') // Enhanced mobile
+                minWidth: getResponsiveSize('120px', '140px', '140px', '110px', '100px'),
+                minHeight: getResponsiveSize('45px', '50px', '50px', '40px', '35px')
               }}
             >
               <div 
                 className="font-medium text-gray-800"
                 style={{
-                  fontSize: getResponsiveSize('0.8rem', '0.875rem', '0.875rem', '0.75rem', '0.7rem') // Enhanced mobile
+                  fontSize: getResponsiveSize('0.875rem', '1rem', '1rem', '0.8rem', '0.75rem')
                 }}
               >
                 {displayedText}
-                <span className="inline-block w-1 h-3 bg-gray-800 ml-1 animate-pulse"></span>
+                <span className="inline-block w-1 h-4 bg-gray-800 ml-1 animate-pulse"></span>
               </div>
               {/* Speech bubble tail */}
-              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-white border-r border-b border-gray-200"></div>
+              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-3 h-3 bg-white border-r border-b border-gray-200"></div>
             </div>
             
             {/* Robot Image */}
@@ -366,41 +366,41 @@ const Primary = () => {
               alt="KAI Robot" 
               className="object-contain drop-shadow-lg transition-transform duration-300 hover:scale-110"
               style={{
-                width: getResponsiveSize('2.75rem', '3rem', '3rem', '2.25rem', '2rem'), // Enhanced mobile
-                height: getResponsiveSize('2.75rem', '3rem', '3rem', '2.25rem', '2rem') // Enhanced mobile
+                width: getResponsiveSize('3rem', '3.5rem', '3.5rem', '2.5rem', '2.25rem'),
+                height: getResponsiveSize('3rem', '3.5rem', '3.5rem', '2.5rem', '2.25rem')
               }}
             />
           </div>
 
-          {/* Menu Container - Enhanced only for mobile */}
+          {/* Menu Container */}
           <div className={`
             btn-pluss bg-blue-900 overflow-hidden flex flex-col items-center
             transition-all duration-600 ease-[cubic-bezier(0.34,1.56,0.64,1)]
-            ${isHovered ? 'h-auto rounded-2xl pb-3 pt-3 shadow-2xl' : 'h-12 rounded-full shadow-lg'}
+            ${isHovered ? 'h-auto rounded-2xl pb-4 pt-4 shadow-2xl' : 'h-14 rounded-full shadow-xl'}
             border border-blue-700
           `}
           style={{
-            width: isHovered ? getResponsiveSize('10.5rem', '11rem', '11rem', '9.5rem', '8.5rem') : getResponsiveSize('3rem', '3rem', '3rem', '2.75rem', '2.5rem') // Enhanced mobile
+            width: isHovered ? getResponsiveSize('12rem', '13rem', '13rem', '11rem', '10rem') : getResponsiveSize('3.5rem', '3.5rem', '3.5rem', '3rem', '2.75rem')
           }}>
-            {/* Plus Button with Jelly Animation - Enhanced for mobile */}
+            {/* Plus Button with Jelly Animation Both Ways */}
             <div className={`
               bg-red-600 rounded-full flex items-center justify-center text-white font-bold
               transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]
-              ${isHovered ? 'rotate-45 scale-105' : 'rotate-0 scale-100'}
+              ${isHovered ? 'rotate-45 scale-110' : 'rotate-0 scale-100'}
               shadow-lg hover:shadow-xl border border-red-500
             `}
             style={{
-              width: getResponsiveSize('2.75rem', '3rem', '3rem', '2.25rem', '2rem'), // Enhanced mobile
-              height: getResponsiveSize('2.75rem', '3rem', '3rem', '2.25rem', '2rem'), // Enhanced mobile
-              fontSize: getResponsiveSize('1.125rem', '1.25rem', '1.25rem', '1rem', '0.9rem') // Enhanced mobile
+              width: getResponsiveSize('3rem', '3.5rem', '3.5rem', '2.5rem', '2.25rem'),
+              height: getResponsiveSize('3rem', '3.5rem', '3.5rem', '2.5rem', '2.25rem'),
+              fontSize: getResponsiveSize('1.125rem', '1.375rem', '1.375rem', '1rem', '0.9rem')
             }}>
               +
             </div>
             
-            {/* Menu Items with Jelly Staggered Animation - Enhanced for mobile */}
+            {/* Menu Items with Jelly Staggered Animation Both Ways */}
             <ul className={`
-              transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] px-3 w-full overflow-y-auto ${getJellyMenuMaxHeight()}
-              ${isHovered ? 'opacity-100 mt-4' : 'opacity-0 mt-0'}
+              transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] px-4 w-full overflow-y-auto ${getJellyMenuMaxHeight()}
+              ${isHovered ? 'opacity-100 mt-5' : 'opacity-0 mt-0'}
             `}
             style={{ 
               scrollbarWidth: 'thin',
@@ -413,14 +413,14 @@ const Primary = () => {
                     bg-white rounded-lg transition-all duration-600 ease-[cubic-bezier(0.34,1.56,0.64,1)]
                     transform border border-gray-100 shadow-sm
                     ${isHovered 
-                      ? `mb-2 opacity-100 translate-x-0 scale-100` 
+                      ? `mb-3 opacity-100 translate-x-0 scale-100` 
                       : 'opacity-0 translate-x-8 scale-90'
                     }
                     hover:bg-blue-50 hover:border-blue-200 hover:scale-105 hover:shadow-md
                     cursor-pointer
                   `}
                   style={{
-                    height: isHovered ? getResponsiveSize('2.75rem', '3rem', '3rem', '2.5rem', '2.25rem') : '0', // Enhanced mobile
+                    height: isHovered ? getResponsiveSize('3rem', '3.5rem', '3.5rem', '2.75rem', '2.5rem') : '0',
                     transitionDelay: isHovered 
                       ? `${index * 100}ms` 
                       : `${(menuItems.length - index) * 80}ms`
@@ -428,16 +428,16 @@ const Primary = () => {
                   onClick={() => handleNavigation(item.href)}
                 >
                   <div 
-                    className="text-blue-900 font-medium block w-full h-full flex flex-col items-center justify-center transition-colors duration-300 hover:text-blue-700 p-1"
+                    className="text-blue-900 font-medium block w-full h-full flex flex-col items-center justify-center transition-colors duration-300 hover:text-blue-700 p-2"
                     style={{
-                      fontSize: getResponsiveSize('0.75rem', '0.8rem', '0.875rem', '0.7rem', '0.65rem') // Enhanced mobile
+                      fontSize: getResponsiveSize('0.8rem', '0.9rem', '0.9rem', '0.75rem', '0.7rem')
                     }}
                   >
                     <span className="font-semibold">{item.text}</span>
                     <span 
                       className="text-gray-600"
                       style={{
-                        fontSize: getResponsiveSize('0.65rem', '0.7rem', '0.75rem', '0.6rem', '0.55rem') // Enhanced mobile
+                        fontSize: getResponsiveSize('0.7rem', '0.8rem', '0.8rem', '0.65rem', '0.6rem')
                       }}
                     >
                       {item.description}
@@ -449,7 +449,7 @@ const Primary = () => {
           </div>
         </nav>
 
-        {/* Ninja Image with Cartoon Dialog - Enhanced only for mobile */}
+        {/* Ninja Image with Cartoon Dialog - Responsive Positioning */}
         <div className={`fixed bottom-0 left-1/2 transform -translate-x-1/2 z-40 transition-all duration-300 pointer-events-auto ${getNinjaPosition()}`}>
           <div className="relative">
             {/* Ninja Image */}
@@ -459,48 +459,48 @@ const Primary = () => {
               className="object-contain drop-shadow-lg"
               style={{
                 width: getResponsiveSize(
-                  isLandscape ? '9rem' : '13rem', // Enhanced from 8rem/12rem
-                  '14rem',
-                  '20rem',
-                  '7rem', // Enhanced from 6rem
-                  '6rem'  // Enhanced from 5rem
+                  isLandscape ? '10rem' : '14rem',
+                  '16rem',
+                  '22rem',
+                  '8rem',
+                  '7rem'
                 ),
                 height: getResponsiveSize(
-                  isLandscape ? '9rem' : '13rem', // Enhanced from 8rem/12rem
-                  '14rem',
-                  '20rem',
-                  '7rem', // Enhanced from 6rem
-                  '6rem'  // Enhanced from 5rem
+                  isLandscape ? '10rem' : '14rem',
+                  '16rem',
+                  '22rem',
+                  '8rem',
+                  '7rem'
                 )
               }}
             />
             
-            {/* Ninja Cartoon Dialog - Enhanced for mobile */}
+            {/* Ninja Cartoon Dialog - Responsive Positioning */}
             <div className={`absolute transform ${getNinjaDialogPosition()}`}>
               <div 
-                className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 relative"
+                className="bg-white rounded-2xl px-4 py-3 shadow-xl border border-gray-200 relative"
                 style={{
-                  maxWidth: getResponsiveSize('150px', '160px', '180px', '130px', '110px'), // Enhanced mobile
-                  minHeight: getResponsiveSize('65px', '70px', '80px', '55px', '50px') // Enhanced mobile
+                  maxWidth: getResponsiveSize('160px', '180px', '200px', '140px', '120px'),
+                  minHeight: getResponsiveSize('70px', '80px', '90px', '60px', '55px')
                 }}
               >
                 <div 
                   className="font-medium text-gray-800 whitespace-pre-line"
                   style={{
-                    fontSize: getResponsiveSize('0.75rem', '0.8rem', '0.875rem', '0.7rem', '0.65rem') // Enhanced mobile
+                    fontSize: getResponsiveSize('0.8rem', '0.9rem', '0.9rem', '0.75rem', '0.7rem')
                   }}
                 >
                   {ninjaText}
-                  <span className="inline-block w-1 h-3 bg-gray-800 ml-1 animate-pulse"></span>
+                  <span className="inline-block w-1 h-4 bg-gray-800 ml-1 animate-pulse"></span>
                 </div>
                 {/* Speech bubble tail pointing left towards ninja */}
                 <div 
                   className="absolute transform -translate-y-1/2 rotate-45 bg-white border-l border-b border-gray-200"
                   style={{
-                    bottom: getResponsiveSize('1.75rem', '1.75rem', '2rem', '1.5rem', '1.25rem'), // Enhanced mobile
-                    left: '-0.3rem', // Enhanced mobile
-                    width: getResponsiveSize('0.6rem', '0.6rem', '0.75rem', '0.5rem', '0.4rem'), // Enhanced mobile
-                    height: getResponsiveSize('0.6rem', '0.6rem', '0.75rem', '0.5rem', '0.4rem') // Enhanced mobile
+                    bottom: getResponsiveSize('2rem', '2.25rem', '2.5rem', '1.75rem', '1.5rem'),
+                    left: '-0.375rem',
+                    width: getResponsiveSize('0.75rem', '0.875rem', '1rem', '0.625rem', '0.5rem'),
+                    height: getResponsiveSize('0.75rem', '0.875rem', '1rem', '0.625rem', '0.5rem')
                   }}
                 ></div>
               </div>
@@ -519,17 +519,17 @@ const Primary = () => {
 
         /* Custom scrollbar for primary theme */
         .overflow-y-auto::-webkit-scrollbar {
-          width: 6px;
+          width: 8px;
         }
         
         .overflow-y-auto::-webkit-scrollbar-track {
           background: #dcfce7;
-          border-radius: 3px;
+          border-radius: 4px;
         }
         
         .overflow-y-auto::-webkit-scrollbar-thumb {
           background: #16a34a;
-          border-radius: 3px;
+          border-radius: 4px;
         }
         
         .overflow-y-auto::-webkit-scrollbar-thumb:hover {
@@ -542,27 +542,27 @@ const Primary = () => {
           scrollbar-color: #16a34a #dcfce7;
         }
 
-        /* Mobile-specific optimizations - ENHANCED for larger phones */
-        @media (max-width: 767px) and (orientation: landscape) {
+        /* Mobile-specific optimizations for larger phones */
+        @media (max-width: 1023px) and (orientation: landscape) {
           .btn-pluss-wrapper {
-            transform: scale(0.9); // Enhanced from 0.85
+            transform: scale(1);
+          }
+        }
+
+        @media (max-width: 768px) and (orientation: landscape) {
+          .btn-pluss-wrapper {
+            transform: scale(0.9);
           }
         }
 
         @media (max-width: 640px) and (orientation: landscape) {
           .btn-pluss-wrapper {
-            transform: scale(0.8); // Enhanced from 0.75
-          }
-        }
-
-        @media (max-width: 500px) and (orientation: landscape) {
-          .btn-pluss-wrapper {
-            transform: scale(0.7); // Enhanced from 0.65
+            transform: scale(0.8);
           }
         }
 
         /* Prevent text selection on mobile */
-        @media (max-width: 767px) {
+        @media (max-width: 1023px) {
           * {
             -webkit-tap-highlight-color: transparent;
           }
@@ -576,7 +576,7 @@ const Primary = () => {
         }
 
         .btn-pluss ul::-webkit-scrollbar {
-          width: 4px;
+          width: 6px;
         }
         
         .btn-pluss ul::-webkit-scrollbar-track {
@@ -584,12 +584,12 @@ const Primary = () => {
         }
         
         .btn-pluss ul::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.3);
-          border-radius: 2px;
+          background: rgba(255, 255, 255, 0.4);
+          border-radius: 3px;
         }
         
         .btn-pluss ul::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 255, 255, 0.5);
+          background: rgba(255, 255, 255, 0.6);
         }
       `}</style>
     </div>
