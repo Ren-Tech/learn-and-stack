@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import BottomNav from '../components/BottomNav';
@@ -75,7 +75,7 @@ const Home = () => {
   }, []);
 
   const isMobile = windowSize.width < 1100;
-  const isTablet = windowSize.width >= 1024 && windowSize.width < 1280;
+  const isTablet = windowSize.width >= 1024 && windowSize.width < 1024;
   const isDesktop = windowSize.width >= 1024;
   const isLandscape = windowSize.width > windowSize.height;
   const isMobileLandscape = isMobile && isLandscape;
@@ -228,9 +228,9 @@ const Home = () => {
     return '/images/homee.png';
   };
 
-  // Updated button position - center for desktop landscape, bottom right for others
+  // UPDATED: Modified button position - moved closer to center for desktop landscape
   const getButtonPosition = () => {
-    if (isDesktopLandscape) return 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 scale-100';
+    if (isDesktopLandscape) return 'top-1/2 right-32 transform -translate-y-1/2 scale-100';
     if (isMobilePortrait) return 'bottom-4 right-4 transform scale-75';
     if (isMobileLandscape) return 'bottom-4 right-4 transform scale-65';
     if (isTablet) return 'bottom-6 right-6 transform scale-90';
@@ -244,8 +244,9 @@ const Home = () => {
     return 'mb-[-40px]';
   };
 
-  // Updated ninja dialog position - centered on top of ninja
+  // UPDATED: Ninja dialog position - moved to right side for desktop landscape
   const getNinjaDialogPosition = () => {
+    if (isDesktopLandscape) return 'bottom-1/2 left-full transform translate-y-1/2 ml-4 scale-50';
     if (useBbcLayout) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-2 scale-90';
     if (isMobile) return isLandscape ? 'bottom-full left-1/2 transform -translate-x-1/2 mb-2' : 'bottom-full left-1/2 transform -translate-x-1/2 mb-2';
     if (isTablet) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-3';
@@ -649,7 +650,7 @@ const Home = () => {
         {/* Ninja Character */}
         <div className={`fixed bottom-0 left-1/2 transform -translate-x-1/2 z-30 transition-all duration-300 pointer-events-auto ${getNinjaPosition()}`}>
           <div className="relative flex flex-col items-center">
-            {/* Ninja Dialog - Now centered on top */}
+            {/* UPDATED: Ninja Dialog - Now positioned to the right for desktop landscape */}
             <div className={`absolute ${getNinjaDialogPosition()}`}>
               <div className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 relative" style={{ 
                 maxWidth: getResponsiveSize('140px', '160px', '180px', '120px', '100px'), 
@@ -661,8 +662,12 @@ const Home = () => {
                   {ninjaText}
                   <span className="inline-block w-1 h-3 bg-gray-800 ml-1 animate-pulse"></span>
                 </div>
-                {/* Pointer arrow centered at bottom */}
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-45 bg-white border-r border-b border-gray-200" style={{ 
+                {/* UPDATED: Pointer arrow positioned for right-side placement */}
+                <div className={`absolute ${
+                  isDesktopLandscape 
+                    ? 'right-full top-1/2 transform -translate-y-1/2 -translate-x-1/2 rotate-[135deg]' 
+                    : 'top-full left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-45'
+                } bg-white border-r border-b border-gray-200`} style={{ 
                   width: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem'), 
                   height: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem') 
                 }}></div>
