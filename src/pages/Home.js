@@ -228,8 +228,9 @@ const Home = () => {
     return '/images/homee.png';
   };
 
-  // Updated button position - always bottom right and smaller
+  // Updated button position - center for desktop landscape, bottom right for others
   const getButtonPosition = () => {
+    if (isDesktopLandscape) return 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 scale-100';
     if (isMobilePortrait) return 'bottom-4 right-4 transform scale-75';
     if (isMobileLandscape) return 'bottom-4 right-4 transform scale-65';
     if (isTablet) return 'bottom-6 right-6 transform scale-90';
@@ -243,11 +244,12 @@ const Home = () => {
     return 'mb-[-40px]';
   };
 
+  // Updated ninja dialog position - centered on top of ninja
   const getNinjaDialogPosition = () => {
-    if (useBbcLayout) return 'top-2 -right-1 translate-x-full scale-90';
-    if (isMobile) return isLandscape ? 'top-4 -right-1 translate-x-full' : 'top-12 -right-1 translate-x-full';
-    if (isTablet) return 'top-4 -right-1 translate-x-full';
-    return 'top-20 -right-2 translate-x-full';
+    if (useBbcLayout) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-2 scale-90';
+    if (isMobile) return isLandscape ? 'bottom-full left-1/2 transform -translate-x-1/2 mb-2' : 'bottom-full left-1/2 transform -translate-x-1/2 mb-2';
+    if (isTablet) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-3';
+    return 'bottom-full left-1/2 transform -translate-x-1/2 mb-4';
   };
 
   const getJellyMenuMaxHeight = () => {
@@ -646,7 +648,28 @@ const Home = () => {
 
         {/* Ninja Character */}
         <div className={`fixed bottom-0 left-1/2 transform -translate-x-1/2 z-30 transition-all duration-300 pointer-events-auto ${getNinjaPosition()}`}>
-          <div className="relative">
+          <div className="relative flex flex-col items-center">
+            {/* Ninja Dialog - Now centered on top */}
+            <div className={`absolute ${getNinjaDialogPosition()}`}>
+              <div className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 relative" style={{ 
+                maxWidth: getResponsiveSize('140px', '160px', '180px', '120px', '100px'), 
+                minHeight: getResponsiveSize('60px', '70px', '80px', '50px', '45px') 
+              }}>
+                <div className="font-medium text-gray-800 whitespace-pre-line text-center" style={{ 
+                  fontSize: getResponsiveSize('0.7rem', '0.8rem', '0.875rem', '0.65rem', '0.6rem') 
+                }}>
+                  {ninjaText}
+                  <span className="inline-block w-1 h-3 bg-gray-800 ml-1 animate-pulse"></span>
+                </div>
+                {/* Pointer arrow centered at bottom */}
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-45 bg-white border-r border-b border-gray-200" style={{ 
+                  width: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem'), 
+                  height: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem') 
+                }}></div>
+              </div>
+            </div>
+            
+            {/* Ninja Image */}
             <img 
               src="/images/ninja.png" 
               alt="Ninja character offering help" 
@@ -668,25 +691,6 @@ const Home = () => {
                 ) 
               }} 
             />
-            <div className={`absolute transform ${getNinjaDialogPosition()}`}>
-              <div className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 relative" style={{ 
-                maxWidth: getResponsiveSize('140px', '160px', '180px', '120px', '100px'), 
-                minHeight: getResponsiveSize('60px', '70px', '80px', '50px', '45px') 
-              }}>
-                <div className="font-medium text-gray-800 whitespace-pre-line" style={{ 
-                  fontSize: getResponsiveSize('0.7rem', '0.8rem', '0.875rem', '0.65rem', '0.6rem') 
-                }}>
-                  {ninjaText}
-                  <span className="inline-block w-1 h-3 bg-gray-800 ml-1 animate-pulse"></span>
-                </div>
-                <div className="absolute transform -translate-y-1/2 rotate-45 bg-white border-l border-b border-gray-200" style={{ 
-                  bottom: getResponsiveSize('1.5rem', '1.75rem', '2rem', '1.25rem', '1rem'), 
-                  left: '-0.25rem', 
-                  width: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem'), 
-                  height: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem') 
-                }}></div>
-              </div>
-            </div>
           </div>
         </div>
 
