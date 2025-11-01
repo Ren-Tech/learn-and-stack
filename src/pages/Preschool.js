@@ -89,20 +89,34 @@ const Preschool = () => {
     return desktop;
   };
 
-  // Function to determine ninja position
+  // Function to determine ninja position - UPDATED FOR MOBILE LANDSCAPE
   const getNinjaPosition = () => {
+    if (isMobileLandscape) {
+      return 'bottom-7 right-100'; // Move to bottom right in mobile landscape
+    }
     if (useBbcLayout) return 'mb-[-5px] scale-75';
     if (isMobile) return isLandscape ? 'mb-[-5px] scale-90' : 'mb-[-15px]';
     if (isTablet) return 'mb-[20px]';
     return 'mb-[-40px]';
   };
 
-  // Function to determine ninja dialog position
+  // Function to determine ninja dialog position - UPDATED FOR MOBILE LANDSCAPE
   const getNinjaDialogPosition = () => {
+    if (isMobileLandscape) {
+      return 'top-0 -left-2 -translate-x-full scale-90'; // Position dialog to the left of ninja in mobile landscape
+    }
     if (useBbcLayout) return 'top-2 -right-1 translate-x-full scale-90';
     if (isMobile) return isLandscape ? 'top-4 -right-1 translate-x-full' : 'top-12 -right-1 translate-x-full';
     if (isTablet) return 'top-4 -right-1 translate-x-full';
     return 'top-20 -right-2 translate-x-full';
+  };
+
+  // Function to determine ninja container alignment - NEW FUNCTION
+  const getNinjaContainerAlignment = () => {
+    if (isMobileLandscape) {
+      return 'left-1/2 transform -translate-x-1/2'; // Keep centered for other cases
+    }
+    return 'left-1/2 transform -translate-x-1/2'; // Default centered position
   };
 
   // Function to determine plus menu position
@@ -450,8 +464,8 @@ const Preschool = () => {
           </div>
         </nav>
 
-        {/* Ninja Image with Cartoon Dialog - Responsive Positioning */}
-        <div className={`fixed bottom-0 left-1/2 transform -translate-x-1/2 z-40 transition-all duration-300 pointer-events-auto ${getNinjaPosition()}`}>
+        {/* Ninja Image with Cartoon Dialog - Responsive Positioning - UPDATED FOR MOBILE LANDSCAPE */}
+        <div className={`fixed z-40 transition-all duration-300 pointer-events-auto ${getNinjaPosition()} ${getNinjaContainerAlignment()}`}>
           <div className="relative">
             {/* Ninja Image */}
             <img 
@@ -494,16 +508,22 @@ const Preschool = () => {
                   {ninjaText}
                   <span className="inline-block w-1 h-3 bg-gray-800 ml-1 animate-pulse"></span>
                 </div>
-                {/* Speech bubble tail pointing left towards ninja */}
+                {/* Speech bubble tail - UPDATED FOR MOBILE LANDSCAPE */}
                 <div 
-                  className="absolute transform -translate-y-1/2 rotate-45 bg-white border-l border-b border-gray-200"
+                  className="absolute transform bg-white border border-gray-200"
                   style={{
-                    bottom: getResponsiveSize('1.5rem', '1.75rem', '2rem', '1.25rem', '1rem'),
-                    left: '-0.25rem',
                     width: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem'),
                     height: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem')
                   }}
-                ></div>
+                >
+                  {isMobileLandscape ? (
+                    // Point right towards ninja (for dialog on left side)
+                    <div className="w-full h-full bg-white border-r border-b border-gray-200 transform rotate-45 translate-x-1/2 -translate-y-1/2 absolute top-1/2 right-0"></div>
+                  ) : (
+                    // Point left towards ninja (for dialog on right side)
+                    <div className="w-full h-full bg-white border-l border-b border-gray-200 transform -rotate-45 -translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-0"></div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
