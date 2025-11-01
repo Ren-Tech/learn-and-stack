@@ -74,8 +74,8 @@ const Home = () => {
     };
   }, []);
 
-  const isMobile = windowSize.width < 768;
-  const isTablet = windowSize.width >= 768 && windowSize.width < 1024;
+  const isMobile = windowSize.width < 1100;
+  const isTablet = windowSize.width >= 1024 && windowSize.width < 1280;
   const isDesktop = windowSize.width >= 1024;
   const isLandscape = windowSize.width > windowSize.height;
   const isMobileLandscape = isMobile && isLandscape;
