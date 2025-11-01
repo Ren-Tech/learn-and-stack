@@ -45,6 +45,15 @@ const Home = () => {
     { title: "A-Levels", gradient: "from-orange-600 via-orange-500 to-yellow-500", shadow: "shadow-orange-500/50", glow: "shadow-orange-400", angle: 60, href: "/alevels" }
   ];
 
+  // Home specific images for mobile - using PNGs
+  const homeImages = [
+    { src: '/images/landscape/home1.jpg', alt: 'Home Hero 1', title: 'Welcome to EduPlatform' },
+    { src: '/images/landscape/home2.png', alt: 'Home Activity 2', title: 'Creative Learning' },
+    { src: '/images/landscape/home3.png', alt: 'Home Activity 3', title: 'Team Collaboration' },
+    { src: '/images/landscape/home4.png', alt: 'Home Activity 4', title: 'Interactive Sessions' },
+    { src: '/images/landscape/home5.png', alt: 'Home Activity 5', title: 'Progress Tracking' }
+  ];
+
   useEffect(() => {
     const handleResize = () => {
       setWindowSize({ width: window.innerWidth, height: window.innerHeight });
@@ -70,9 +79,13 @@ const Home = () => {
   const isDesktop = windowSize.width >= 1024;
   const isLandscape = windowSize.width > windowSize.height;
   const isMobileLandscape = isMobile && isLandscape;
+  const isMobilePortrait = isMobile && !isLandscape;
   const isSmallMobileLandscape = isMobileLandscape && windowSize.width < 700;
   const isDesktopLandscape = isDesktop && isLandscape;
   const isTabletPortrait = isTablet && !isLandscape;
+
+  // Use BBC-style layout for both mobile landscape and portrait
+  const useBbcLayout = isMobileLandscape || isMobilePortrait;
 
   const getResponsiveSize = (mobile, tablet, desktop, landscapeMobile = null, smallLandscape = null) => {
     if (isSmallMobileLandscape && smallLandscape !== null) return smallLandscape;
@@ -82,7 +95,22 @@ const Home = () => {
     return desktop;
   };
 
+  // Updated circle position calculation for portrait mode
   const getCirclePosition = (angle, radius, index) => {
+    // For mobile portrait, position circles in a grid from top left
+    if (isMobilePortrait && showMiniCircles) {
+      const cols = 2; // 2 columns
+      const rows = 2; // 2 rows
+      const col = index % cols;
+      const row = Math.floor(index / cols);
+      const spacingX = 80; // Horizontal spacing
+      const spacingY = 80; // Vertical spacing
+      return { 
+        x: (col * spacingX) - (spacingX * (cols - 1) / 2), 
+        y: (row * spacingY) - (spacingY * (rows - 1) / 2) - 100 // Move up from center
+      };
+    }
+    
     if (isTablet) {
       const totalCircles = assessmentCategories.length;
       const spacing = 180;
@@ -194,64 +222,55 @@ const Home = () => {
   }, [ninjaText, isNinjaTyping, ninjaLines]);
 
   const getHomeImage = () => {
-    if (isMobileLandscape) return '/images/landscape/home1.jpg';
+    if (useBbcLayout) return '/images/landscape/home1.jpg';
     if (isMobile) return '/images/home_mob.png';
     if (isTabletPortrait) return '/images/tab_home.png';
     return '/images/homee.png';
   };
 
+  // Updated button position - always bottom right and smaller
   const getButtonPosition = () => {
-    if (isSmallMobileLandscape) return 'bottom-4 right-2 transform scale-50';
-    if (isMobileLandscape) return 'bottom-4 right-4 transform scale-60';
-    if (isMobile) return 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2';
-    if (isTablet) return 'top-[45%] left-1/2 transform -translate-x-1/2 -translate-y-1/2';
-    return 'top-1/2 right-[15%] transform -translate-y-1/2';
+    if (isMobilePortrait) return 'bottom-4 right-4 transform scale-75';
+    if (isMobileLandscape) return 'bottom-4 right-4 transform scale-65';
+    if (isTablet) return 'bottom-6 right-6 transform scale-90';
+    return 'bottom-8 right-8 transform scale-100';
   };
 
   const getNinjaPosition = () => {
-    if (isSmallMobileLandscape) return 'mb-[-8px] scale-65';
-    if (isMobileLandscape) return 'mb-[-5px] scale-75';
+    if (useBbcLayout) return 'mb-[-5px] scale-75';
     if (isMobile) return isLandscape ? 'mb-[-5px] scale-90' : 'mb-[-15px]';
     if (isTablet) return 'mb-[20px]';
     return 'mb-[-40px]';
   };
 
   const getNinjaDialogPosition = () => {
-    if (isSmallMobileLandscape) return 'top-1 -right-2 translate-x-full scale-75';
-    if (isMobileLandscape) return 'top-2 -right-1 translate-x-full scale-90';
+    if (useBbcLayout) return 'top-2 -right-1 translate-x-full scale-90';
     if (isMobile) return isLandscape ? 'top-4 -right-1 translate-x-full' : 'top-12 -right-1 translate-x-full';
     if (isTablet) return 'top-4 -right-1 translate-x-full';
     return 'top-20 -right-2 translate-x-full';
   };
 
   const getJellyMenuMaxHeight = () => {
-    if (isMobileLandscape) return 'max-h-32';
+    if (useBbcLayout) return 'max-h-32';
     return 'max-h-96';
   };
 
   return (
     <div 
-      className="min-h-screen bg-white relative overflow-x-hidden overflow-y-auto"
+      className="min-h-screen bg-white relative overflow-y-auto"
       onClick={handleContainerClick}
     >
-      {/* Navbar - Placed at the top with proper z-index */}
+      {/* Scrollable Navbar - Now part of scrollable content */}
       <div className="relative z-50">
         <Navbar onMenuStateChange={handleMenuStateChange} />
       </div>
 
-      {/* Main Content Area - Adjusted for navbar height */}
-      <div 
-        className="relative z-0 w-full"
-        style={{ 
-          height: isMobileLandscape 
-            ? 'calc(100vh - 80px)'  // Adjusted for mobile landscape
-            : 'calc(100vh - 120px)' // Adjusted for other screen sizes
-        }}
-      >
-        {isMobileLandscape ? (
-          // BBC-Style Layout for Mobile Landscape
-          <div className="w-full h-full bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-y-auto">
-            {/* BBC-style header bar */}
+      {/* Main Content Area - Scrollable container */}
+      <div className="relative z-0 w-full">
+        {useBbcLayout ? (
+          // BBC-Style Layout for Mobile (Both Landscape and Portrait)
+          <div className="w-full bg-gradient-to-br from-blue-50 via-white to-purple-50">
+            {/* BBC-style header bar - Now inside scrollable area */}
             <div className="sticky top-0 left-0 right-0 h-8 bg-gradient-to-r from-blue-800 to-purple-800 z-20 flex items-center px-4">
               <div className="flex items-center space-x-2">
                 <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
@@ -266,18 +285,18 @@ const Home = () => {
               </div>
             </div>
 
-            {/* BBC-style main content grid */}
-            <div className="p-4">
+            {/* BBC-style main content grid - Adjusted for portrait */}
+            <div className="p-4 pb-20"> {/* Added padding bottom for bottom nav */}
               {/* Main featured story - BBC style */}
               <div className="mb-6">
                 <div className="bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200">
                   <img
                     src="/images/landscape/home1.jpg"
                     alt="Educational Platform Hero"
-                    className="w-full h-48 object-cover"
+                    className={`w-full ${isMobilePortrait ? 'h-64' : 'h-48'} object-cover`}
                   />
                   <div className="p-4">
-                    <h1 className="text-xl font-bold text-gray-900 mb-2">Welcome to EduPlatform</h1>
+                    <h1 className={`${isMobilePortrait ? 'text-2xl' : 'text-xl'} font-bold text-gray-900 mb-2`}>Welcome to EduPlatform</h1>
                     <p className="text-gray-600 text-sm mb-3">Comprehensive learning solutions for all educational stages</p>
                     <div className="flex items-center text-xs text-gray-500">
                       <span>All Ages</span>
@@ -290,32 +309,22 @@ const Home = () => {
                 </div>
               </div>
 
-              {/* BBC-style secondary stories grid */}
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200">
-                  <img
-                    src="/images/landscape/home2.png"
-                    alt="Creative Learning"
-                    className="w-full h-32 object-cover"
-                  />
-                  <div className="p-3">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-1">Creative Learning</h3>
-                    <div className="w-8 h-1 bg-purple-500 mb-2"></div>
-                    <p className="text-xs text-gray-600">Innovative teaching methods</p>
+              {/* BBC-style secondary stories grid - Adjusted columns for portrait */}
+              <div className={`grid ${isMobilePortrait ? 'grid-cols-2' : 'grid-cols-2'} gap-4 mb-6`}>
+                {homeImages.slice(1, isMobilePortrait ? 5 : 3).map((image, index) => (
+                  <div key={index} className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200">
+                    <img
+                      src={image.src}
+                      alt={image.alt}
+                      className={`w-full ${isMobilePortrait ? 'h-40' : 'h-32'} object-cover`}
+                    />
+                    <div className="p-3">
+                      <h3 className="text-sm font-semibold text-gray-900 mb-1">{image.title}</h3>
+                      <div className="w-8 h-1 bg-purple-500 mb-2"></div>
+                      <p className="text-xs text-gray-600">Innovative teaching methods</p>
+                    </div>
                   </div>
-                </div>
-                <div className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200">
-                  <img
-                    src="/images/landscape/home3.png"
-                    alt="Team Collaboration"
-                    className="w-full h-32 object-cover"
-                  />
-                  <div className="p-3">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-1">Team Collaboration</h3>
-                    <div className="w-8 h-1 bg-blue-500 mb-2"></div>
-                    <p className="text-xs text-gray-600">Group learning activities</p>
-                  </div>
-                </div>
+                ))}
               </div>
 
               {/* BBC-style more stories section */}
@@ -349,7 +358,7 @@ const Home = () => {
                   <div className="w-3 h-6 bg-blue-600 mr-2"></div>
                   <h3 className="text-md font-bold text-gray-900">Quick Access</h3>
                 </div>
-                <div className="grid grid-cols-2 gap-2">
+                <div className={`grid ${isMobilePortrait ? 'grid-cols-2' : 'grid-cols-2'} gap-2`}>
                   {assessmentCategories.map((item, index) => (
                     <div key={index} className="bg-white rounded p-2 text-center border border-gray-300">
                       <span className="text-xs font-medium text-gray-700">{item.title}</span>
@@ -369,30 +378,30 @@ const Home = () => {
                 </div>
               </div>
             </div>
-
-            {/* Bottom Navigation - Now part of scrollable content */}
-            <div className="sticky bottom-0 left-0 right-0 z-40 mt-6">
-              <BottomNav />
-            </div>
           </div>
         ) : (
-          // Original layout for other screen sizes
-          <img
-            src={getHomeImage()}
-            alt="Educational platform main content"
-            className="w-full h-full object-cover pointer-events-none"
-            style={{
-              imageRendering: '-webkit-optimize-contrast',
-              WebkitBackfaceVisibility: 'hidden',
-              MozBackfaceVisibility: 'hidden',
-              backfaceVisibility: 'hidden'
-            }}
-          />
+          // Original layout for other screen sizes - Fixed image height to prevent overlap
+          <div className="w-full" style={{ 
+            height: isMobile ? 'calc(100vh - 120px)' : 'calc(100vh - 120px)',
+            marginTop: '0' // Ensure no overlap with navbar
+          }}>
+            <img
+              src={getHomeImage()}
+              alt="Educational platform main content"
+              className="w-full h-full object-cover pointer-events-none"
+              style={{
+                imageRendering: '-webkit-optimize-contrast',
+                WebkitBackfaceVisibility: 'hidden',
+                MozBackfaceVisibility: 'hidden',
+                backfaceVisibility: 'hidden'
+              }}
+            />
+          </div>
         )}
       </div>
 
-      {/* Interactive Elements - Placed above the image but below navbar */}
-      <div className="absolute inset-0 z-40 pointer-events-none">
+      {/* Interactive Elements - Fixed position above scrollable content */}
+      <div className="fixed inset-0 z-40 pointer-events-none">
         {!isMenuOpen && (
           <div 
             className={`fixed instant-assessment-container ${getButtonPosition()} pointer-events-auto`}
@@ -407,14 +416,17 @@ const Home = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="relative" style={{ 
-              width: getResponsiveSize('200px', '250px', '280px', '120px', '110px'), 
-              height: getResponsiveSize('200px', '250px', '280px', '120px', '110px') 
+              // Reduced container size
+              width: getResponsiveSize('120px', '150px', '180px', '80px', '70px'), 
+              height: getResponsiveSize('120px', '150px', '180px', '80px', '70px') 
             }}>
               <div className="absolute inset-0">
                 {assessmentCategories.map((category, index) => {
-                  const radius = getResponsiveSize(120, 150, 180, 65, 60);
+                  // Reduced radius for smaller circles
+                  const radius = getResponsiveSize(80, 100, 120, 50, 45);
                   const position = getCirclePosition(category.angle, radius, index);
-                  const circleSize = getResponsiveSize('80px', '100px', '112px', '50px', '45px');
+                  // Reduced circle size
+                  const circleSize = getResponsiveSize('50px', '60px', '70px', '35px', '30px');
                   
                   const shouldShowMiniCircles = isMobile || isTablet ? showMiniCircles : is3DButtonHovered;
                   
@@ -428,7 +440,7 @@ const Home = () => {
                       }}
                       onMouseEnter={() => !isMobile && setHoveredCircle(index)}
                       onMouseLeave={() => !isMobile && setHoveredCircle(null)}>
-                      {!isMobile && (
+                      {!isMobile && !isMobilePortrait && (
                         <svg className={`absolute transition-all duration-500 ${shouldShowMiniCircles ? 'opacity-100' : 'opacity-0'}`}
                           style={{ 
                             left: '50%', 
@@ -472,17 +484,22 @@ const Home = () => {
                         style={{ 
                           width: circleSize, 
                           height: circleSize, 
-                          border: '4px solid rgba(255, 255, 255, 0.3)', 
-                          boxShadow: !isMobile && hoveredCircle === index ? `0 15px 40px ${category.shadow.replace('/50', '/60')}, inset 0 -4px 12px rgba(0,0,0,0.3), inset 0 4px 12px rgba(255,255,255,0.3)` : '0 8px 25px rgba(0,0,0,0.3), inset 0 -3px 10px rgba(0,0,0,0.3), inset 0 3px 10px rgba(255,255,255,0.2)' 
+                          border: '3px solid rgba(255, 255, 255, 0.3)', // Reduced border
+                          boxShadow: !isMobile && hoveredCircle === index ? `0 12px 30px ${category.shadow.replace('/50', '/60')}, inset 0 -3px 8px rgba(0,0,0,0.3), inset 0 3px 8px rgba(255,255,255,0.3)` : '0 6px 20px rgba(0,0,0,0.3), inset 0 -2px 6px rgba(0,0,0,0.3), inset 0 2px 6px rgba(255,255,255,0.2)' 
                         }}
                         onClick={() => handleMiniCircleTap(category.href)}
                       >
-                        <div className="absolute inset-2 rounded-full border-2 border-white/20"></div>
-                        <div className="absolute inset-4 rounded-full bg-gradient-to-br from-white/30 to-transparent"></div>
-                        <div className="relative z-10 flex flex-col items-center justify-center h-full p-2">
-                          <span className="text-white font-black tracking-wider mb-1 drop-shadow-lg" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)', fontSize: getResponsiveSize('0.75rem', '0.875rem', '1.125rem', '0.5rem', '0.45rem') }}>{category.title}</span>
+                        <div className="absolute inset-1 rounded-full border border-white/20"></div>
+                        <div className="absolute inset-2 rounded-full bg-gradient-to-br from-white/30 to-transparent"></div>
+                        <div className="relative z-10 flex flex-col items-center justify-center h-full p-1">
+                          <span className="text-white font-black tracking-wider mb-0.5 drop-shadow-lg" style={{ 
+                            textShadow: '2px 2px 4px rgba(0,0,0,0.5)', 
+                            fontSize: getResponsiveSize('0.5rem', '0.6rem', '0.7rem', '0.4rem', '0.35rem') 
+                          }}>
+                            {category.title}
+                          </span>
                         </div>
-                        {!isMobile && <div className={`absolute inset-0 rounded-full transition-all duration-500 ${hoveredCircle === index ? 'opacity-100' : 'opacity-0'}`} style={{ border: '2px dashed rgba(255, 255, 255, 0.4)', animation: hoveredCircle === index ? 'spin 3s linear infinite' : 'none' }}></div>}
+                        {!isMobile && <div className={`absolute inset-0 rounded-full transition-all duration-500 ${hoveredCircle === index ? 'opacity-100' : 'opacity-0'}`} style={{ border: '1px dashed rgba(255, 255, 255, 0.4)', animation: hoveredCircle === index ? 'spin 3s linear infinite' : 'none' }}></div>}
                         {!isMobile && hoveredCircle === index && (
                           <div className="absolute inset-0 rounded-full overflow-hidden">
                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent shine-animation"></div>
@@ -497,30 +514,49 @@ const Home = () => {
               <button 
                 className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-500 ${!isMobile && is3DButtonHovered ? 'scale-110' : 'scale-100'} ${isDesktop ? 'cursor-default' : 'cursor-pointer'} group`}
                 style={{ 
-                  width: getResponsiveSize('100px', '120px', '160px', '60px', '55px'), 
-                  height: getResponsiveSize('100px', '120px', '160px', '60px', '55px'), 
+                  // Reduced button size
+                  width: getResponsiveSize('60px', '70px', '80px', '40px', '35px'), 
+                  height: getResponsiveSize('60px', '70px', '80px', '40px', '35px'), 
                   background: 'linear-gradient(145deg, #fbbf24, #f59e0b, #d97706)', 
-                  boxShadow: !isMobile && is3DButtonHovered ? '0 20px 50px rgba(251, 191, 36, 0.6), 0 0 80px rgba(251, 191, 36, 0.4), inset 0 -8px 20px rgba(0,0,0,0.4), inset 0 8px 20px rgba(255,255,255,0.3)' : '0 12px 30px rgba(251, 191, 36, 0.4), 0 0 40px rgba(251, 191, 36, 0.2), inset 0 -5px 15px rgba(0,0,0,0.3), inset 0 5px 15px rgba(255,255,255,0.2)', 
-                  border: '5px solid rgba(255, 255, 255, 0.3)' 
+                  boxShadow: !isMobile && is3DButtonHovered ? '0 15px 35px rgba(251, 191, 36, 0.6), 0 0 60px rgba(251, 191, 36, 0.4), inset 0 -5px 12px rgba(0,0,0,0.4), inset 0 5px 12px rgba(255,255,255,0.3)' : '0 8px 20px rgba(251, 191, 36, 0.4), 0 0 30px rgba(251, 191, 36, 0.2), inset 0 -3px 10px rgba(0,0,0,0.3), inset 0 3px 10px rgba(255,255,255,0.2)', 
+                  border: '3px solid rgba(255, 255, 255, 0.3)' // Reduced border
                 }}
                 onClick={handleInstantAssessmentTap}
                 onMouseEnter={() => !isMobile && setIs3DButtonHovered(true)}
                 onMouseLeave={() => !isMobile && setIs3DButtonHovered(false)}
               >
-                <div className="absolute inset-0 rounded-full" style={{ border: '3px solid rgba(0, 0, 0, 0.2)', boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.5), inset 0 -2px 4px rgba(0,0,0,0.3)' }}></div>
-                {!isMobile && <div className={`absolute inset-0 rounded-full transition-opacity duration-500 ${is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ border: '2px dashed rgba(255, 255, 255, 0.3)', animation: is3DButtonHovered ? 'spin 4s linear infinite' : 'none' }}></div>}
-                <div className={`absolute rounded-full transition-opacity duration-700 ${!isMobile && is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ inset: getResponsiveSize('1.5rem', '1.75rem', '1.5rem', '0.6rem', '0.55rem'), background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 60%)', animation: !isMobile && is3DButtonHovered ? 'pulse 1.5s ease-in-out infinite' : 'none' }}></div>
+                <div className="absolute inset-0 rounded-full" style={{ border: '2px solid rgba(0, 0, 0, 0.2)', boxShadow: 'inset 0 1px 3px rgba(255,255,255,0.5), inset 0 -1px 3px rgba(0,0,0,0.3)' }}></div>
+                {!isMobile && <div className={`absolute inset-0 rounded-full transition-opacity duration-500 ${is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ border: '1px dashed rgba(255, 255, 255, 0.3)', animation: is3DButtonHovered ? 'spin 4s linear infinite' : 'none' }}></div>}
+                <div className={`absolute rounded-full transition-opacity duration-700 ${!isMobile && is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ inset: getResponsiveSize('0.8rem', '1rem', '1rem', '0.4rem', '0.35rem'), background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 60%)', animation: !isMobile && is3DButtonHovered ? 'pulse 1.5s ease-in-out infinite' : 'none' }}></div>
                 <div className="relative z-10 flex flex-col items-center justify-center h-full">
-                  <div className="relative mb-1">
-                    <div className="absolute inset-0 bg-white/20 rounded-full blur-md"></div>
-                    <svg className="text-white drop-shadow-lg relative z-10" style={{ width: getResponsiveSize('2rem', '2.5rem', '3.5rem', '1rem', '0.9rem'), height: getResponsiveSize('2rem', '2.5rem', '3.5rem', '1rem', '0.9rem') }} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                  <div className="relative mb-0.5">
+                    <div className="absolute inset-0 bg-white/20 rounded-full blur-sm"></div>
+                    <svg className="text-white drop-shadow-lg relative z-10" style={{ 
+                      width: getResponsiveSize('1rem', '1.25rem', '1.5rem', '0.6rem', '0.5rem'), 
+                      height: getResponsiveSize('1rem', '1.25rem', '1.5rem', '0.6rem', '0.5rem') 
+                    }} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                     </svg>
                   </div>
                   <div className="text-center">
-                    <span className="text-white font-black tracking-wider drop-shadow-lg block" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5), 0 0 10px rgba(255,255,255,0.3)', fontSize: getResponsiveSize('0.75rem', '0.875rem', '1.25rem', '0.45rem', '0.4rem') }}>INSTANT</span>
-                    <div className="text-white font-bold tracking-wide drop-shadow-lg" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)', fontSize: getResponsiveSize('0.6rem', '0.7rem', '0.875rem', '0.35rem', '0.32rem') }}>ASSESS</div>
-                    <span className="text-white/90 font-semibold mt-0.5 block" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)', fontSize: getResponsiveSize('0.5rem', '0.6rem', '0.5rem', '0.28rem', '0.25rem') }}>Powered by KAI</span>
+                    <span className="text-white font-black tracking-wider drop-shadow-lg block" style={{ 
+                      textShadow: '1px 1px 3px rgba(0,0,0,0.5), 0 0 8px rgba(255,255,255,0.3)', 
+                      fontSize: getResponsiveSize('0.5rem', '0.6rem', '0.7rem', '0.3rem', '0.28rem') 
+                    }}>
+                      INSTANT
+                    </span>
+                    <div className="text-white font-bold tracking-wide drop-shadow-lg" style={{ 
+                      textShadow: '1px 1px 2px rgba(0,0,0,0.5)', 
+                      fontSize: getResponsiveSize('0.4rem', '0.5rem', '0.6rem', '0.25rem', '0.22rem') 
+                    }}>
+                      ASSESS
+                    </div>
+                    <span className="text-white/90 font-semibold mt-0.5 block" style={{ 
+                      textShadow: '1px 1px 2px rgba(0,0,0,0.5)', 
+                      fontSize: getResponsiveSize('0.3rem', '0.4rem', '0.4rem', '0.2rem', '0.18rem') 
+                    }}>
+                      Powered by KAI
+                    </span>
                   </div>
                 </div>
                 {!isMobile && (
@@ -535,8 +571,7 @@ const Home = () => {
 
         {/* KAI Assistant */}
         <nav className={`btn-pluss-wrapper fixed z-40 flex flex-col items-center transition-all duration-300 pointer-events-auto ${
-          isSmallMobileLandscape ? 'bottom-1 left-1 scale-75' : 
-          isMobileLandscape ? 'bottom-2 left-2 scale-85' : 
+          useBbcLayout ? 'bottom-2 left-2 scale-85' : 
           isMobile ? isLandscape ? 'bottom-4 left-4' : 'bottom-20 left-4' : 
           'bottom-16 right-10'
         }`}
@@ -656,7 +691,7 @@ const Home = () => {
         </div>
 
         {/* Bottom Navigation */}
-        <div className="pointer-events-auto">
+        <div className="fixed bottom-0 left-0 right-0 z-40 pointer-events-auto">
           <BottomNav />
         </div>
       </div>

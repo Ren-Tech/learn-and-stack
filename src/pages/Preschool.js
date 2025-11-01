@@ -20,7 +20,7 @@ const Preschool = () => {
   const dialogLines = ["I'm KAI", "Can I help?"];
   const ninjaLines = ["Ready", "Steady", "Succeed"];
 
-  // Preschool specific images for landscape mobile - using PNGs
+  // Preschool specific images for mobile - using PNGs
   const preschoolImages = [
     { src: '/images/landscape/pre1.png', alt: 'Preschool Activity 1', title: 'Creative Play' },
     { src: '/images/landscape/pre2.png', alt: 'Preschool Activity 2', title: 'Learning Fun' },
@@ -62,7 +62,11 @@ const Preschool = () => {
   const isTablet = windowSize.width >= 768 && windowSize.width < 1024;
   const isLandscape = windowSize.width > windowSize.height;
   const isMobileLandscape = isMobile && isLandscape;
+  const isMobilePortrait = isMobile && !isLandscape;
   const isTabletPortrait = isTablet && !isLandscape;
+
+  // Use BBC-style layout for both mobile landscape and portrait
+  const useBbcLayout = isMobileLandscape || isMobilePortrait;
 
   // Navigation handler
   const handleNavigation = (href) => {
@@ -71,7 +75,7 @@ const Preschool = () => {
 
   // Get appropriate image based on screen size
   const getBackgroundImage = () => {
-    if (isMobileLandscape) return "/images/landscape/pre1.png";
+    if (useBbcLayout) return "/images/landscape/pre1.png";
     if (isMobile) return "/images/home_pre.png";
     if (isTabletPortrait) return "/images/tab_pre.png";
     return "/images/pre-school.png";
@@ -87,7 +91,7 @@ const Preschool = () => {
 
   // Function to determine ninja position
   const getNinjaPosition = () => {
-    if (isMobileLandscape) return 'mb-[-5px] scale-75';
+    if (useBbcLayout) return 'mb-[-5px] scale-75';
     if (isMobile) return isLandscape ? 'mb-[-5px] scale-90' : 'mb-[-15px]';
     if (isTablet) return 'mb-[20px]';
     return 'mb-[-40px]';
@@ -95,7 +99,7 @@ const Preschool = () => {
 
   // Function to determine ninja dialog position
   const getNinjaDialogPosition = () => {
-    if (isMobileLandscape) return 'top-2 -right-1 translate-x-full scale-90';
+    if (useBbcLayout) return 'top-2 -right-1 translate-x-full scale-90';
     if (isMobile) return isLandscape ? 'top-4 -right-1 translate-x-full' : 'top-12 -right-1 translate-x-full';
     if (isTablet) return 'top-4 -right-1 translate-x-full';
     return 'top-20 -right-2 translate-x-full';
@@ -103,14 +107,14 @@ const Preschool = () => {
 
   // Function to determine plus menu position
   const getPlusMenuPosition = () => {
-    if (isMobileLandscape) return 'bottom-2 left-2 scale-85';
+    if (useBbcLayout) return 'bottom-2 left-2 scale-85';
     if (isMobile) return isLandscape ? 'bottom-4 left-4' : 'bottom-20 left-4';
     if (isTablet) return 'bottom-16 right-10';
     return 'bottom-16 right-10';
   };
 
   const getJellyMenuMaxHeight = () => {
-    if (isMobileLandscape) return 'max-h-32';
+    if (useBbcLayout) return 'max-h-32';
     return 'max-h-96';
   };
 
@@ -167,8 +171,8 @@ const Preschool = () => {
 
   return (
     <div className="min-h-screen bg-white relative overflow-x-hidden">
-      {isMobileLandscape ? (
-        // BBC-style Layout for Mobile Landscape
+      {useBbcLayout ? (
+        // BBC-style Layout for Mobile (Both Landscape and Portrait)
         <div className="w-full h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 overflow-y-auto">
           {/* Green Navbar - Now part of scrollable content */}
           <div className="relative z-50">
@@ -190,7 +194,7 @@ const Preschool = () => {
             </div>
           </div>
 
-          {/* BBC-style main content grid */}
+          {/* BBC-style main content grid - Adjusted for portrait */}
           <div className="p-4">
             {/* Main featured story - BBC style */}
             <div className="mb-6">
@@ -198,10 +202,10 @@ const Preschool = () => {
                 <img
                   src="/images/landscape/pre1.png"
                   alt="Preschool Learning Hero"
-                  className="w-full h-48 object-cover"
+                  className={`w-full ${isMobilePortrait ? 'h-64' : 'h-48'} object-cover`}
                 />
                 <div className="p-4">
-                  <h1 className="text-xl font-bold text-gray-900 mb-2">Preschool Fun Learning</h1>
+                  <h1 className={`${isMobilePortrait ? 'text-2xl' : 'text-xl'} font-bold text-gray-900 mb-2`}>Preschool Fun Learning</h1>
                   <p className="text-gray-600 text-sm mb-3">Interactive activities and play-based learning for early development</p>
                   <div className="flex items-center text-xs text-gray-500">
                     <span>Ages 2-5</span>
@@ -214,14 +218,14 @@ const Preschool = () => {
               </div>
             </div>
 
-            {/* BBC-style secondary stories grid */}
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              {preschoolImages.slice(1, 3).map((image, index) => (
+            {/* BBC-style secondary stories grid - Adjusted columns for portrait */}
+            <div className={`grid ${isMobilePortrait ? 'grid-cols-2' : 'grid-cols-2'} gap-4 mb-6`}>
+              {preschoolImages.slice(1, isMobilePortrait ? 5 : 3).map((image, index) => (
                 <div key={index} className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200">
                   <img
                     src={image.src}
                     alt={image.alt}
-                    className="w-full h-32 object-cover"
+                    className={`w-full ${isMobilePortrait ? 'h-40' : 'h-32'} object-cover`}
                   />
                   <div className="p-3">
                     <h3 className="text-sm font-semibold text-gray-900 mb-1">{image.title}</h3>
@@ -240,13 +244,13 @@ const Preschool = () => {
               </div>
               
               <div className="space-y-4">
-                {preschoolImages.slice(3).map((image, index) => (
+                {preschoolImages.slice(isMobilePortrait ? 5 : 3).map((image, index) => (
                   <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
                     <div className="flex">
                       <img
                         src={image.src}
                         alt={image.alt}
-                        className="w-24 h-24 object-cover flex-shrink-0"
+                        className={`${isMobilePortrait ? 'w-32 h-32' : 'w-24 h-24'} object-cover flex-shrink-0`}
                       />
                       <div className="p-3 flex-1">
                         <h3 className="text-sm font-semibold text-gray-900 mb-2">{image.title}</h3>
@@ -269,7 +273,7 @@ const Preschool = () => {
                 <div className="w-3 h-6 bg-pink-500 mr-2"></div>
                 <h3 className="text-md font-bold text-gray-900">Popular Activities</h3>
               </div>
-              <div className="grid grid-cols-2 gap-2">
+              <div className={`grid ${isMobilePortrait ? 'grid-cols-2' : 'grid-cols-2'} gap-2`}>
                 {['Creative Play', 'Art & Craft', 'Music Time', 'Outdoor Fun'].map((item, index) => (
                   <div key={index} className="bg-white rounded p-2 text-center border border-gray-300">
                     <span className="text-xs font-medium text-gray-700">{item}</span>

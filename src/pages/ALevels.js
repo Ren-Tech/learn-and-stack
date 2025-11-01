@@ -20,7 +20,7 @@ const ALevels = () => {
   const dialogLines = ["I'm KAI", "Can I help?"];
   const ninjaLines = ["Ready", "Steady", "Succeed"];
 
-  // A-Levels specific images for landscape mobile - using level PNGs
+  // A-Levels specific images for mobile - using level PNGs
   const aLevelImages = [
     { src: '/images/landscape/level1.png', alt: 'A-Level Preparation 1', title: 'Advanced Mathematics' },
     { src: '/images/landscape/level2.jpg', alt: 'A-Level Preparation 2', title: 'Science Research' },
@@ -58,7 +58,11 @@ const ALevels = () => {
   const isTablet = windowSize.width >= 768 && windowSize.width < 1024;
   const isLandscape = windowSize.width > windowSize.height;
   const isMobileLandscape = isMobile && isLandscape;
+  const isMobilePortrait = isMobile && !isLandscape;
   const isTabletPortrait = isTablet && !isLandscape;
+
+  // Use BBC-style layout for both mobile landscape and portrait
+  const useBbcLayout = isMobileLandscape || isMobilePortrait;
 
   // Navigation handler
   const handleNavigation = (href) => {
@@ -67,7 +71,7 @@ const ALevels = () => {
 
   // Get background image based on screen size
   const getBackgroundImage = () => {
-    if (isMobileLandscape) return "/images/landscape/level1.png";
+    if (useBbcLayout) return "/images/landscape/level1.png";
     if (isMobile) return "/images/a-level.png";
     if (isTabletPortrait) return "/images/tab_alevel.png";
     return "/images/a-levels.png";
@@ -83,7 +87,7 @@ const ALevels = () => {
 
   // Function to determine ninja position - moved higher for tablet
   const getNinjaPosition = () => {
-    if (isMobileLandscape) return 'mb-[-5px] scale-75';
+    if (useBbcLayout) return 'mb-[-5px] scale-75';
     if (isMobile) return isLandscape ? 'mb-[-5px] scale-90' : 'mb-[-15px]';
     if (isTablet) return 'mb-[20px]';
     return 'mb-[-40px]';
@@ -91,7 +95,7 @@ const ALevels = () => {
 
   // Function to determine ninja dialog position - adjusted for tablet
   const getNinjaDialogPosition = () => {
-    if (isMobileLandscape) return 'top-2 -right-1 translate-x-full scale-90';
+    if (useBbcLayout) return 'top-2 -right-1 translate-x-full scale-90';
     if (isMobile) return isLandscape ? 'top-4 -right-1 translate-x-full' : 'top-12 -right-1 translate-x-full';
     if (isTablet) return 'top-4 -right-1 translate-x-full';
     return 'top-20 -right-2 translate-x-full';
@@ -99,14 +103,14 @@ const ALevels = () => {
 
   // Function to determine plus menu position
   const getPlusMenuPosition = () => {
-    if (isMobileLandscape) return 'bottom-2 left-2 scale-85';
+    if (useBbcLayout) return 'bottom-2 left-2 scale-85';
     if (isMobile) return isLandscape ? 'bottom-4 left-4' : 'bottom-20 left-4';
     if (isTablet) return 'bottom-16 right-10';
     return 'bottom-16 right-10';
   };
 
   const getJellyMenuMaxHeight = () => {
-    if (isMobileLandscape) return 'max-h-32';
+    if (useBbcLayout) return 'max-h-32';
     return 'max-h-96';
   };
 
@@ -163,8 +167,8 @@ const ALevels = () => {
 
   return (
     <div className="min-h-screen bg-white relative overflow-x-hidden">
-      {isMobileLandscape ? (
-        // BBC-style Layout for Mobile Landscape
+      {useBbcLayout ? (
+        // BBC-style Layout for Mobile (Both Landscape and Portrait)
         <div className="w-full h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 overflow-y-auto">
           {/* Green Navbar - Now part of scrollable content */}
           <div className="relative z-50">
@@ -186,7 +190,7 @@ const ALevels = () => {
             </div>
           </div>
 
-          {/* BBC-style main content grid */}
+          {/* BBC-style main content grid - Adjusted for portrait */}
           <div className="p-4">
             {/* Main featured story - BBC style */}
             <div className="mb-6">
@@ -194,10 +198,10 @@ const ALevels = () => {
                 <img
                   src="/images/landscape/level1.png"
                   alt="A-Level Preparation Hero"
-                  className="w-full h-48 object-cover"
+                  className={`w-full ${isMobilePortrait ? 'h-64' : 'h-48'} object-cover`}
                 />
                 <div className="p-4">
-                  <h1 className="text-xl font-bold text-gray-900 mb-2">A-Level Advanced Studies</h1>
+                  <h1 className={`${isMobilePortrait ? 'text-2xl' : 'text-xl'} font-bold text-gray-900 mb-2`}>A-Level Advanced Studies</h1>
                   <p className="text-gray-600 text-sm mb-3">In-depth preparation for university entrance and advanced subjects</p>
                   <div className="flex items-center text-xs text-gray-500">
                     <span>Ages 16-18</span>
@@ -210,14 +214,14 @@ const ALevels = () => {
               </div>
             </div>
 
-            {/* BBC-style secondary stories grid */}
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              {aLevelImages.slice(1, 3).map((image, index) => (
+            {/* BBC-style secondary stories grid - Adjusted columns for portrait */}
+            <div className={`grid ${isMobilePortrait ? 'grid-cols-2' : 'grid-cols-2'} gap-4 mb-6`}>
+              {aLevelImages.slice(1, isMobilePortrait ? 5 : 3).map((image, index) => (
                 <div key={index} className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200">
                   <img
                     src={image.src}
                     alt={image.alt}
-                    className="w-full h-32 object-cover"
+                    className={`w-full ${isMobilePortrait ? 'h-40' : 'h-32'} object-cover`}
                   />
                   <div className="p-3">
                     <h3 className="text-sm font-semibold text-gray-900 mb-1">{image.title}</h3>
@@ -236,13 +240,13 @@ const ALevels = () => {
               </div>
               
               <div className="space-y-4">
-                {aLevelImages.slice(3).map((image, index) => (
+                {aLevelImages.slice(isMobilePortrait ? 5 : 3).map((image, index) => (
                   <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
                     <div className="flex">
                       <img
                         src={image.src}
                         alt={image.alt}
-                        className="w-24 h-24 object-cover flex-shrink-0"
+                        className={`${isMobilePortrait ? 'w-32 h-32' : 'w-24 h-24'} object-cover flex-shrink-0`}
                       />
                       <div className="p-3 flex-1">
                         <h3 className="text-sm font-semibold text-gray-900 mb-2">{image.title}</h3>
@@ -265,7 +269,7 @@ const ALevels = () => {
                 <div className="w-3 h-6 bg-indigo-600 mr-2"></div>
                 <h3 className="text-md font-bold text-gray-900">Popular A-Level Choices</h3>
               </div>
-              <div className="grid grid-cols-2 gap-2">
+              <div className={`grid ${isMobilePortrait ? 'grid-cols-2' : 'grid-cols-2'} gap-2`}>
                 {['Mathematics', 'Sciences', 'Humanities', 'Languages'].map((item, index) => (
                   <div key={index} className="bg-white rounded p-2 text-center border border-gray-300">
                     <span className="text-xs font-medium text-gray-700">{item}</span>
