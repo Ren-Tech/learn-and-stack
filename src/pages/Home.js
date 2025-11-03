@@ -1,4 +1,4 @@
- import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import BottomNav from '../components/BottomNav';
@@ -50,8 +50,7 @@ const Home = () => {
     { src: '/images/landscape/home1.jpg', alt: 'Home Hero 1', title: 'Welcome to EduPlatform' },
     { src: '/images/landscape/home2.png', alt: 'Home Activity 2', title: 'Creative Learning' },
     { src: '/images/landscape/home3.png', alt: 'Home Activity 3', title: 'Team Collaboration' },
-    { src: '/images/landscape/home4.png', alt: 'Home Activity 4', title: 'Interactive Sessions' },
-    { src: '/images/landscape/home5.png', alt: 'Home Activity 5', title: 'Progress Tracking' }
+
   ];
 
   useEffect(() => {
@@ -75,7 +74,7 @@ const Home = () => {
   }, []);
 
   const isMobile = windowSize.width < 1100;
-  const isTablet = windowSize.width >= 1024 && windowSize.width < 1024;
+  const isTablet = windowSize.width >= 768 && windowSize.width < 1024;
   const isDesktop = windowSize.width >= 1024;
   const isLandscape = windowSize.width > windowSize.height;
   const isMobileLandscape = isMobile && isLandscape;
@@ -293,11 +292,18 @@ const Home = () => {
               {/* Main featured story - BBC style */}
               <div className="mb-6">
                 <div className="bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200">
-                  <img
-                    src="/images/landscape/home1.jpg"
-                    alt="Educational Platform Hero"
-                    className={`w-full ${isMobilePortrait ? 'h-64' : 'h-48'} object-cover`}
-                  />
+                  <div className={`relative w-full ${isMobilePortrait ? 'h-64' : 'h-48'} overflow-hidden`}>
+                    <img
+                      src="/images/landscape/home1.jpg"
+                      alt="Educational Platform Hero"
+                      className="w-full h-full object-contain"
+                      style={{
+                        imageRendering: '-webkit-optimize-contrast',
+                        WebkitBackfaceVisibility: 'hidden',
+                        backfaceVisibility: 'hidden'
+                      }}
+                    />
+                  </div>
                   <div className="p-4">
                     <h1 className={`${isMobilePortrait ? 'text-2xl' : 'text-xl'} font-bold text-gray-900 mb-2`}>Welcome to EduPlatform</h1>
                     <p className="text-gray-600 text-sm mb-3">Comprehensive learning solutions for all educational stages</p>
@@ -316,11 +322,18 @@ const Home = () => {
               <div className={`grid ${isMobilePortrait ? 'grid-cols-2' : 'grid-cols-2'} gap-4 mb-6`}>
                 {homeImages.slice(1, isMobilePortrait ? 5 : 3).map((image, index) => (
                   <div key={index} className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200">
-                    <img
-                      src={image.src}
-                      alt={image.alt}
-                      className={`w-full ${isMobilePortrait ? 'h-40' : 'h-32'} object-cover`}
-                    />
+                    <div className={`relative w-full ${isMobilePortrait ? 'h-40' : 'h-32'} overflow-hidden`}>
+                      <img
+                        src={image.src}
+                        alt={image.alt}
+                        className="w-full h-full object-contain"
+                        style={{
+                          imageRendering: '-webkit-optimize-contrast',
+                          WebkitBackfaceVisibility: 'hidden',
+                          backfaceVisibility: 'hidden'
+                        }}
+                      />
+                    </div>
                     <div className="p-3">
                       <h3 className="text-sm font-semibold text-gray-900 mb-1">{image.title}</h3>
                       <div className="w-8 h-1 bg-purple-500 mb-2"></div>
@@ -395,7 +408,6 @@ const Home = () => {
               style={{
                 imageRendering: '-webkit-optimize-contrast',
                 WebkitBackfaceVisibility: 'hidden',
-                MozBackfaceVisibility: 'hidden',
                 backfaceVisibility: 'hidden'
               }}
             />
@@ -630,7 +642,7 @@ const Home = () => {
                 } hover:bg-blue-50 hover:border-blue-200 hover:scale-105 hover:shadow-md cursor-pointer`}
                   style={{ 
                     height: isHovered ? getResponsiveSize('2.5rem', '3rem', '3rem', '2.25rem', '2rem') : '0', 
-                    transitionDelay: isHovered ? `${index * 100}ms` : `${(menuItems.length - index) * 80}ms` 
+                    transitionDelay: isHovered ? `${index * 100}ms` : `${(menuItems.length - index - 1) * 80}ms` 
                   }}
                   onClick={() => handleNavigation(item.href)}>
                   <div className="text-blue-900 font-medium block w-full h-full flex flex-col items-center justify-center transition-colors duration-300 hover:text-blue-700 p-1" style={{ 

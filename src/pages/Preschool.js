@@ -199,11 +199,19 @@ const Preschool = () => {
             {/* Main featured story - BBC style */}
             <div className="mb-6">
               <div className="bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200">
-                <img
-                  src="/images/landscape/pre1.png"
-                  alt="Preschool Learning Hero"
-                  className={`w-full ${isMobilePortrait ? 'h-64' : 'h-48'} object-cover`}
-                />
+                <div className={`relative w-full ${isMobilePortrait ? 'h-64' : 'h-48'} overflow-hidden`}>
+                  <img
+                    src="/images/landscape/pre1.png"
+                    alt="Preschool Learning Hero"
+                    className="w-full h-full object-contain"
+                    style={{
+                      imageRendering: '-webkit-optimize-contrast',
+                      WebkitBackfaceVisibility: 'hidden',
+                      MozBackfaceVisibility: 'hidden',
+                      backfaceVisibility: 'hidden'
+                    }}
+                  />
+                </div>
                 <div className="p-4">
                   <h1 className={`${isMobilePortrait ? 'text-2xl' : 'text-xl'} font-bold text-gray-900 mb-2`}>Preschool Fun Learning</h1>
                   <p className="text-gray-600 text-sm mb-3">Interactive activities and play-based learning for early development</p>
@@ -222,11 +230,19 @@ const Preschool = () => {
             <div className={`grid ${isMobilePortrait ? 'grid-cols-2' : 'grid-cols-2'} gap-4 mb-6`}>
               {preschoolImages.slice(1, isMobilePortrait ? 5 : 3).map((image, index) => (
                 <div key={index} className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200">
-                  <img
-                    src={image.src}
-                    alt={image.alt}
-                    className={`w-full ${isMobilePortrait ? 'h-40' : 'h-32'} object-cover`}
-                  />
+                  <div className={`relative w-full ${isMobilePortrait ? 'h-40' : 'h-32'} overflow-hidden`}>
+                    <img
+                      src={image.src}
+                      alt={image.alt}
+                      className="w-full h-full object-contain"
+                      style={{
+                        imageRendering: '-webkit-optimize-contrast',
+                        WebkitBackfaceVisibility: 'hidden',
+                        MozBackfaceVisibility: 'hidden',
+                        backfaceVisibility: 'hidden'
+                      }}
+                    />
+                  </div>
                   <div className="p-3">
                     <h3 className="text-sm font-semibold text-gray-900 mb-1">{image.title}</h3>
                     <div className="w-8 h-1 bg-yellow-500 mb-2"></div>
@@ -247,11 +263,19 @@ const Preschool = () => {
                 {preschoolImages.slice(isMobilePortrait ? 5 : 3).map((image, index) => (
                   <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
                     <div className="flex">
-                      <img
-                        src={image.src}
-                        alt={image.alt}
-                        className={`${isMobilePortrait ? 'w-32 h-32' : 'w-24 h-24'} object-cover flex-shrink-0`}
-                      />
+                      <div className={`relative ${isMobilePortrait ? 'w-32 h-32' : 'w-24 h-24'} overflow-hidden flex-shrink-0`}>
+                        <img
+                          src={image.src}
+                          alt={image.alt}
+                          className="w-full h-full object-contain"
+                          style={{
+                            imageRendering: '-webkit-optimize-contrast',
+                            WebkitBackfaceVisibility: 'hidden',
+                            MozBackfaceVisibility: 'hidden',
+                            backfaceVisibility: 'hidden'
+                          }}
+                        />
+                      </div>
                       <div className="p-3 flex-1">
                         <h3 className="text-sm font-semibold text-gray-900 mb-2">{image.title}</h3>
                         <p className="text-xs text-gray-600 line-clamp-2">Engaging activities to develop early skills through play</p>
