@@ -10,10 +10,14 @@ const Preschool = () => {
   const [isTyping, setIsTyping] = useState(true);
   const [ninjaText, setNinjaText] = useState('');
   const [isNinjaTyping, setIsNinjaTyping] = useState(true);
+  const [is3DButtonHovered, setIs3DButtonHovered] = useState(false);
+  const [hoveredCircle, setHoveredCircle] = useState(null);
+  const [showMiniCircles, setShowMiniCircles] = useState(false);
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
   });
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -44,6 +48,14 @@ const Preschool = () => {
     { href: "/alevels", text: "A-Levels", description: "16-18 Years Old" },
   ];
 
+  // Assessment categories for instant assess button (Mobile Only)
+  const assessmentCategories = [
+    { title: "Colors", gradient: "from-purple-600 via-purple-500 to-pink-500", shadow: "shadow-purple-500/50", glow: "shadow-purple-400", angle: -60, href: "/colors-assessment" },
+    { title: "Shapes", gradient: "from-blue-600 via-blue-500 to-cyan-500", shadow: "shadow-blue-500/50", glow: "shadow-blue-400", angle: -20, href: "/shapes-assessment" },
+    { title: "Numbers", gradient: "from-green-600 via-green-500 to-emerald-500", shadow: "shadow-green-500/50", glow: "shadow-green-400", angle: 20, href: "/numbers-assessment" },
+    { title: "Letters", gradient: "from-orange-600 via-orange-500 to-yellow-500", shadow: "shadow-orange-500/50", glow: "shadow-orange-400", angle: 60, href: "/letters-assessment" }
+  ];
+
   // Handle window resize
   useEffect(() => {
     const handleResize = () => {
@@ -53,20 +65,37 @@ const Preschool = () => {
       });
     };
 
+    const preventTouch = (e) => {
+      if (e.touches.length > 1) {
+        e.preventDefault();
+      }
+    };
+
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    document.addEventListener('touchstart', preventTouch, { passive: false });
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      document.removeEventListener('touchstart', preventTouch);
+    };
   }, []);
 
   // Responsive calculations
   const isMobile = windowSize.width < 1100;
-  const isTablet = windowSize.width >= 1024 && windowSize.width < 1280;
+  const isTablet = windowSize.width >= 768 && windowSize.width < 1024;
+  const isDesktop = windowSize.width >= 1024;
   const isLandscape = windowSize.width > windowSize.height;
   const isMobileLandscape = isMobile && isLandscape;
   const isMobilePortrait = isMobile && !isLandscape;
+  const isSmallMobileLandscape = isMobileLandscape && windowSize.width < 700;
+  const isDesktopLandscape = isDesktop && isLandscape;
   const isTabletPortrait = isTablet && !isLandscape;
 
   // Use BBC-style layout for both mobile landscape and portrait
   const useBbcLayout = isMobileLandscape || isMobilePortrait;
+
+  // Show instant assess only on mobile screens
+  const showInstantAssess = isMobile || isTablet;
 
   // Navigation handler
   const handleNavigation = (href) => {
@@ -83,11 +112,98 @@ const Preschool = () => {
 
   // Responsive sizes
   const getResponsiveSize = (mobile, tablet, desktop, landscapeMobile = null, smallLandscape = null) => {
+    if (isSmallMobileLandscape && smallLandscape !== null) return smallLandscape;
     if (isMobileLandscape && landscapeMobile !== null) return landscapeMobile;
     if (isMobile) return mobile;
     if (isTablet) return tablet;
     return desktop;
   };
+
+  // Circle position calculation for mobile only
+  const getCirclePosition = (angle, radius, index) => {
+    // For mobile portrait, position circles in a grid
+    if (isMobilePortrait && showMiniCircles) {
+      const cols = 2; // 2 columns
+      const rows = 2; // 2 rows
+      const col = index % cols;
+      const row = Math.floor(index / cols);
+      const spacingX = 80; // Horizontal spacing
+      const spacingY = 80; // Vertical spacing
+      return { 
+        x: (col * spacingX) - (spacingX * (cols - 1) / 2), 
+        y: (row * spacingY) - (spacingY * (rows - 1) / 2) - 100 // Move up from center
+      };
+    }
+    
+    // For mobile landscape, position in a horizontal line
+    if (isMobileLandscape && showMiniCircles) {
+      const totalCircles = assessmentCategories.length;
+      const spacing = 70;
+      const startX = -((totalCircles - 1) * spacing) / 2;
+      return { 
+        x: startX + (index * spacing), 
+        y: -80
+      };
+    }
+    
+    if (isTablet) {
+      const totalCircles = assessmentCategories.length;
+      const spacing = 180;
+      const startX = -((totalCircles - 1) * spacing) / 2;
+      return { 
+        x: startX + (index * spacing), 
+        y: -80
+      };
+    }
+    
+    const radian = (angle * Math.PI) / 180;
+    return { x: Math.cos(radian) * radius, y: Math.sin(radian) * radius };
+  };
+
+  const handleInstantAssessmentTap = () => {
+    if (showInstantAssess) {
+      setShowMiniCircles(prev => !prev);
+    }
+  };
+
+  const handleMiniCircleTap = (href) => {
+    if (showInstantAssess) {
+      handleNavigation(href);
+      setShowMiniCircles(false);
+    } else {
+      handleNavigation(href);
+    }
+  };
+
+  const handleMenuStateChange = (isOpen) => {
+    setIsMenuOpen(isOpen);
+    if (isOpen) {
+      setIs3DButtonHovered(false);
+      setShowMiniCircles(false);
+    }
+  };
+
+  const handleContainerClick = (e) => {
+    if (e.target === e.currentTarget && showInstantAssess) {
+      setShowMiniCircles(false);
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (showInstantAssess && showMiniCircles) {
+        const buttonContainer = document.querySelector('.instant-assessment-container');
+        if (buttonContainer && !buttonContainer.contains(e.target)) {
+          setShowMiniCircles(false);
+        }
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [showMiniCircles, showInstantAssess]);
 
   // Function to determine ninja position
   const getNinjaPosition = () => {
@@ -99,10 +215,11 @@ const Preschool = () => {
 
   // Function to determine ninja dialog position
   const getNinjaDialogPosition = () => {
-    if (useBbcLayout) return 'top-2 -right-1 translate-x-full scale-90';
-    if (isMobile) return isLandscape ? 'top-4 -right-1 translate-x-full' : 'top-12 -right-1 translate-x-full';
-    if (isTablet) return 'top-4 -right-1 translate-x-full';
-    return 'top-20 -right-2 translate-x-full';
+    if (isDesktopLandscape) return 'bottom-1/2 left-full transform translate-y-1/2 ml-4 scale-50';
+    if (useBbcLayout) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-2 scale-90';
+    if (isMobile) return isLandscape ? 'bottom-full left-1/2 transform -translate-x-1/2 mb-2' : 'bottom-full left-1/2 transform -translate-x-1/2 mb-2';
+    if (isTablet) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-3';
+    return 'bottom-full left-1/2 transform -translate-x-1/2 mb-4';
   };
 
   // Function to determine plus menu position
@@ -111,6 +228,15 @@ const Preschool = () => {
     if (isMobile) return isLandscape ? 'bottom-4 left-4' : 'bottom-20 left-4';
     if (isTablet) return 'bottom-16 right-10';
     return 'bottom-16 right-10';
+  };
+
+  // Function to determine instant assess button position (Mobile only)
+  const getInstantAssessButtonPosition = () => {
+    if (isDesktopLandscape) return 'top-1/2 right-32 transform -translate-y-1/2 scale-100';
+    if (isMobilePortrait) return 'bottom-4 right-4 transform scale-75';
+    if (isMobileLandscape) return 'bottom-4 right-4 transform scale-65';
+    if (isTablet) return 'bottom-6 right-6 transform scale-90';
+    return 'bottom-8 right-8 transform scale-100';
   };
 
   const getJellyMenuMaxHeight = () => {
@@ -170,13 +296,13 @@ const Preschool = () => {
   }, [ninjaText, isNinjaTyping, ninjaLines]);
 
   return (
-    <div className="min-h-screen bg-white relative overflow-x-hidden">
+    <div className="min-h-screen bg-white relative overflow-x-hidden" onClick={handleContainerClick}>
       {useBbcLayout ? (
         // BBC-style Layout for Mobile (Both Landscape and Portrait)
         <div className="w-full h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 overflow-y-auto">
           {/* Green Navbar - Now part of scrollable content */}
           <div className="relative z-50">
-            <Navbar />
+            <Navbar onMenuStateChange={handleMenuStateChange} />
           </div>
 
           {/* BBC-style header bar */}
@@ -328,7 +454,7 @@ const Preschool = () => {
         <div className="relative">
           {/* Green Navbar */}
           <div className="relative z-50">
-            <Navbar />
+            <Navbar onMenuStateChange={handleMenuStateChange} />
           </div>
 
           {/* Background Image */}
@@ -355,6 +481,170 @@ const Preschool = () => {
 
       {/* Interactive Elements - Fixed position elements that stay visible */}
       <div className="fixed inset-0 z-40 pointer-events-none">
+        {/* Instant Assessment Button - MOBILE ONLY */}
+        {showInstantAssess && !isMenuOpen && (
+          <div 
+            className={`fixed instant-assessment-container ${getInstantAssessButtonPosition()} pointer-events-auto`}
+            style={{ touchAction: 'manipulation' }}
+            onMouseEnter={() => !isMobile && setIs3DButtonHovered(true)}
+            onMouseLeave={() => {
+              if (!isMobile) {
+                setIs3DButtonHovered(false);
+                setHoveredCircle(null);
+              }
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative" style={{ 
+              width: getResponsiveSize('120px', '150px', '180px', '80px', '70px'), 
+              height: getResponsiveSize('120px', '150px', '180px', '80px', '70px') 
+            }}>
+              <div className="absolute inset-0">
+                {assessmentCategories.map((category, index) => {
+                  const radius = getResponsiveSize(80, 100, 120, 50, 45);
+                  const position = getCirclePosition(category.angle, radius, index);
+                  const circleSize = getResponsiveSize('50px', '60px', '70px', '35px', '30px');
+                  
+                  const shouldShowMiniCircles = isMobile || isTablet ? showMiniCircles : is3DButtonHovered;
+                  
+                  return (
+                    <div key={category.title} className={`absolute transition-all duration-700 ease-out ${shouldShowMiniCircles ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
+                      style={{ 
+                        left: '50%', 
+                        top: '50%', 
+                        transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`, 
+                        transitionDelay: shouldShowMiniCircles ? `${index * 120}ms` : '0ms' 
+                      }}
+                      onMouseEnter={() => !isMobile && setHoveredCircle(index)}
+                      onMouseLeave={() => !isMobile && setHoveredCircle(null)}>
+                      {!isMobile && !isMobilePortrait && (
+                        <svg className={`absolute transition-all duration-500 ${shouldShowMiniCircles ? 'opacity-100' : 'opacity-0'}`}
+                          style={{ 
+                            left: '50%', 
+                            top: '50%', 
+                            transform: `translate(-50%, -50%)`, 
+                            width: isTablet ? `${Math.abs(position.x) * 2 + 50}px` : `${radius + 50}px`, 
+                            height: isTablet ? '100px' : `${radius + 50}px`, 
+                            pointerEvents: 'none', 
+                            transitionDelay: shouldShowMiniCircles ? `${index * 120 + 200}ms` : '0ms' 
+                          }}>
+                          {isTablet && (
+                            <path 
+                              d={`M ${(Math.abs(position.x) * 2 + 50) / 2} ${50} L ${(Math.abs(position.x) * 2 + 50) / 2 + position.x} ${50 + position.y}`} 
+                              stroke="rgba(251, 191, 36, 0.6)" 
+                              strokeWidth="3" 
+                              fill="none" 
+                              strokeDasharray="5,5" 
+                            />
+                          )}
+                          {!isTablet && (
+                            <path 
+                              d={`M ${(radius + 50) / 2} ${(radius + 50) / 2} L ${(radius + 50) / 2 - position.x} ${(radius + 50) / 2 - position.y}`} 
+                              stroke="rgba(251, 191, 36, 0.6)" 
+                              strokeWidth="3" 
+                              fill="none" 
+                              strokeDasharray="5,5" 
+                            />
+                          )}
+                          <circle 
+                            cx={isTablet ? `${(Math.abs(position.x) * 2 + 50) / 2 + position.x}` : `${(radius + 50) / 2 - position.x}`} 
+                            cy={isTablet ? `${50 + position.y}` : `${(radius + 50) / 2 - position.y}`} 
+                            r="4" 
+                            fill="#fbbf24" 
+                            className="drop-shadow-lg" 
+                            style={{ filter: 'drop-shadow(0 0 6px rgba(251, 191, 36, 0.8))' }} 
+                          />
+                        </svg>
+                      )}
+                      <div 
+                        className={`relative rounded-full transform transition-all duration-400 cursor-pointer ${!isMobile && hoveredCircle === index ? 'scale-110 rotate-12' : 'scale-100 rotate-0'} bg-gradient-to-br ${category.gradient} shadow-xl ${category.shadow} ${!isMobile && hoveredCircle === index ? `${category.glow} shadow-2xl` : ''}`}
+                        style={{ 
+                          width: circleSize, 
+                          height: circleSize, 
+                          border: '3px solid rgba(255, 255, 255, 0.3)',
+                          boxShadow: !isMobile && hoveredCircle === index ? `0 12px 30px ${category.shadow.replace('/50', '/60')}, inset 0 -3px 8px rgba(0,0,0,0.3), inset 0 3px 8px rgba(255,255,255,0.3)` : '0 6px 20px rgba(0,0,0,0.3), inset 0 -2px 6px rgba(0,0,0,0.3), inset 0 2px 6px rgba(255,255,255,0.2)' 
+                        }}
+                        onClick={() => handleMiniCircleTap(category.href)}
+                      >
+                        <div className="absolute inset-1 rounded-full border border-white/20"></div>
+                        <div className="absolute inset-2 rounded-full bg-gradient-to-br from-white/30 to-transparent"></div>
+                        <div className="relative z-10 flex flex-col items-center justify-center h-full p-1">
+                          <span className="text-white font-black tracking-wider mb-0.5 drop-shadow-lg" style={{ 
+                            textShadow: '2px 2px 4px rgba(0,0,0,0.5)', 
+                            fontSize: getResponsiveSize('0.5rem', '0.6rem', '0.7rem', '0.4rem', '0.35rem') 
+                          }}>
+                            {category.title}
+                          </span>
+                        </div>
+                        {!isMobile && <div className={`absolute inset-0 rounded-full transition-all duration-500 ${hoveredCircle === index ? 'opacity-100' : 'opacity-0'}`} style={{ border: '1px dashed rgba(255, 255, 255, 0.4)', animation: hoveredCircle === index ? 'spin 3s linear infinite' : 'none' }}></div>}
+                        {!isMobile && hoveredCircle === index && (
+                          <div className="absolute inset-0 rounded-full overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent shine-animation"></div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <button 
+                className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-500 ${!isMobile && is3DButtonHovered ? 'scale-110' : 'scale-100'} ${isDesktop ? 'cursor-default' : 'cursor-pointer'} group`}
+                style={{ 
+                  width: getResponsiveSize('60px', '70px', '80px', '40px', '35px'), 
+                  height: getResponsiveSize('60px', '70px', '80px', '40px', '35px'), 
+                  background: 'linear-gradient(145deg, #fbbf24, #f59e0b, #d97706)', 
+                  boxShadow: !isMobile && is3DButtonHovered ? '0 15px 35px rgba(251, 191, 36, 0.6), 0 0 60px rgba(251, 191, 36, 0.4), inset 0 -5px 12px rgba(0,0,0,0.4), inset 0 5px 12px rgba(255,255,255,0.3)' : '0 8px 20px rgba(251, 191, 36, 0.4), 0 0 30px rgba(251, 191, 36, 0.2), inset 0 -3px 10px rgba(0,0,0,0.3), inset 0 3px 10px rgba(255,255,255,0.2)', 
+                  border: '3px solid rgba(255, 255, 255, 0.3)'
+                }}
+                onClick={handleInstantAssessmentTap}
+                onMouseEnter={() => !isMobile && setIs3DButtonHovered(true)}
+                onMouseLeave={() => !isMobile && setIs3DButtonHovered(false)}
+              >
+                <div className="absolute inset-0 rounded-full" style={{ border: '2px solid rgba(0, 0, 0, 0.2)', boxShadow: 'inset 0 1px 3px rgba(255,255,255,0.5), inset 0 -1px 3px rgba(0,0,0,0.3)' }}></div>
+                {!isMobile && <div className={`absolute inset-0 rounded-full transition-opacity duration-500 ${is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ border: '1px dashed rgba(255, 255, 255, 0.3)', animation: is3DButtonHovered ? 'spin 4s linear infinite' : 'none' }}></div>}
+                <div className={`absolute rounded-full transition-opacity duration-700 ${!isMobile && is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ inset: getResponsiveSize('0.8rem', '1rem', '1rem', '0.4rem', '0.35rem'), background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 60%)', animation: !isMobile && is3DButtonHovered ? 'pulse 1.5s ease-in-out infinite' : 'none' }}></div>
+                <div className="relative z-10 flex flex-col items-center justify-center h-full">
+                  <div className="relative mb-0.5">
+                    <div className="absolute inset-0 bg-white/20 rounded-full blur-sm"></div>
+                    <svg className="text-white drop-shadow-lg relative z-10" style={{ 
+                      width: getResponsiveSize('1rem', '1.25rem', '1.5rem', '0.6rem', '0.5rem'), 
+                      height: getResponsiveSize('1rem', '1.25rem', '1.5rem', '0.6rem', '0.5rem') 
+                    }} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    </svg>
+                  </div>
+                  <div className="text-center">
+                    <span className="text-white font-black tracking-wider drop-shadow-lg block" style={{ 
+                      textShadow: '1px 1px 3px rgba(0,0,0,0.5), 0 0 8px rgba(255,255,255,0.3)', 
+                      fontSize: getResponsiveSize('0.5rem', '0.6rem', '0.7rem', '0.3rem', '0.28rem') 
+                    }}>
+                      INSTANT
+                    </span>
+                    <div className="text-white font-bold tracking-wide drop-shadow-lg" style={{ 
+                      textShadow: '1px 1px 2px rgba(0,0,0,0.5)', 
+                      fontSize: getResponsiveSize('0.4rem', '0.5rem', '0.6rem', '0.25rem', '0.22rem') 
+                    }}>
+                      ASSESS
+                    </div>
+                    <span className="text-white/90 font-semibold mt-0.5 block" style={{ 
+                      textShadow: '1px 1px 2px rgba(0,0,0,0.5)', 
+                      fontSize: getResponsiveSize('0.3rem', '0.4rem', '0.4rem', '0.2rem', '0.18rem') 
+                    }}>
+                      Powered by KAI
+                    </span>
+                  </div>
+                </div>
+                {!isMobile && (
+                  <div className={`absolute inset-0 rounded-full overflow-hidden transition-opacity duration-500 ${is3DButtonHovered ? 'opacity-100' : 'opacity-0'}`}>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent shine-animation"></div>
+                  </div>
+                )}
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Floating Plus Menu with Robot and Dialog - Responsive Positioning */}
         <nav 
           className={`btn-pluss-wrapper fixed z-50 flex flex-col items-center transition-all duration-300 pointer-events-auto ${getPlusMenuPosition()}`}
@@ -448,7 +738,7 @@ const Preschool = () => {
                     height: isHovered ? getResponsiveSize('2.5rem', '3rem', '3rem', '2.25rem', '2rem') : '0',
                     transitionDelay: isHovered 
                       ? `${index * 100}ms` 
-                      : `${(menuItems.length - index) * 80}ms`
+                      : `${(menuItems.length - index - 1) * 80}ms`
                   }}
                   onClick={() => handleNavigation(item.href)}
                 >
@@ -476,61 +766,59 @@ const Preschool = () => {
 
         {/* Ninja Image with Cartoon Dialog - Responsive Positioning */}
         <div className={`fixed bottom-0 left-1/2 transform -translate-x-1/2 z-40 transition-all duration-300 pointer-events-auto ${getNinjaPosition()}`}>
-          <div className="relative">
-            {/* Ninja Image */}
-            <img 
-              src="/images/ninja.png" 
-              alt="Ninja" 
-              className="object-contain drop-shadow-lg"
-              style={{
-                width: getResponsiveSize(
-                  isLandscape ? '8rem' : '12rem',
-                  '14rem',
-                  '20rem',
-                  '6rem',
-                  '5rem'
-                ),
-                height: getResponsiveSize(
-                  isLandscape ? '8rem' : '12rem',
-                  '14rem',
-                  '20rem',
-                  '6rem',
-                  '5rem'
-                )
-              }}
-            />
-            
-            {/* Ninja Cartoon Dialog - Responsive Positioning */}
-            <div className={`absolute transform ${getNinjaDialogPosition()}`}>
-              <div 
-                className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 relative"
-                style={{
-                  maxWidth: getResponsiveSize('140px', '160px', '180px', '120px', '100px'),
-                  minHeight: getResponsiveSize('60px', '70px', '80px', '50px', '45px')
-                }}
-              >
-                <div 
-                  className="font-medium text-gray-800 whitespace-pre-line"
-                  style={{
-                    fontSize: getResponsiveSize('0.7rem', '0.8rem', '0.875rem', '0.65rem', '0.6rem')
-                  }}
-                >
+          <div className="relative flex flex-col items-center">
+            {/* UPDATED: Ninja Dialog - Now positioned to the right for desktop landscape */}
+            <div className={`absolute ${getNinjaDialogPosition()}`}>
+              <div className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 relative" style={{ 
+                maxWidth: getResponsiveSize('140px', '160px', '180px', '120px', '100px'), 
+                minHeight: getResponsiveSize('60px', '70px', '80px', '50px', '45px') 
+              }}>
+                <div className="font-medium text-gray-800 whitespace-pre-line text-center" style={{ 
+                  fontSize: getResponsiveSize('0.7rem', '0.8rem', '0.875rem', '0.65rem', '0.6rem') 
+                }}>
                   {ninjaText}
                   <span className="inline-block w-1 h-3 bg-gray-800 ml-1 animate-pulse"></span>
                 </div>
-                {/* Speech bubble tail pointing left towards ninja */}
-                <div 
-                  className="absolute transform -translate-y-1/2 rotate-45 bg-white border-l border-b border-gray-200"
-                  style={{
-                    bottom: getResponsiveSize('1.5rem', '1.75rem', '2rem', '1.25rem', '1rem'),
-                    left: '-0.25rem',
-                    width: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem'),
-                    height: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem')
-                  }}
-                ></div>
+                {/* UPDATED: Pointer arrow positioned for right-side placement */}
+                <div className={`absolute ${
+                  isDesktopLandscape 
+                    ? 'right-full top-1/2 transform -translate-y-1/2 -translate-x-1/2 rotate-[135deg]' 
+                    : 'top-full left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-45'
+                } bg-white border-r border-b border-gray-200`} style={{ 
+                  width: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem'), 
+                  height: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem') 
+                }}></div>
               </div>
             </div>
+            
+            {/* Ninja Image */}
+            <img 
+              src="/images/ninja.png" 
+              alt="Ninja character offering help" 
+              className="object-contain drop-shadow-lg" 
+              style={{ 
+                width: getResponsiveSize(
+                  isLandscape ? '8rem' : '12rem', 
+                  '14rem', 
+                  '20rem', 
+                  '6rem', 
+                  '5rem'
+                ), 
+                height: getResponsiveSize(
+                  isLandscape ? '8rem' : '12rem', 
+                  '14rem', 
+                  '20rem', 
+                  '6rem', 
+                  '5rem'
+                ) 
+              }} 
+            />
           </div>
+        </div>
+
+        {/* Bottom Navigation */}
+        <div className="fixed bottom-0 left-0 right-0 z-40 pointer-events-auto">
+          <BottomNav />
         </div>
       </div>
 
@@ -540,6 +828,20 @@ const Preschool = () => {
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
+        }
+
+        @keyframes pulse {
+          0%, 100% { opacity: 0.6; }
+          50% { opacity: 1; }
+        }
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .shine-animation { animation: shine 2s infinite; }
+        @keyframes shine {
+          0% { transform: translateX(-100%) skewX(-15deg); }
+          100% { transform: translateX(200%) skewX(-15deg); }
         }
 
         /* Custom scrollbar for preschool theme */
@@ -590,13 +892,6 @@ const Preschool = () => {
         @media (max-width: 767px) {
           * {
             -webkit-tap-highlight-color: transparent;
-          }
-        }
-
-        /* Enhanced image rendering */
-        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-          .btn-pluss-wrapper, .ninja-container {
-            image-rendering: -webkit-optimize-contrast;
           }
         }
 
