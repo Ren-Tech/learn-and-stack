@@ -124,7 +124,7 @@ const ElevenPlus = () => {
     return "/images/11+.png";
   };
 
-  // Responsive sizes
+  // Responsive sizes - UPDATED with larger sizes to match Primary
   const getResponsiveSize = (mobile, tablet, desktop, landscapeMobile = null, smallLandscape = null) => {
     if (isSmallMobileLandscape && smallLandscape !== null) return smallLandscape;
     if (isMobileLandscape && landscapeMobile !== null) return landscapeMobile;
@@ -133,7 +133,7 @@ const ElevenPlus = () => {
     return desktop;
   };
 
-  // Circle position calculation for mobile only
+  // Circle position calculation for mobile only - UPDATED with larger spacing
   const getCirclePosition = (angle, radius, index) => {
     // For mobile portrait, position circles in a grid
     if (isMobilePortrait && showMiniCircles) {
@@ -141,8 +141,8 @@ const ElevenPlus = () => {
       const rows = 2; // 2 rows
       const col = index % cols;
       const row = Math.floor(index / cols);
-      const spacingX = 80; // Horizontal spacing
-      const spacingY = 80; // Vertical spacing
+      const spacingX = 90; // Increased horizontal spacing
+      const spacingY = 90; // Increased vertical spacing
       return { 
         x: (col * spacingX) - (spacingX * (cols - 1) / 2), 
         y: (row * spacingY) - (spacingY * (rows - 1) / 2) - 100 // Move up from center
@@ -152,21 +152,21 @@ const ElevenPlus = () => {
     // For mobile landscape, position in a horizontal line
     if (isMobileLandscape && showMiniCircles) {
       const totalCircles = assessmentCategories.length;
-      const spacing = 70;
+      const spacing = 80; // Increased spacing
       const startX = -((totalCircles - 1) * spacing) / 2;
       return { 
         x: startX + (index * spacing), 
-        y: -80
+        y: -90 // Moved up slightly
       };
     }
     
     if (isTablet) {
       const totalCircles = assessmentCategories.length;
-      const spacing = 180;
+      const spacing = 200; // Increased spacing
       const startX = -((totalCircles - 1) * spacing) / 2;
       return { 
         x: startX + (index * spacing), 
-        y: -80
+        y: -90
       };
     }
     
@@ -228,14 +228,14 @@ const ElevenPlus = () => {
   };
 
   // Function to determine ninja dialog position - UPDATED
- const getNinjaDialogPosition = () => {
-  if (isDesktopLandscape) return 'bottom-1/2 left-full transform translate-y-1/2 ml-4 scale-50';
-  if (isMobileLandscape) return 'top-1/2 right-full transform -translate-y-1/2 mr-2 scale-75';
-  if (useBbcLayout) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-2 scale-90';
-  if (isMobile) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-2';
-  if (isTablet) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-3';
-  return 'bottom-full left-1/2 transform -translate-x-1/2 mb-4';
-};
+  const getNinjaDialogPosition = () => {
+    if (isDesktopLandscape) return 'bottom-1/2 left-full transform translate-y-1/2 ml-4 scale-50';
+    if (isMobileLandscape) return 'top-1/2 right-full transform -translate-y-1/2 mr-2 scale-75';
+    if (useBbcLayout) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-2 scale-90';
+    if (isMobile) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-2';
+    if (isTablet) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-3';
+    return 'bottom-full left-1/2 transform -translate-x-1/2 mb-4';
+  };
 
   // Function to determine plus menu position
   const getPlusMenuPosition = () => {
@@ -245,13 +245,22 @@ const ElevenPlus = () => {
     return 'bottom-16 right-10';
   };
 
-  // Function to determine instant assess button position (INSIDE BottomNav) - UPDATED
+  // Function to determine instant assess button position - UPDATED to move left by 1 inch (96px) to match Primary
   const getInstantAssessButtonPosition = () => {
-    if (isDesktopLandscape) return 'top-1/2 right-32 transform -translate-y-1/2 scale-100';
-    if (isMobilePortrait) return 'bottom-4 right-4 transform scale-75';
-    if (isMobileLandscape) return 'bottom-4 right-4 transform scale-65';
-    if (isTablet) return 'bottom-6 right-6 transform scale-90';
-    return 'bottom-8 right-8 transform scale-100';
+    if (isDesktopLandscape) return 'top-1/2 transform -translate-y-1/2 scale-100';
+    if (isMobilePortrait) return 'bottom-4 transform scale-85'; // Increased from 0.75
+    if (isMobileLandscape) return 'bottom-100 transform scale-75'; // Increased from 0.65
+    if (isTablet) return 'bottom-6 transform scale-100'; // Increased from 0.90
+    return 'bottom-8 transform scale-100';
+  };
+
+  // Get right position for instant assess button - UPDATED to match Primary
+  const getInstantAssessRightPosition = () => {
+    if (isDesktopLandscape) return '128px'; // Desktop: moved left by 96px (1 inch)
+    if (isMobilePortrait) return '20px'; // Mobile portrait: moved left
+    if (isMobileLandscape) return '60px'; // Mobile landscape: moved left
+    if (isTablet) return '30px'; // Tablet: moved left
+    return '40px'; // Default: moved left
   };
 
   const getJellyMenuMaxHeight = () => {
@@ -513,15 +522,13 @@ const ElevenPlus = () => {
 
       {/* Interactive Elements - Fixed position elements that stay visible */}
       <div className="fixed inset-0 z-40 pointer-events-none">
-        {/* Instant Assessment Button - INSIDE BOTTOM NAVBAR - UPDATED */}
+        {/* Instant Assessment Button - UPDATED position and size to match Primary */}
         {showInstantAssess && !isMenuOpen && (
           <div 
-            className={`fixed instant-assessment-container bottom-0 right-0 z-50 pointer-events-auto`}
+            className={`fixed instant-assessment-container bottom-0 z-50 pointer-events-auto ${getInstantAssessButtonPosition()}`}
             style={{ 
-              touchAction: 'manipulation',
-              transform: isMobilePortrait ? 'scale(0.6) translateY(-5px)' : 
-                         isMobileLandscape ? 'scale(0.5) translateY(-5px)' : 
-                         isTablet ? 'scale(0.7) translateY(-8px)' : 'scale(0.8) translateY(-10px)'
+              right: getInstantAssessRightPosition(),
+              touchAction: 'manipulation'
             }}
             onMouseEnter={() => !isMobile && setIs3DButtonHovered(true)}
             onMouseLeave={() => {
@@ -533,14 +540,14 @@ const ElevenPlus = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="relative" style={{ 
-              width: getResponsiveSize('120px', '150px', '180px', '80px', '70px'), 
-              height: getResponsiveSize('120px', '150px', '180px', '80px', '70px') 
+              width: getResponsiveSize('150px', '180px', '220px', '100px', '90px'), // Increased sizes to match Primary
+              height: getResponsiveSize('150px', '180px', '220px', '100px', '90px') // Increased sizes to match Primary
             }}>
               <div className="absolute inset-0">
                 {assessmentCategories.map((category, index) => {
-                  const radius = getResponsiveSize(80, 100, 120, 50, 45);
+                  const radius = getResponsiveSize(100, 120, 150, 60, 55); // Increased radius to match Primary
                   const position = getCirclePosition(category.angle, radius, index);
-                  const circleSize = getResponsiveSize('50px', '60px', '70px', '35px', '30px');
+                  const circleSize = getResponsiveSize('60px', '70px', '85px', '42px', '38px'); // Increased circle sizes to match Primary
                   
                   const shouldShowMiniCircles = isMobile || isTablet ? showMiniCircles : is3DButtonHovered;
                   
@@ -560,14 +567,14 @@ const ElevenPlus = () => {
                             left: '50%', 
                             top: '50%', 
                             transform: `translate(-50%, -50%)`, 
-                            width: isTablet ? `${Math.abs(position.x) * 2 + 50}px` : `${radius + 50}px`, 
-                            height: isTablet ? '100px' : `${radius + 50}px`, 
+                            width: isTablet ? `${Math.abs(position.x) * 2 + 60}px` : `${radius + 60}px`, 
+                            height: isTablet ? '120px' : `${radius + 60}px`, 
                             pointerEvents: 'none', 
                             transitionDelay: shouldShowMiniCircles ? `${index * 120 + 200}ms` : '0ms' 
                           }}>
                           {isTablet && (
                             <path 
-                              d={`M ${(Math.abs(position.x) * 2 + 50) / 2} ${50} L ${(Math.abs(position.x) * 2 + 50) / 2 + position.x} ${50 + position.y}`} 
+                              d={`M ${(Math.abs(position.x) * 2 + 60) / 2} ${60} L ${(Math.abs(position.x) * 2 + 60) / 2 + position.x} ${60 + position.y}`} 
                               stroke="rgba(251, 191, 36, 0.6)" 
                               strokeWidth="3" 
                               fill="none" 
@@ -576,7 +583,7 @@ const ElevenPlus = () => {
                           )}
                           {!isTablet && (
                             <path 
-                              d={`M ${(radius + 50) / 2} ${(radius + 50) / 2} L ${(radius + 50) / 2 - position.x} ${(radius + 50) / 2 - position.y}`} 
+                              d={`M ${(radius + 60) / 2} ${(radius + 60) / 2} L ${(radius + 60) / 2 - position.x} ${(radius + 60) / 2 - position.y}`} 
                               stroke="rgba(251, 191, 36, 0.6)" 
                               strokeWidth="3" 
                               fill="none" 
@@ -584,8 +591,8 @@ const ElevenPlus = () => {
                             />
                           )}
                           <circle 
-                            cx={isTablet ? `${(Math.abs(position.x) * 2 + 50) / 2 + position.x}` : `${(radius + 50) / 2 - position.x}`} 
-                            cy={isTablet ? `${50 + position.y}` : `${(radius + 50) / 2 - position.y}`} 
+                            cx={isTablet ? `${(Math.abs(position.x) * 2 + 60) / 2 + position.x}` : `${(radius + 60) / 2 - position.x}`} 
+                            cy={isTablet ? `${60 + position.y}` : `${(radius + 60) / 2 - position.y}`} 
                             r="4" 
                             fill="#fbbf24" 
                             className="drop-shadow-lg" 
@@ -608,7 +615,7 @@ const ElevenPlus = () => {
                         <div className="relative z-10 flex flex-col items-center justify-center h-full p-1">
                           <span className="text-white font-black tracking-wider mb-0.5 drop-shadow-lg" style={{ 
                             textShadow: '2px 2px 4px rgba(0,0,0,0.5)', 
-                            fontSize: getResponsiveSize('0.5rem', '0.6rem', '0.7rem', '0.4rem', '0.35rem') 
+                            fontSize: getResponsiveSize('0.6rem', '0.7rem', '0.85rem', '0.5rem', '0.45rem') 
                           }}>
                             {category.title}
                           </span>
@@ -628,8 +635,8 @@ const ElevenPlus = () => {
               <button 
                 className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-500 ${!isMobile && is3DButtonHovered ? 'scale-110' : 'scale-100'} ${isDesktop ? 'cursor-default' : 'cursor-pointer'} group`}
                 style={{ 
-                  width: getResponsiveSize('60px', '70px', '80px', '40px', '35px'), 
-                  height: getResponsiveSize('60px', '70px', '80px', '40px', '35px'), 
+                  width: getResponsiveSize('75px', '90px', '105px', '50px', '45px'), // Increased main button sizes to match Primary
+                  height: getResponsiveSize('75px', '90px', '105px', '50px', '45px'), // Increased main button sizes to match Primary
                   background: 'linear-gradient(145deg, #fbbf24, #f59e0b, #d97706)', 
                   boxShadow: !isMobile && is3DButtonHovered ? '0 15px 35px rgba(251, 191, 36, 0.6), 0 0 60px rgba(251, 191, 36, 0.4), inset 0 -5px 12px rgba(0,0,0,0.4), inset 0 5px 12px rgba(255,255,255,0.3)' : '0 8px 20px rgba(251, 191, 36, 0.4), 0 0 30px rgba(251, 191, 36, 0.2), inset 0 -3px 10px rgba(0,0,0,0.3), inset 0 3px 10px rgba(255,255,255,0.2)', 
                   border: '3px solid rgba(255, 255, 255, 0.3)'
@@ -640,13 +647,13 @@ const ElevenPlus = () => {
               >
                 <div className="absolute inset-0 rounded-full" style={{ border: '2px solid rgba(0, 0, 0, 0.2)', boxShadow: 'inset 0 1px 3px rgba(255,255,255,0.5), inset 0 -1px 3px rgba(0,0,0,0.3)' }}></div>
                 {!isMobile && <div className={`absolute inset-0 rounded-full transition-opacity duration-500 ${is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ border: '1px dashed rgba(255, 255, 255, 0.3)', animation: is3DButtonHovered ? 'spin 4s linear infinite' : 'none' }}></div>}
-                <div className={`absolute rounded-full transition-opacity duration-700 ${!isMobile && is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ inset: getResponsiveSize('0.8rem', '1rem', '1rem', '0.4rem', '0.35rem'), background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 60%)', animation: !isMobile && is3DButtonHovered ? 'pulse 1.5s ease-in-out infinite' : 'none' }}></div>
+                <div className={`absolute rounded-full transition-opacity duration-700 ${!isMobile && is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ inset: getResponsiveSize('1rem', '1.2rem', '1.2rem', '0.5rem', '0.45rem'), background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 60%)', animation: !isMobile && is3DButtonHovered ? 'pulse 1.5s ease-in-out infinite' : 'none' }}></div>
                 <div className="relative z-10 flex flex-col items-center justify-center h-full">
                   <div className="relative mb-0.5">
                     <div className="absolute inset-0 bg-white/20 rounded-full blur-sm"></div>
                     <svg className="text-white drop-shadow-lg relative z-10" style={{ 
-                      width: getResponsiveSize('1rem', '1.25rem', '1.5rem', '0.6rem', '0.5rem'), 
-                      height: getResponsiveSize('1rem', '1.25rem', '1.5rem', '0.6rem', '0.5rem') 
+                      width: getResponsiveSize('1.25rem', '1.5rem', '1.75rem', '0.75rem', '0.65rem'), 
+                      height: getResponsiveSize('1.25rem', '1.5rem', '1.75rem', '0.75rem', '0.65rem') 
                     }} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                     </svg>
@@ -654,19 +661,19 @@ const ElevenPlus = () => {
                   <div className="text-center">
                     <span className="text-white font-black tracking-wider drop-shadow-lg block" style={{ 
                       textShadow: '1px 1px 3px rgba(0,0,0,0.5), 0 0 8px rgba(255,255,255,0.3)', 
-                      fontSize: getResponsiveSize('0.5rem', '0.6rem', '0.7rem', '0.3rem', '0.28rem') 
+                      fontSize: getResponsiveSize('0.625rem', '0.75rem', '0.875rem', '0.4rem', '0.35rem') 
                     }}>
                       INSTANT
                     </span>
                     <div className="text-white font-bold tracking-wide drop-shadow-lg" style={{ 
                       textShadow: '1px 1px 2px rgba(0,0,0,0.5)', 
-                      fontSize: getResponsiveSize('0.4rem', '0.5rem', '0.6rem', '0.25rem', '0.22rem') 
+                      fontSize: getResponsiveSize('0.5rem', '0.625rem', '0.75rem', '0.35rem', '0.3rem') 
                     }}>
                       ASSESS
                     </div>
                     <span className="text-white/90 font-semibold mt-0.5 block" style={{ 
                       textShadow: '1px 1px 2px rgba(0,0,0,0.5)', 
-                      fontSize: getResponsiveSize('0.3rem', '0.4rem', '0.4rem', '0.2rem', '0.18rem') 
+                      fontSize: getResponsiveSize('0.375rem', '0.5rem', '0.5rem', '0.25rem', '0.22rem') 
                     }}>
                       Powered by KAI
                     </span>
@@ -806,27 +813,27 @@ const ElevenPlus = () => {
           <div className="relative flex flex-col items-center">
             {/* Ninja Dialog - Updated positioning */}
             <div className={`absolute ${getNinjaDialogPosition()}`}>
-  <div className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 relative" style={{ 
-    maxWidth: getResponsiveSize('140px', '160px', '180px', '120px', '100px'), 
-    minHeight: getResponsiveSize('60px', '70px', '80px', '50px', '45px') 
-  }}>
-    <div className="font-medium text-gray-800 whitespace-pre-line text-center" style={{ 
-      fontSize: getResponsiveSize('0.7rem', '0.8rem', '0.875rem', '0.65rem', '0.6rem') 
-    }}>
-      {ninjaText}
-      <span className="inline-block w-1 h-3 bg-gray-800 ml-1 animate-pulse"></span>
-    </div>
-    {/* Pointer arrow with conditional positioning */}
-    <div className={`absolute transform ${
-      isMobileLandscape 
-        ? 'top-1/2 right-0 translate-x-1/2 -translate-y-1/2 rotate-[135deg]' 
-        : 'top-full left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-45'
-    } bg-white border-r border-b border-gray-200`} style={{ 
-      width: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem'), 
-      height: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem') 
-    }}></div>
-  </div>
-</div>
+              <div className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 relative" style={{ 
+                maxWidth: getResponsiveSize('140px', '160px', '180px', '120px', '100px'), 
+                minHeight: getResponsiveSize('60px', '70px', '80px', '50px', '45px') 
+              }}>
+                <div className="font-medium text-gray-800 whitespace-pre-line text-center" style={{ 
+                  fontSize: getResponsiveSize('0.7rem', '0.8rem', '0.875rem', '0.65rem', '0.6rem') 
+                }}>
+                  {ninjaText}
+                  <span className="inline-block w-1 h-3 bg-gray-800 ml-1 animate-pulse"></span>
+                </div>
+                {/* Pointer arrow with conditional positioning */}
+                <div className={`absolute transform ${
+                  isMobileLandscape 
+                    ? 'top-1/2 right-0 translate-x-1/2 -translate-y-1/2 rotate-[135deg]' 
+                    : 'top-full left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-45'
+                } bg-white border-r border-b border-gray-200`} style={{ 
+                  width: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem'), 
+                  height: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem') 
+                }}></div>
+              </div>
+            </div>
             
             {/* Ninja Image */}
             <img 
