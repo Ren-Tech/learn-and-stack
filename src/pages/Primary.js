@@ -231,7 +231,7 @@ const Primary = () => {
   // Function to determine ninja dialog position - UPDATED
 const getNinjaDialogPosition = () => {
   if (isDesktopLandscape) return 'bottom-1/2 left-full transform translate-y-1/2 ml-4 scale-50';
-  if (isMobileLandscape) return 'top-1/2 left-full transform -translate-y-1/2 ml-2 scale-75';
+  if (isMobileLandscape) return 'top-1/2 right-full transform -translate-y-1/2 mr-2 scale-75';
   if (useBbcLayout) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-2 scale-90';
   if (isMobile) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-2';
   if (isTablet) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-3';
@@ -807,22 +807,26 @@ const getNinjaDialogPosition = () => {
           <div className="relative flex flex-col items-center">
             {/* Ninja Dialog - Updated positioning */}
             <div className={`absolute ${getNinjaDialogPosition()}`}>
-              <div className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 relative" style={{ 
-                maxWidth: getResponsiveSize('140px', '160px', '180px', '120px', '100px'), 
-                minHeight: getResponsiveSize('60px', '70px', '80px', '50px', '45px') 
-              }}>
-                <div className="font-medium text-gray-800 whitespace-pre-line text-center" style={{ 
-                  fontSize: getResponsiveSize('0.7rem', '0.8rem', '0.875rem', '0.65rem', '0.6rem') 
-                }}>
-                  {ninjaText}
-                  <span className="inline-block w-1 h-3 bg-gray-800 ml-1 animate-pulse"></span>
-                </div>
-                {/* Pointer arrow positioned for bottom placement */}
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-45 bg-white border-r border-b border-gray-200" style={{ 
-                  width: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem'), 
-                  height: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem') 
-                }}></div>
-              </div>
+  <div className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 relative" style={{ 
+    maxWidth: getResponsiveSize('140px', '160px', '180px', '120px', '100px'), 
+    minHeight: getResponsiveSize('60px', '70px', '80px', '50px', '45px') 
+  }}>
+    <div className="font-medium text-gray-800 whitespace-pre-line text-center" style={{ 
+      fontSize: getResponsiveSize('0.7rem', '0.8rem', '0.875rem', '0.65rem', '0.6rem') 
+    }}>
+      {ninjaText}
+      <span className="inline-block w-1 h-3 bg-gray-800 ml-1 animate-pulse"></span>
+    </div>
+    {/* Pointer arrow with conditional positioning */}
+    <div className={`absolute transform ${
+      isMobileLandscape 
+        ? 'top-1/2 right-0 translate-x-1/2 -translate-y-1/2 rotate-[135deg]' 
+        : 'top-full left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-45'
+    } bg-white border-r border-b border-gray-200`} style={{ 
+      width: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem'), 
+      height: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem') 
+    }}></div>
+  </div>
             </div>
             
             {/* Ninja Image */}
