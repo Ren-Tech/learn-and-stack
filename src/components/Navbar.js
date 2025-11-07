@@ -15,6 +15,15 @@ const Navbar = ({ onMenuStateChange }) => {
     height: window.innerHeight,
   });
 
+  // Robot and Instant Assess States
+  const [isHovered, setIsHovered] = useState(false);
+  const [displayedText, setDisplayedText] = useState('');
+  const [currentLine, setCurrentLine] = useState(0);
+  const [isTyping, setIsTyping] = useState(true);
+  const [is3DButtonHovered, setIs3DButtonHovered] = useState(false);
+  const [hoveredCircle, setHoveredCircle] = useState(null);
+  const [showMiniCircles, setShowMiniCircles] = useState(false);
+
   const navLinks = [
     { path: "/", label: "Home", ageRange: "" },
     { path: "/primary", label: "Primary", ageRange: "6-11 Years Old" },
@@ -22,6 +31,14 @@ const Navbar = ({ onMenuStateChange }) => {
     { path: "/11plus", label: "11+", ageRange: "11 Years Old" },
     { path: "/gcses", label: "GCSEs", ageRange: "14-16 Years Old" },
     { path: "/alevels", label: "A-Levels", ageRange: "16-18 Years Old" },
+  ];
+
+  // Assessment categories for instant assess button
+  const assessmentCategories = [
+    { title: "Math", gradient: "from-purple-600 via-purple-500 to-pink-500", shadow: "shadow-purple-500/50", glow: "shadow-purple-400", angle: -60, href: "/math-assessment" },
+    { title: "Science", gradient: "from-blue-600 via-blue-500 to-cyan-500", shadow: "shadow-blue-500/50", glow: "shadow-blue-400", angle: -20, href: "/science-assessment" },
+    { title: "English", gradient: "from-green-600 via-green-500 to-emerald-500", shadow: "shadow-green-500/50", glow: "shadow-green-400", angle: 20, href: "/english-assessment" },
+    { title: "Reading", gradient: "from-orange-600 via-orange-500 to-yellow-500", shadow: "shadow-orange-500/50", glow: "shadow-orange-400", angle: 60, href: "/reading-assessment" }
   ];
 
   // Check window size for responsive behavior
@@ -38,8 +55,9 @@ const Navbar = ({ onMenuStateChange }) => {
   }, []);
 
   const isDesktop = windowSize.width >= 1024;
+  const isMobile = windowSize.width < 768;
+  const isTablet = windowSize.width >= 768 && windowSize.width < 1024;
   const isLandscape = windowSize.width > windowSize.height;
-  const isDesktopLandscape = isDesktop && isLandscape;
 
   const isActive = (path) => location.pathname === path;
 
@@ -64,6 +82,76 @@ const Navbar = ({ onMenuStateChange }) => {
   const handleNavClick = (path) => {
     navigate(path);
     setIsMenuOpen(false);
+  };
+
+  // Robot dialog lines
+  const dialogLines = ["I'm KAI", "Can I help?"];
+
+  // KAI Robot typing animation
+  useEffect(() => {
+    if (currentLine < dialogLines.length) {
+      const currentText = dialogLines[currentLine];
+      
+      if (isTyping) {
+        if (displayedText.length < currentText.length) {
+          const timer = setTimeout(() => {
+            setDisplayedText(currentText.slice(0, displayedText.length + 1));
+          }, 100);
+          return () => clearTimeout(timer);
+        } else {
+          const timer = setTimeout(() => {
+            setIsTyping(false);
+            setTimeout(() => {
+              if (currentLine === dialogLines.length - 1) {
+                setCurrentLine(0);
+                setDisplayedText('');
+                setIsTyping(true);
+              } else {
+                setCurrentLine(prev => prev + 1);
+                setDisplayedText('');
+                setIsTyping(true);
+              }
+            }, 2000);
+          }, 1000);
+          return () => clearTimeout(timer);
+        }
+      }
+    }
+  }, [displayedText, currentLine, isTyping, dialogLines]);
+
+  // Instant Assessment Functions
+  const handleInstantAssessmentTap = () => {
+    setShowMiniCircles(prev => !prev);
+  };
+
+  const handleMiniCircleTap = (href) => {
+    navigate(href);
+    setShowMiniCircles(false);
+  };
+
+  const getCirclePosition = (angle, radius, index) => {
+    if (isMobile) {
+      const totalCircles = assessmentCategories.length;
+      const spacing = 60;
+      const startX = -((totalCircles - 1) * spacing) / 2;
+      return { 
+        x: startX + (index * spacing), 
+        y: -60
+      };
+    }
+    
+    if (isTablet) {
+      const totalCircles = assessmentCategories.length;
+      const spacing = 80;
+      const startX = -((totalCircles - 1) * spacing) / 2;
+      return { 
+        x: startX + (index * spacing), 
+        y: -70
+      };
+    }
+    
+    const radian = (angle * Math.PI) / 180;
+    return { x: Math.cos(radian) * radius, y: Math.sin(radian) * radius };
   };
 
   // Notify parent component when menu state changes
@@ -179,8 +267,7 @@ const Navbar = ({ onMenuStateChange }) => {
   return (
     <>
       {/* ===== Top Navbar ===== */}
-      {/* REMOVED: sticky top-0 - Now it will scroll with content */}
-      <nav className="bg-gradient-to-r from-blue-600 to-blue-700 py-3 px-4 sm:px-6 md:px-8 lg:px-10 shadow-2xl z-50">
+      <nav className="bg-gradient-to-r from-blue-600 to-blue-700 py-3 px-4 sm:px-6 md:px-8 lg:px-10 shadow-2xl z-50 relative">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           {/* Logo + Title */}
           <div className="flex items-center gap-3">
@@ -223,8 +310,143 @@ const Navbar = ({ onMenuStateChange }) => {
             ))}
           </ul>
 
-          {/* Right Icons */}
+          {/* Right Icons - Updated with Robot and Instant Assess */}
           <div className="hidden sm:flex items-center gap-3 md:gap-4">
+            {/* Instant Assessment Button */}
+            <div className="relative instant-assessment-container">
+              <div className="relative" style={{ 
+                width: isMobile ? '80px' : isTablet ? '100px' : '120px', 
+                height: isMobile ? '80px' : isTablet ? '100px' : '120px' 
+              }}>
+                <div className="absolute inset-0">
+                  {assessmentCategories.map((category, index) => {
+                    const radius = isMobile ? 50 : isTablet ? 60 : 80;
+                    const position = getCirclePosition(category.angle, radius, index);
+                    const circleSize = isMobile ? '35px' : isTablet ? '45px' : '55px';
+                    
+                    return (
+                      <div key={category.title} className={`absolute transition-all duration-700 ease-out ${showMiniCircles ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
+                        style={{ 
+                          left: '50%', 
+                          top: '50%', 
+                          transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`, 
+                          transitionDelay: showMiniCircles ? `${index * 120}ms` : '0ms' 
+                        }}
+                        onMouseEnter={() => setHoveredCircle(index)}
+                        onMouseLeave={() => setHoveredCircle(null)}>
+                        <div 
+                          className={`relative rounded-full transform transition-all duration-400 cursor-pointer ${hoveredCircle === index ? 'scale-110 rotate-12' : 'scale-100 rotate-0'} bg-gradient-to-br ${category.gradient} shadow-xl ${category.shadow} ${hoveredCircle === index ? `${category.glow} shadow-2xl` : ''}`}
+                          style={{ 
+                            width: circleSize, 
+                            height: circleSize, 
+                            border: '3px solid rgba(255, 255, 255, 0.3)',
+                            boxShadow: hoveredCircle === index ? `0 12px 30px ${category.shadow.replace('/50', '/60')}, inset 0 -3px 8px rgba(0,0,0,0.3), inset 0 3px 8px rgba(255,255,255,0.3)` : '0 6px 20px rgba(0,0,0,0.3), inset 0 -2px 6px rgba(0,0,0,0.3), inset 0 2px 6px rgba(255,255,255,0.2)' 
+                          }}
+                          onClick={() => handleMiniCircleTap(category.href)}
+                        >
+                          <div className="absolute inset-1 rounded-full border border-white/20"></div>
+                          <div className="absolute inset-2 rounded-full bg-gradient-to-br from-white/30 to-transparent"></div>
+                          <div className="relative z-10 flex flex-col items-center justify-center h-full p-1">
+                            <span className="text-white font-black tracking-wider mb-0.5 drop-shadow-lg" style={{ 
+                              textShadow: '2px 2px 4px rgba(0,0,0,0.5)', 
+                              fontSize: isMobile ? '0.4rem' : isTablet ? '0.5rem' : '0.6rem' 
+                            }}>
+                              {category.title}
+                            </span>
+                          </div>
+                          <div className={`absolute inset-0 rounded-full transition-all duration-500 ${hoveredCircle === index ? 'opacity-100' : 'opacity-0'}`} style={{ border: '1px dashed rgba(255, 255, 255, 0.4)', animation: hoveredCircle === index ? 'spin 3s linear infinite' : 'none' }}></div>
+                          {hoveredCircle === index && (
+                            <div className="absolute inset-0 rounded-full overflow-hidden">
+                              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent shine-animation"></div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <button 
+                  className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-500 ${is3DButtonHovered ? 'scale-110' : 'scale-100'} cursor-pointer group`}
+                  style={{ 
+                    width: isMobile ? '40px' : isTablet ? '50px' : '60px', 
+                    height: isMobile ? '40px' : isTablet ? '50px' : '60px', 
+                    background: 'linear-gradient(145deg, #fbbf24, #f59e0b, #d97706)', 
+                    boxShadow: is3DButtonHovered ? '0 15px 35px rgba(251, 191, 36, 0.6), 0 0 60px rgba(251, 191, 36, 0.4), inset 0 -5px 12px rgba(0,0,0,0.4), inset 0 5px 12px rgba(255,255,255,0.3)' : '0 8px 20px rgba(251, 191, 36, 0.4), 0 0 30px rgba(251, 191, 36, 0.2), inset 0 -3px 10px rgba(0,0,0,0.3), inset 0 3px 10px rgba(255,255,255,0.2)', 
+                    border: '3px solid rgba(255, 255, 255, 0.3)'
+                  }}
+                  onClick={handleInstantAssessmentTap}
+                  onMouseEnter={() => setIs3DButtonHovered(true)}
+                  onMouseLeave={() => {
+                    setIs3DButtonHovered(false);
+                    setHoveredCircle(null);
+                  }}
+                >
+                  <div className="absolute inset-0 rounded-full" style={{ border: '2px solid rgba(0, 0, 0, 0.2)', boxShadow: 'inset 0 1px 3px rgba(255,255,255,0.5), inset 0 -1px 3px rgba(0,0,0,0.3)' }}></div>
+                  <div className={`absolute inset-0 rounded-full transition-opacity duration-500 ${is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ border: '1px dashed rgba(255, 255, 255, 0.3)', animation: is3DButtonHovered ? 'spin 4s linear infinite' : 'none' }}></div>
+                  <div className={`absolute rounded-full transition-opacity duration-700 ${is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ inset: isMobile ? '0.4rem' : isTablet ? '0.6rem' : '0.8rem', background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 60%)', animation: is3DButtonHovered ? 'pulse 1.5s ease-in-out infinite' : 'none' }}></div>
+                  <div className="relative z-10 flex flex-col items-center justify-center h-full">
+                    <div className="relative mb-0.5">
+                      <div className="absolute inset-0 bg-white/20 rounded-full blur-sm"></div>
+                      <svg className="text-white drop-shadow-lg relative z-10" style={{ 
+                        width: isMobile ? '0.8rem' : isTablet ? '1rem' : '1.2rem', 
+                        height: isMobile ? '0.8rem' : isTablet ? '1rem' : '1.2rem' 
+                      }} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                      </svg>
+                    </div>
+                    <div className="text-center">
+                      <span className="text-white font-black tracking-wider drop-shadow-lg block" style={{ 
+                        textShadow: '1px 1px 3px rgba(0,0,0,0.5), 0 0 8px rgba(255,255,255,0.3)', 
+                        fontSize: isMobile ? '0.3rem' : isTablet ? '0.4rem' : '0.5rem' 
+                      }}>
+                        INSTANT
+                      </span>
+                      <div className="text-white font-bold tracking-wide drop-shadow-lg" style={{ 
+                        textShadow: '1px 1px 2px rgba(0,0,0,0.5)', 
+                        fontSize: isMobile ? '0.25rem' : isTablet ? '0.3rem' : '0.4rem' 
+                      }}>
+                        ASSESS
+                      </div>
+                    </div>
+                  </div>
+                  {is3DButtonHovered && (
+                    <div className="absolute inset-0 rounded-full overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent shine-animation"></div>
+                    </div>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Robot with Dialog */}
+            <div className="relative flex items-center">
+              {/* Cartoon Dialog */}
+              <div 
+                className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 mr-2 relative"
+                style={{
+                  minWidth: '100px',
+                  minHeight: '35px'
+                }}
+              >
+                <div 
+                  className="font-medium text-gray-800 text-sm"
+                >
+                  {displayedText}
+                  <span className="inline-block w-1 h-3 bg-gray-800 ml-1 animate-pulse"></span>
+                </div>
+                {/* Speech bubble tail */}
+                <div className="absolute top-1/2 right-0 transform -translate-y-1/2 translate-x-1/2 rotate-45 w-2 h-2 bg-white border-r border-b border-gray-200"></div>
+              </div>
+              
+              {/* Robot Image */}
+              <img 
+                src="/images/bot_kai.png" 
+                alt="KAI Robot" 
+                className="w-8 h-8 object-contain drop-shadow-lg cursor-pointer hover:scale-110 transition-transform duration-300"
+              />
+            </div>
+
             {/* Search */}
             <form onSubmit={handleSearch} className="relative">
               <input
@@ -289,7 +511,6 @@ const Navbar = ({ onMenuStateChange }) => {
       </nav>
 
       {/* ===== Bottom Info Banner ===== */}
-      {/* REMOVED: This is now part of the scrollable content flow */}
       <div className="bg-gradient-to-r from-green-500 to-green-600 py-3 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10">
           <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
@@ -389,6 +610,22 @@ const Navbar = ({ onMenuStateChange }) => {
           </div>
         </div>
       )}
+
+      <style jsx>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 0.6; }
+          50% { opacity: 1; }
+        }
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .shine-animation { animation: shine 2s infinite; }
+        @keyframes shine {
+          0% { transform: translateX(-100%) skewX(-15deg); }
+          100% { transform: translateX(200%) skewX(-15deg); }
+        }
+      `}</style>
     </>
   );
 };

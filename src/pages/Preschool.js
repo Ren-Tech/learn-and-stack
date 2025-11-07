@@ -18,6 +18,7 @@ const Preschool = () => {
     height: window.innerHeight,
   });
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showPortraitLock, setShowPortraitLock] = useState(false);
 
   const navigate = useNavigate();
 
@@ -63,6 +64,16 @@ const Preschool = () => {
         width: window.innerWidth,
         height: window.innerHeight,
       });
+      
+      // Check if device is in portrait mode and is mobile
+      const isMobile = window.innerWidth < 1100;
+      const isPortrait = window.innerHeight > window.innerWidth;
+      
+      if (isMobile && isPortrait) {
+        setShowPortraitLock(true);
+      } else {
+        setShowPortraitLock(false);
+      }
     };
 
     const preventTouch = (e) => {
@@ -71,11 +82,16 @@ const Preschool = () => {
       }
     };
 
+    // Initial check
+    handleResize();
+
     window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
     document.addEventListener('touchstart', preventTouch, { passive: false });
     
     return () => {
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
       document.removeEventListener('touchstart', preventTouch);
     };
   }, []);
@@ -296,10 +312,31 @@ const Preschool = () => {
   }, [ninjaText, isNinjaTyping, ninjaLines]);
 
   return (
-    <div className="min-h-screen bg-white relative overflow-x-hidden" onClick={handleContainerClick}>
+    <div className={`min-h-screen bg-white relative overflow-x-hidden ${showPortraitLock ? 'backdrop-blur-sm' : ''}`} onClick={handleContainerClick}>
+      {/* Portrait Lock Dialog */}
+      {showPortraitLock && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full text-center shadow-2xl border border-gray-200">
+            <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+              <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Portrait Mode Locked</h3>
+            <p className="text-gray-600 mb-4">Please switch to landscape mode for the best experience.</p>
+            <div className="w-12 h-12 mx-auto mb-4 animate-bounce">
+              <svg className="w-12 h-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              </svg>
+            </div>
+            <p className="text-sm text-gray-500">Rotate your device to continue</p>
+          </div>
+        </div>
+      )}
+
       {useBbcLayout ? (
         // BBC-style Layout for Mobile (Both Landscape and Portrait)
-        <div className="w-full h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 overflow-y-auto">
+        <div className={`w-full h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 overflow-y-auto ${showPortraitLock ? 'blur-sm' : ''}`}>
           {/* Green Navbar - Now part of scrollable content */}
           <div className="relative z-50">
             <Navbar onMenuStateChange={handleMenuStateChange} />
@@ -451,7 +488,7 @@ const Preschool = () => {
         </div>
       ) : (
         // Original layout for other screen sizes
-        <div className="relative">
+        <div className={`relative ${showPortraitLock ? 'blur-sm' : ''}`}>
           {/* Green Navbar */}
           <div className="relative z-50">
             <Navbar onMenuStateChange={handleMenuStateChange} />
