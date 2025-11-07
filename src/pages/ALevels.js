@@ -219,7 +219,7 @@ const ALevels = () => {
 
   // Function to determine ninja position - UPDATED to align with bottom navbar
   const getNinjaPosition = () => {
-    if (useBbcLayout) return 'bottom-6 mb-0 scale-75'; // Aligned with bottom navbar
+    if (useBbcLayout) return 'bottom-9 mb-0 scale-75'; // Aligned with bottom navbar
     if (isMobile) return isLandscape ? 'bottom-0 mb-0 scale-90' : 'bottom-0 mb-0'; // Aligned with bottom navbar
     if (isTablet) return 'bottom-0 mb-0'; // Aligned with bottom navbar
     return 'bottom-0 mb-0'; // Aligned with bottom navbar
