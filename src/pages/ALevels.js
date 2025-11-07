@@ -217,19 +217,20 @@ const ALevels = () => {
     };
   }, [showMiniCircles, showInstantAssess]);
 
-  // Function to determine ninja position
+  // Function to determine ninja position - UPDATED to align with bottom navbar
   const getNinjaPosition = () => {
-    if (useBbcLayout) return 'mb-[-5px] scale-75';
-    if (isMobile) return isLandscape ? 'mb-[-5px] scale-90' : 'mb-[-15px]';
-    if (isTablet) return 'mb-[20px]';
-    return 'mb-[-40px]';
+    if (useBbcLayout) return 'bottom-6 mb-0 scale-75'; // Aligned with bottom navbar
+    if (isMobile) return isLandscape ? 'bottom-0 mb-0 scale-90' : 'bottom-0 mb-0'; // Aligned with bottom navbar
+    if (isTablet) return 'bottom-0 mb-0'; // Aligned with bottom navbar
+    return 'bottom-0 mb-0'; // Aligned with bottom navbar
   };
 
-  // Function to determine ninja dialog position
+  // Function to determine ninja dialog position - UPDATED
   const getNinjaDialogPosition = () => {
     if (isDesktopLandscape) return 'bottom-1/2 left-full transform translate-y-1/2 ml-4 scale-50';
+    if (isMobileLandscape) return 'top-1/2 left-full transform -translate-y-1/2 ml-2 scale-75';
     if (useBbcLayout) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-2 scale-90';
-    if (isMobile) return isLandscape ? 'bottom-full left-1/2 transform -translate-x-1/2 mb-2' : 'bottom-full left-1/2 transform -translate-x-1/2 mb-2';
+    if (isMobile) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-2';
     if (isTablet) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-3';
     return 'bottom-full left-1/2 transform -translate-x-1/2 mb-4';
   };
@@ -242,7 +243,7 @@ const ALevels = () => {
     return 'bottom-16 right-10';
   };
 
-  // Function to determine instant assess button position (Mobile only)
+  // Function to determine instant assess button position (INSIDE BottomNav) - UPDATED
   const getInstantAssessButtonPosition = () => {
     if (isDesktopLandscape) return 'top-1/2 right-32 transform -translate-y-1/2 scale-100';
     if (isMobilePortrait) return 'bottom-4 right-4 transform scale-75';
@@ -510,11 +511,16 @@ const ALevels = () => {
 
       {/* Interactive Elements - Fixed position elements that stay visible */}
       <div className="fixed inset-0 z-40 pointer-events-none">
-        {/* Instant Assessment Button - MOBILE ONLY */}
+        {/* Instant Assessment Button - INSIDE BOTTOM NAVBAR - UPDATED */}
         {showInstantAssess && !isMenuOpen && (
           <div 
-            className={`fixed instant-assessment-container ${getInstantAssessButtonPosition()} pointer-events-auto`}
-            style={{ touchAction: 'manipulation' }}
+            className={`fixed instant-assessment-container bottom-0 right-0 z-50 pointer-events-auto`}
+            style={{ 
+              touchAction: 'manipulation',
+              transform: isMobilePortrait ? 'scale(0.6) translateY(-5px)' : 
+                         isMobileLandscape ? 'scale(0.5) translateY(-5px)' : 
+                         isTablet ? 'scale(0.7) translateY(-8px)' : 'scale(0.8) translateY(-10px)'
+            }}
             onMouseEnter={() => !isMobile && setIs3DButtonHovered(true)}
             onMouseLeave={() => {
               if (!isMobile) {
@@ -793,10 +799,10 @@ const ALevels = () => {
           </div>
         </nav>
 
-        {/* Ninja Image with Cartoon Dialog - Responsive Positioning */}
-        <div className={`fixed bottom-0 left-1/2 transform -translate-x-1/2 z-40 transition-all duration-300 pointer-events-auto ${getNinjaPosition()}`}>
+        {/* Ninja Image with Cartoon Dialog - Responsive Positioning - UPDATED to align with bottom navbar */}
+        <div className={`fixed left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 pointer-events-auto ${getNinjaPosition()}`}>
           <div className="relative flex flex-col items-center">
-            {/* UPDATED: Ninja Dialog - Now positioned to the right for desktop landscape */}
+            {/* Ninja Dialog - Updated positioning */}
             <div className={`absolute ${getNinjaDialogPosition()}`}>
               <div className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 relative" style={{ 
                 maxWidth: getResponsiveSize('140px', '160px', '180px', '120px', '100px'), 
@@ -808,12 +814,8 @@ const ALevels = () => {
                   {ninjaText}
                   <span className="inline-block w-1 h-3 bg-gray-800 ml-1 animate-pulse"></span>
                 </div>
-                {/* UPDATED: Pointer arrow positioned for right-side placement */}
-                <div className={`absolute ${
-                  isDesktopLandscape 
-                    ? 'right-full top-1/2 transform -translate-y-1/2 -translate-x-1/2 rotate-[135deg]' 
-                    : 'top-full left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-45'
-                } bg-white border-r border-b border-gray-200`} style={{ 
+                {/* Pointer arrow positioned for bottom placement */}
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-45 bg-white border-r border-b border-gray-200" style={{ 
                   width: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem'), 
                   height: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem') 
                 }}></div>

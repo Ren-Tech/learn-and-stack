@@ -34,7 +34,6 @@ const ElevenPlus = () => {
     { src: '/images/landscape/el5.png', alt: '11+ Preparation 5', title: 'Practice Tests' },
     { src: '/images/landscape/el6.png', alt: '11+ Preparation 6', title: 'Time Management' },
     { src: '/images/landscape/el7.png', alt: '11+ Preparation 7', title: 'Problem Solving' },
-    { src: '/images/landscape/el8.png', alt: '11+ Preparation 8', title: 'Creative Writing' },
     { src: '/images/landscape/el9.png', alt: '11+ Preparation 9', title: 'Exam Strategies' },
     { src: '/images/landscape/el10.png', alt: '11+ Preparation 10', title: 'Confidence Building' }
   ];
@@ -81,15 +80,6 @@ const ElevenPlus = () => {
       }
     };
 
-    // Prevent scrolling when portrait lock is active
-    const preventScroll = (e) => {
-      if (showPortraitLock) {
-        e.preventDefault();
-        e.stopPropagation();
-        return false;
-      }
-    };
-
     // Initial check
     handleResize();
 
@@ -97,26 +87,12 @@ const ElevenPlus = () => {
     window.addEventListener('orientationchange', handleResize);
     document.addEventListener('touchstart', preventTouch, { passive: false });
     
-    // Add scroll prevention when portrait lock is active
-    if (showPortraitLock) {
-      document.body.style.overflow = 'hidden';
-      document.addEventListener('scroll', preventScroll, { passive: false });
-      document.addEventListener('touchmove', preventScroll, { passive: false });
-      document.addEventListener('wheel', preventScroll, { passive: false });
-    } else {
-      document.body.style.overflow = 'auto';
-    }
-    
     return () => {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('orientationchange', handleResize);
       document.removeEventListener('touchstart', preventTouch);
-      document.removeEventListener('scroll', preventScroll);
-      document.removeEventListener('touchmove', preventScroll);
-      document.removeEventListener('wheel', preventScroll);
-      document.body.style.overflow = 'auto';
     };
-  }, [showPortraitLock]);
+  }, []);
 
   // Responsive calculations
   const isMobile = windowSize.width < 1100;
@@ -243,19 +219,20 @@ const ElevenPlus = () => {
     };
   }, [showMiniCircles, showInstantAssess]);
 
-  // Function to determine ninja position - moved higher for tablet
+  // Function to determine ninja position - UPDATED to align with bottom navbar
   const getNinjaPosition = () => {
-    if (useBbcLayout) return 'mb-[-5px] scale-75';
-    if (isMobile) return isLandscape ? 'mb-[-5px] scale-90' : 'mb-[-15px]';
-    if (isTablet) return 'mb-[20px]';
-    return 'mb-[-40px]';
+    if (useBbcLayout) return 'bottom-6 mb-0 scale-75'; // Aligned with bottom navbar
+    if (isMobile) return isLandscape ? 'bottom-0 mb-0 scale-90' : 'bottom-0 mb-0'; // Aligned with bottom navbar
+    if (isTablet) return 'bottom-0 mb-0'; // Aligned with bottom navbar
+    return 'bottom-0 mb-0'; // Aligned with bottom navbar
   };
 
-  // Function to determine ninja dialog position - adjusted for tablet
+  // Function to determine ninja dialog position - UPDATED
   const getNinjaDialogPosition = () => {
     if (isDesktopLandscape) return 'bottom-1/2 left-full transform translate-y-1/2 ml-4 scale-50';
+    if (isMobileLandscape) return 'top-1/2 left-full transform -translate-y-1/2 ml-2 scale-75';
     if (useBbcLayout) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-2 scale-90';
-    if (isMobile) return isLandscape ? 'bottom-full left-1/2 transform -translate-x-1/2 mb-2' : 'bottom-full left-1/2 transform -translate-x-1/2 mb-2';
+    if (isMobile) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-2';
     if (isTablet) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-3';
     return 'bottom-full left-1/2 transform -translate-x-1/2 mb-4';
   };
@@ -268,7 +245,7 @@ const ElevenPlus = () => {
     return 'bottom-16 right-10';
   };
 
-  // Function to determine instant assess button position (Mobile only)
+  // Function to determine instant assess button position (INSIDE BottomNav) - UPDATED
   const getInstantAssessButtonPosition = () => {
     if (isDesktopLandscape) return 'top-1/2 right-32 transform -translate-y-1/2 scale-100';
     if (isMobilePortrait) return 'bottom-4 right-4 transform scale-75';
@@ -334,10 +311,10 @@ const ElevenPlus = () => {
   }, [ninjaText, isNinjaTyping, ninjaLines]);
 
   return (
-    <div className={`min-h-screen bg-white relative ${showPortraitLock ? 'overflow-hidden' : 'overflow-x-hidden'}`} onClick={handleContainerClick}>
-      {/* Portrait Lock Dialog - Fixed at highest z-index */}
+    <div className={`min-h-screen bg-white relative overflow-x-hidden ${showPortraitLock ? 'backdrop-blur-sm' : ''}`} onClick={handleContainerClick}>
+      {/* Portrait Lock Dialog */}
       {showPortraitLock && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md p-4">
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full text-center shadow-2xl border border-gray-200">
             <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
               <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -356,535 +333,527 @@ const ElevenPlus = () => {
         </div>
       )}
 
-      {/* Main Content - Conditionally blurred and scrollable */}
-      <div className={`relative z-0 ${showPortraitLock ? 'blur-sm pointer-events-none' : ''}`}>
-        {useBbcLayout ? (
-          // BBC-style Layout for Mobile (Both Landscape and Portrait)
-          <div className="w-full h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 overflow-y-auto">
-            {/* Green Navbar - Now part of scrollable content */}
-            <div className="relative z-50">
-              <Navbar onMenuStateChange={handleMenuStateChange} />
-            </div>
+      {useBbcLayout ? (
+        // BBC-style Layout for Mobile (Both Landscape and Portrait)
+        <div className={`w-full h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 overflow-y-auto ${showPortraitLock ? 'blur-sm' : ''}`}>
+          {/* Green Navbar - Now part of scrollable content */}
+          <div className="relative z-50">
+            <Navbar onMenuStateChange={handleMenuStateChange} />
+          </div>
 
-            {/* BBC-style header bar */}
-            <div className="sticky top-0 left-0 right-0 h-8 bg-gradient-to-r from-purple-600 to-indigo-600 z-40 flex items-center px-4">
-              <div className="flex items-center space-x-2">
-                <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
-                  <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+          {/* BBC-style header bar */}
+          <div className="sticky top-0 left-0 right-0 h-8 bg-gradient-to-r from-purple-600 to-indigo-600 z-40 flex items-center px-4">
+            <div className="flex items-center space-x-2">
+              <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+              </div>
+              <span className="text-white font-bold text-sm tracking-tight">11+ PREPARATION</span>
+            </div>
+            <div className="ml-auto flex items-center space-x-3">
+              <div className="w-4 h-4 bg-white/20 rounded"></div>
+              <div className="w-4 h-4 bg-white/20 rounded"></div>
+              <div className="w-4 h-4 bg-white/20 rounded"></div>
+            </div>
+          </div>
+
+          {/* BBC-style main content grid - Adjusted for portrait */}
+          <div className="p-4">
+            {/* Main featured story - BBC style */}
+            <div className="mb-6">
+              <div className="bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200">
+                <div className={`relative w-full ${isMobilePortrait ? 'h-64' : 'h-48'} overflow-hidden`}>
+                  <img
+                    src="/images/landscape/el1.png"
+                    alt="11+ Preparation Hero"
+                    className="w-full h-full object-contain"
+                    style={{
+                      imageRendering: '-webkit-optimize-contrast',
+                      WebkitBackfaceVisibility: 'hidden',
+                      backfaceVisibility: 'hidden'
+                    }}
+                  />
                 </div>
-                <span className="text-white font-bold text-sm tracking-tight">11+ PREPARATION</span>
-              </div>
-              <div className="ml-auto flex items-center space-x-3">
-                <div className="w-4 h-4 bg-white/20 rounded"></div>
-                <div className="w-4 h-4 bg-white/20 rounded"></div>
-                <div className="w-4 h-4 bg-white/20 rounded"></div>
+                <div className="p-4">
+                  <h1 className={`${isMobilePortrait ? 'text-2xl' : 'text-xl'} font-bold text-gray-900 mb-2`}>11+ Exam Preparation</h1>
+                  <p className="text-gray-600 text-sm mb-3">Comprehensive preparation for grammar school entrance exams</p>
+                  <div className="flex items-center text-xs text-gray-500">
+                    <span>Age 11</span>
+                    <span className="mx-2">•</span>
+                    <span>Grammar School</span>
+                    <span className="mx-2">•</span>
+                    <span>Exam Focus</span>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* BBC-style main content grid - Adjusted for portrait */}
-            <div className="p-4">
-              {/* Main featured story - BBC style */}
-              <div className="mb-6">
-                <div className="bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200">
-                  <div className={`relative w-full ${isMobilePortrait ? 'h-64' : 'h-48'} overflow-hidden`}>
+            {/* BBC-style secondary stories grid - Adjusted columns for portrait */}
+            <div className={`grid ${isMobilePortrait ? 'grid-cols-2' : 'grid-cols-2'} gap-4 mb-6`}>
+              {elevenPlusImages.slice(1, isMobilePortrait ? 5 : 3).map((image, index) => (
+                <div key={index} className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200">
+                  <div className={`relative w-full ${isMobilePortrait ? 'h-40' : 'h-32'} overflow-hidden`}>
                     <img
-                      src="/images/landscape/el1.png"
-                      alt="11+ Preparation Hero"
+                      src={image.src}
+                      alt={image.alt}
                       className="w-full h-full object-contain"
                       style={{
                         imageRendering: '-webkit-optimize-contrast',
                         WebkitBackfaceVisibility: 'hidden',
-                        MozBackfaceVisibility: 'hidden',
                         backfaceVisibility: 'hidden'
                       }}
                     />
                   </div>
-                  <div className="p-4">
-                    <h1 className={`${isMobilePortrait ? 'text-2xl' : 'text-xl'} font-bold text-gray-900 mb-2`}>11+ Exam Preparation</h1>
-                    <p className="text-gray-600 text-sm mb-3">Comprehensive preparation for grammar school entrance exams</p>
-                    <div className="flex items-center text-xs text-gray-500">
-                      <span>Age 11</span>
-                      <span className="mx-2">•</span>
-                      <span>Grammar School</span>
-                      <span className="mx-2">•</span>
-                      <span>Exam Focus</span>
-                    </div>
+                  <div className="p-3">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-1">{image.title}</h3>
+                    <div className="w-8 h-1 bg-blue-500 mb-2"></div>
+                    <p className="text-xs text-gray-600">Essential skills development</p>
                   </div>
                 </div>
-              </div>
-
-              {/* BBC-style secondary stories grid - Adjusted columns for portrait */}
-              <div className={`grid ${isMobilePortrait ? 'grid-cols-2' : 'grid-cols-2'} gap-4 mb-6`}>
-                {elevenPlusImages.slice(1, isMobilePortrait ? 5 : 3).map((image, index) => (
-                  <div key={index} className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200">
-                    <div className={`relative w-full ${isMobilePortrait ? 'h-40' : 'h-32'} overflow-hidden`}>
-                      <img
-                        src={image.src}
-                        alt={image.alt}
-                        className="w-full h-full object-contain"
-                        style={{
-                          imageRendering: '-webkit-optimize-contrast',
-                          WebkitBackfaceVisibility: 'hidden',
-                          MozBackfaceVisibility: 'hidden',
-                          backfaceVisibility: 'hidden'
-                        }}
-                      />
-                    </div>
-                    <div className="p-3">
-                      <h3 className="text-sm font-semibold text-gray-900 mb-1">{image.title}</h3>
-                      <div className="w-8 h-1 bg-blue-500 mb-2"></div>
-                      <p className="text-xs text-gray-600">Essential skills development</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* BBC-style more stories section */}
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-bold text-gray-900">More Preparation Topics</h2>
-                  <div className="w-12 h-1 bg-red-500"></div>
-                </div>
-                
-                <div className="space-y-4">
-                  {elevenPlusImages.slice(isMobilePortrait ? 5 : 3).map((image, index) => (
-                    <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
-                      <div className="flex">
-                        <div className={`relative ${isMobilePortrait ? 'w-32 h-32' : 'w-24 h-24'} overflow-hidden flex-shrink-0`}>
-                          <img
-                            src={image.src}
-                            alt={image.alt}
-                            className="w-full h-full object-contain"
-                            style={{
-                              imageRendering: '-webkit-optimize-contrast',
-                              WebkitBackfaceVisibility: 'hidden',
-                              MozBackfaceVisibility: 'hidden',
-                              backfaceVisibility: 'hidden'
-                            }}
-                          />
-                        </div>
-                        <div className="p-3 flex-1">
-                          <h3 className="text-sm font-semibold text-gray-900 mb-2">{image.title}</h3>
-                          <p className="text-xs text-gray-600 line-clamp-2">Build confidence and master essential exam techniques</p>
-                          <div className="flex items-center mt-2 text-xs text-gray-500">
-                            <span>Practice</span>
-                            <span className="mx-2">•</span>
-                            <span>Progress</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* BBC-style trending section */}
-              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-6">
-                <div className="flex items-center mb-3">
-                  <div className="w-3 h-6 bg-purple-600 mr-2"></div>
-                  <h3 className="text-md font-bold text-gray-900">Key Focus Areas</h3>
-                </div>
-                <div className={`grid ${isMobilePortrait ? 'grid-cols-2' : 'grid-cols-2'} gap-2`}>
-                  {['Verbal Reasoning', 'Non-Verbal', 'Math Skills', 'English'].map((item, index) => (
-                    <div key={index} className="bg-white rounded p-2 text-center border border-gray-300">
-                      <span className="text-xs font-medium text-gray-700">{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* BBC-style footer section */}
-              <div className="border-t border-gray-300 pt-4">
-                <div className="text-center">
-                  <div className="inline-flex items-center space-x-2 bg-gray-100 px-4 py-2 rounded-full">
-                    <span className="text-xs text-gray-600 font-medium">11+ PREPARATION</span>
-                    <span className="text-xs text-gray-400">•</span>
-                    <span className="text-xs text-gray-600">AGE 11</span>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
 
-            {/* Bottom Navigation - Now part of scrollable content */}
-            <div className="sticky bottom-0 left-0 right-0 z-40 mt-6">
-              <BottomNav />
-            </div>
-          </div>
-        ) : (
-          // Original layout for other screen sizes
-          <div className="relative">
-            {/* Green Navbar */}
-            <div className="relative z-50">
-              <Navbar onMenuStateChange={handleMenuStateChange} />
-            </div>
-
-            {/* Background Image */}
-            <div className="relative z-0 w-full" style={{ height: 'calc(100vh - 120px)' }}>
-              <img 
-                src={getBackgroundImage()} 
-                alt="11+ Background" 
-                className="w-full h-full object-cover"
-                style={{
-                  imageRendering: '-webkit-optimize-contrast',
-                  WebkitBackfaceVisibility: 'hidden',
-                  MozBackfaceVisibility: 'hidden',
-                  backfaceVisibility: 'hidden'
-                }}
-              />
-            </div>
-
-            {/* Bottom Navigation */}
-            <div className="relative z-40">
-              <BottomNav />
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Interactive Elements - Fixed position above scrollable content */}
-      {!showPortraitLock && (
-        <div className="fixed inset-0 z-40 pointer-events-none">
-          {/* Instant Assessment Button - MOBILE ONLY */}
-          {showInstantAssess && !isMenuOpen && (
-            <div 
-              className={`fixed instant-assessment-container ${getInstantAssessButtonPosition()} pointer-events-auto`}
-              style={{ touchAction: 'manipulation' }}
-              onMouseEnter={() => !isMobile && setIs3DButtonHovered(true)}
-              onMouseLeave={() => {
-                if (!isMobile) {
-                  setIs3DButtonHovered(false);
-                  setHoveredCircle(null);
-                }
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="relative" style={{ 
-                width: getResponsiveSize('120px', '150px', '180px', '80px', '70px'), 
-                height: getResponsiveSize('120px', '150px', '180px', '80px', '70px') 
-              }}>
-                <div className="absolute inset-0">
-                  {assessmentCategories.map((category, index) => {
-                    const radius = getResponsiveSize(80, 100, 120, 50, 45);
-                    const position = getCirclePosition(category.angle, radius, index);
-                    const circleSize = getResponsiveSize('50px', '60px', '70px', '35px', '30px');
-                    
-                    const shouldShowMiniCircles = isMobile || isTablet ? showMiniCircles : is3DButtonHovered;
-                    
-                    return (
-                      <div key={category.title} className={`absolute transition-all duration-700 ease-out ${shouldShowMiniCircles ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
-                        style={{ 
-                          left: '50%', 
-                          top: '50%', 
-                          transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`, 
-                          transitionDelay: shouldShowMiniCircles ? `${index * 120}ms` : '0ms' 
-                        }}
-                        onMouseEnter={() => !isMobile && setHoveredCircle(index)}
-                        onMouseLeave={() => !isMobile && setHoveredCircle(null)}>
-                        {!isMobile && !isMobilePortrait && (
-                          <svg className={`absolute transition-all duration-500 ${shouldShowMiniCircles ? 'opacity-100' : 'opacity-0'}`}
-                            style={{ 
-                              left: '50%', 
-                              top: '50%', 
-                              transform: `translate(-50%, -50%)`, 
-                              width: isTablet ? `${Math.abs(position.x) * 2 + 50}px` : `${radius + 50}px`, 
-                              height: isTablet ? '100px' : `${radius + 50}px`, 
-                              pointerEvents: 'none', 
-                              transitionDelay: shouldShowMiniCircles ? `${index * 120 + 200}ms` : '0ms' 
-                            }}>
-                            {isTablet && (
-                              <path 
-                                d={`M ${(Math.abs(position.x) * 2 + 50) / 2} ${50} L ${(Math.abs(position.x) * 2 + 50) / 2 + position.x} ${50 + position.y}`} 
-                                stroke="rgba(251, 191, 36, 0.6)" 
-                                strokeWidth="3" 
-                                fill="none" 
-                                strokeDasharray="5,5" 
-                              />
-                            )}
-                            {!isTablet && (
-                              <path 
-                                d={`M ${(radius + 50) / 2} ${(radius + 50) / 2} L ${(radius + 50) / 2 - position.x} ${(radius + 50) / 2 - position.y}`} 
-                                stroke="rgba(251, 191, 36, 0.6)" 
-                                strokeWidth="3" 
-                                fill="none" 
-                                strokeDasharray="5,5" 
-                              />
-                            )}
-                            <circle 
-                              cx={isTablet ? `${(Math.abs(position.x) * 2 + 50) / 2 + position.x}` : `${(radius + 50) / 2 - position.x}`} 
-                              cy={isTablet ? `${50 + position.y}` : `${(radius + 50) / 2 - position.y}`} 
-                              r="4" 
-                              fill="#fbbf24" 
-                              className="drop-shadow-lg" 
-                              style={{ filter: 'drop-shadow(0 0 6px rgba(251, 191, 36, 0.8))' }} 
-                            />
-                          </svg>
-                        )}
-                        <div 
-                          className={`relative rounded-full transform transition-all duration-400 cursor-pointer ${!isMobile && hoveredCircle === index ? 'scale-110 rotate-12' : 'scale-100 rotate-0'} bg-gradient-to-br ${category.gradient} shadow-xl ${category.shadow} ${!isMobile && hoveredCircle === index ? `${category.glow} shadow-2xl` : ''}`}
-                          style={{ 
-                            width: circleSize, 
-                            height: circleSize, 
-                            border: '3px solid rgba(255, 255, 255, 0.3)',
-                            boxShadow: !isMobile && hoveredCircle === index ? `0 12px 30px ${category.shadow.replace('/50', '/60')}, inset 0 -3px 8px rgba(0,0,0,0.3), inset 0 3px 8px rgba(255,255,255,0.3)` : '0 6px 20px rgba(0,0,0,0.3), inset 0 -2px 6px rgba(0,0,0,0.3), inset 0 2px 6px rgba(255,255,255,0.2)' 
+            {/* BBC-style more stories section */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-gray-900">More Preparation Topics</h2>
+                <div className="w-12 h-1 bg-red-500"></div>
+              </div>
+              
+              <div className="space-y-4">
+                {elevenPlusImages.slice(isMobilePortrait ? 5 : 3).map((image, index) => (
+                  <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
+                    <div className="flex">
+                      <div className={`relative ${isMobilePortrait ? 'w-32 h-32' : 'w-24 h-24'} overflow-hidden flex-shrink-0`}>
+                        <img
+                          src={image.src}
+                          alt={image.alt}
+                          className="w-full h-full object-contain"
+                          style={{
+                            imageRendering: '-webkit-optimize-contrast',
+                            WebkitBackfaceVisibility: 'hidden',
+                            backfaceVisibility: 'hidden'
                           }}
-                          onClick={() => handleMiniCircleTap(category.href)}
-                        >
-                          <div className="absolute inset-1 rounded-full border border-white/20"></div>
-                          <div className="absolute inset-2 rounded-full bg-gradient-to-br from-white/30 to-transparent"></div>
-                          <div className="relative z-10 flex flex-col items-center justify-center h-full p-1">
-                            <span className="text-white font-black tracking-wider mb-0.5 drop-shadow-lg" style={{ 
-                              textShadow: '2px 2px 4px rgba(0,0,0,0.5)', 
-                              fontSize: getResponsiveSize('0.5rem', '0.6rem', '0.7rem', '0.4rem', '0.35rem') 
-                            }}>
-                              {category.title}
-                            </span>
-                          </div>
-                          {!isMobile && <div className={`absolute inset-0 rounded-full transition-all duration-500 ${hoveredCircle === index ? 'opacity-100' : 'opacity-0'}`} style={{ border: '1px dashed rgba(255, 255, 255, 0.4)', animation: hoveredCircle === index ? 'spin 3s linear infinite' : 'none' }}></div>}
-                          {!isMobile && hoveredCircle === index && (
-                            <div className="absolute inset-0 rounded-full overflow-hidden">
-                              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent shine-animation"></div>
-                            </div>
-                          )}
+                        />
+                      </div>
+                      <div className="p-3 flex-1">
+                        <h3 className="text-sm font-semibold text-gray-900 mb-2">{image.title}</h3>
+                        <p className="text-xs text-gray-600 line-clamp-2">Build confidence and master essential exam techniques</p>
+                        <div className="flex items-center mt-2 text-xs text-gray-500">
+                          <span>Practice</span>
+                          <span className="mx-2">•</span>
+                          <span>Progress</span>
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
-
-                <button 
-                  className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-500 ${!isMobile && is3DButtonHovered ? 'scale-110' : 'scale-100'} ${isDesktop ? 'cursor-default' : 'cursor-pointer'} group`}
-                  style={{ 
-                    width: getResponsiveSize('60px', '70px', '80px', '40px', '35px'), 
-                    height: getResponsiveSize('60px', '70px', '80px', '40px', '35px'), 
-                    background: 'linear-gradient(145deg, #fbbf24, #f59e0b, #d97706)', 
-                    boxShadow: !isMobile && is3DButtonHovered ? '0 15px 35px rgba(251, 191, 36, 0.6), 0 0 60px rgba(251, 191, 36, 0.4), inset 0 -5px 12px rgba(0,0,0,0.4), inset 0 5px 12px rgba(255,255,255,0.3)' : '0 8px 20px rgba(251, 191, 36, 0.4), 0 0 30px rgba(251, 191, 36, 0.2), inset 0 -3px 10px rgba(0,0,0,0.3), inset 0 3px 10px rgba(255,255,255,0.2)', 
-                    border: '3px solid rgba(255, 255, 255, 0.3)'
-                  }}
-                  onClick={handleInstantAssessmentTap}
-                  onMouseEnter={() => !isMobile && setIs3DButtonHovered(true)}
-                  onMouseLeave={() => !isMobile && setIs3DButtonHovered(false)}
-                >
-                  <div className="absolute inset-0 rounded-full" style={{ border: '2px solid rgba(0, 0, 0, 0.2)', boxShadow: 'inset 0 1px 3px rgba(255,255,255,0.5), inset 0 -1px 3px rgba(0,0,0,0.3)' }}></div>
-                  {!isMobile && <div className={`absolute inset-0 rounded-full transition-opacity duration-500 ${is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ border: '1px dashed rgba(255, 255, 255, 0.3)', animation: is3DButtonHovered ? 'spin 4s linear infinite' : 'none' }}></div>}
-                  <div className={`absolute rounded-full transition-opacity duration-700 ${!isMobile && is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ inset: getResponsiveSize('0.8rem', '1rem', '1rem', '0.4rem', '0.35rem'), background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 60%)', animation: !isMobile && is3DButtonHovered ? 'pulse 1.5s ease-in-out infinite' : 'none' }}></div>
-                  <div className="relative z-10 flex flex-col items-center justify-center h-full">
-                    <div className="relative mb-0.5">
-                      <div className="absolute inset-0 bg-white/20 rounded-full blur-sm"></div>
-                      <svg className="text-white drop-shadow-lg relative z-10" style={{ 
-                        width: getResponsiveSize('1rem', '1.25rem', '1.5rem', '0.6rem', '0.5rem'), 
-                        height: getResponsiveSize('1rem', '1.25rem', '1.5rem', '0.6rem', '0.5rem') 
-                      }} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                      </svg>
-                    </div>
-                    <div className="text-center">
-                      <span className="text-white font-black tracking-wider drop-shadow-lg block" style={{ 
-                        textShadow: '1px 1px 3px rgba(0,0,0,0.5), 0 0 8px rgba(255,255,255,0.3)', 
-                        fontSize: getResponsiveSize('0.5rem', '0.6rem', '0.7rem', '0.3rem', '0.28rem') 
-                      }}>
-                        INSTANT
-                      </span>
-                      <div className="text-white font-bold tracking-wide drop-shadow-lg" style={{ 
-                        textShadow: '1px 1px 2px rgba(0,0,0,0.5)', 
-                        fontSize: getResponsiveSize('0.4rem', '0.5rem', '0.6rem', '0.25rem', '0.22rem') 
-                      }}>
-                        ASSESS
-                      </div>
-                      <span className="text-white/90 font-semibold mt-0.5 block" style={{ 
-                        textShadow: '1px 1px 2px rgba(0,0,0,0.5)', 
-                        fontSize: getResponsiveSize('0.3rem', '0.4rem', '0.4rem', '0.2rem', '0.18rem') 
-                      }}>
-                        Powered by KAI
-                      </span>
                     </div>
                   </div>
-                  {!isMobile && (
-                    <div className={`absolute inset-0 rounded-full overflow-hidden transition-opacity duration-500 ${is3DButtonHovered ? 'opacity-100' : 'opacity-0'}`}>
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent shine-animation"></div>
-                    </div>
-                  )}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Floating Plus Menu with Robot and Dialog - Responsive Positioning */}
-          <nav 
-            className={`btn-pluss-wrapper fixed z-50 flex flex-col items-center transition-all duration-300 pointer-events-auto ${getPlusMenuPosition()}`}
-            onMouseEnter={() => !isMobile && setIsHovered(true)}
-            onMouseLeave={() => !isMobile && setIsHovered(false)}
-            onClick={() => isMobile && setIsHovered(!isHovered)}
-          >
-            {/* Robot Image with Cartoon Dialog - Always Visible */}
-            <div className="flex flex-col items-center mb-2">
-              {/* Cartoon Dialog */}
-              <div 
-                className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 mb-2 relative"
-                style={{
-                  minWidth: getResponsiveSize('100px', '120px', '120px', '90px', '80px'),
-                  minHeight: getResponsiveSize('35px', '40px', '40px', '30px', '25px')
-                }}
-              >
-                <div 
-                  className="font-medium text-gray-800"
-                  style={{
-                    fontSize: getResponsiveSize('0.75rem', '0.875rem', '0.875rem', '0.7rem', '0.65rem')
-                  }}
-                >
-                  {displayedText}
-                  <span className="inline-block w-1 h-3 bg-gray-800 ml-1 animate-pulse"></span>
-                </div>
-                {/* Speech bubble tail */}
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-white border-r border-b border-gray-200"></div>
-              </div>
-              
-              {/* Robot Image */}
-              <img 
-                src="/images/bot_kai.png" 
-                alt="KAI Robot" 
-                className="object-contain drop-shadow-lg transition-transform duration-300 hover:scale-110"
-                style={{
-                  width: getResponsiveSize('2.5rem', '3rem', '3rem', '2rem', '1.75rem'),
-                  height: getResponsiveSize('2.5rem', '3rem', '3rem', '2rem', '1.75rem')
-                }}
-              />
-            </div>
-
-            {/* Menu Container */}
-            <div className={`
-              btn-pluss bg-blue-900 overflow-hidden flex flex-col items-center
-              transition-all duration-600 ease-[cubic-bezier(0.34,1.56,0.64,1)]
-              ${isHovered ? 'h-auto rounded-2xl pb-3 pt-3 shadow-2xl' : 'h-12 rounded-full shadow-lg'}
-              border border-blue-700
-            `}
-            style={{
-              width: isHovered ? getResponsiveSize('10rem', '11rem', '11rem', '9rem', '8rem') : getResponsiveSize('3rem', '3rem', '3rem', '2.5rem', '2.25rem')
-            }}>
-              {/* Plus Button with Jelly Animation Both Ways */}
-              <div className={`
-                bg-red-600 rounded-full flex items-center justify-center text-white font-bold
-                transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]
-                ${isHovered ? 'rotate-45 scale-105' : 'rotate-0 scale-100'}
-                shadow-lg hover:shadow-xl border border-red-500
-              `}
-              style={{
-                width: getResponsiveSize('2.5rem', '3rem', '3rem', '2rem', '1.75rem'),
-                height: getResponsiveSize('2.5rem', '3rem', '3rem', '2rem', '1.75rem'),
-                fontSize: getResponsiveSize('1rem', '1.25rem', '1.25rem', '0.875rem', '0.8rem')
-              }}>
-                +
-              </div>
-              
-              {/* Menu Items with Jelly Staggered Animation Both Ways */}
-              <ul className={`
-                transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] px-3 w-full overflow-y-auto ${getJellyMenuMaxHeight()}
-                ${isHovered ? 'opacity-100 mt-4' : 'opacity-0 mt-0'}
-              `}
-              style={{ 
-                scrollbarWidth: 'thin',
-                scrollbarColor: 'rgba(255,255,255,0.3) transparent'
-              }}>
-                {menuItems.map((item, index) => (
-                  <li 
-                    key={index}
-                    className={`
-                      bg-white rounded-lg transition-all duration-600 ease-[cubic-bezier(0.34,1.56,0.64,1)]
-                      transform border border-gray-100 shadow-sm
-                      ${isHovered 
-                        ? `mb-2 opacity-100 translate-x-0 scale-100` 
-                        : 'opacity-0 translate-x-8 scale-90'
-                      }
-                      hover:bg-blue-50 hover:border-blue-200 hover:scale-105 hover:shadow-md
-                      cursor-pointer
-                    `}
-                    style={{
-                      height: isHovered ? getResponsiveSize('2.5rem', '3rem', '3rem', '2.25rem', '2rem') : '0',
-                      transitionDelay: isHovered 
-                        ? `${index * 100}ms` 
-                        : `${(menuItems.length - index - 1) * 80}ms`
-                    }}
-                    onClick={() => handleNavigation(item.href)}
-                  >
-                    <div 
-                      className="text-blue-900 font-medium block w-full h-full flex flex-col items-center justify-center transition-colors duration-300 hover:text-blue-700 p-1"
-                      style={{
-                        fontSize: getResponsiveSize('0.7rem', '0.8rem', '0.875rem', '0.65rem', '0.6rem')
-                      }}
-                    >
-                      <span className="font-semibold">{item.text}</span>
-                      <span 
-                        className="text-gray-600"
-                        style={{
-                          fontSize: getResponsiveSize('0.6rem', '0.7rem', '0.75rem', '0.55rem', '0.5rem')
-                        }}
-                      >
-                        {item.description}
-                      </span>
-                    </div>
-                  </li>
                 ))}
-              </ul>
+              </div>
             </div>
-          </nav>
 
-          {/* Ninja Image with Cartoon Dialog - Responsive Positioning */}
-          <div className={`fixed bottom-0 left-1/2 transform -translate-x-1/2 z-40 transition-all duration-300 pointer-events-auto ${getNinjaPosition()}`}>
-            <div className="relative flex flex-col items-center">
-              {/* UPDATED: Ninja Dialog - Now positioned to the right for desktop landscape */}
-              <div className={`absolute ${getNinjaDialogPosition()}`}>
-                <div className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 relative" style={{ 
-                  maxWidth: getResponsiveSize('140px', '160px', '180px', '120px', '100px'), 
-                  minHeight: getResponsiveSize('60px', '70px', '80px', '50px', '45px') 
-                }}>
-                  <div className="font-medium text-gray-800 whitespace-pre-line text-center" style={{ 
-                    fontSize: getResponsiveSize('0.7rem', '0.8rem', '0.875rem', '0.65rem', '0.6rem') 
-                  }}>
-                    {ninjaText}
-                    <span className="inline-block w-1 h-3 bg-gray-800 ml-1 animate-pulse"></span>
+            {/* BBC-style trending section */}
+            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-6">
+              <div className="flex items-center mb-3">
+                <div className="w-3 h-6 bg-purple-600 mr-2"></div>
+                <h3 className="text-md font-bold text-gray-900">Key Focus Areas</h3>
+              </div>
+              <div className={`grid ${isMobilePortrait ? 'grid-cols-2' : 'grid-cols-2'} gap-2`}>
+                {['Verbal Reasoning', 'Non-Verbal', 'Math Skills', 'English'].map((item, index) => (
+                  <div key={index} className="bg-white rounded p-2 text-center border border-gray-300">
+                    <span className="text-xs font-medium text-gray-700">{item}</span>
                   </div>
-                  {/* UPDATED: Pointer arrow positioned for right-side placement */}
-                  <div className={`absolute ${
-                    isDesktopLandscape 
-                      ? 'right-full top-1/2 transform -translate-y-1/2 -translate-x-1/2 rotate-[135deg]' 
-                      : 'top-full left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-45'
-                  } bg-white border-r border-b border-gray-200`} style={{ 
-                    width: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem'), 
-                    height: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem') 
-                  }}></div>
+                ))}
+              </div>
+            </div>
+
+            {/* BBC-style footer section */}
+            <div className="border-t border-gray-300 pt-4">
+              <div className="text-center">
+                <div className="inline-flex items-center space-x-2 bg-gray-100 px-4 py-2 rounded-full">
+                  <span className="text-xs text-gray-600 font-medium">11+ PREPARATION</span>
+                  <span className="text-xs text-gray-400">•</span>
+                  <span className="text-xs text-gray-600">AGE 11</span>
                 </div>
               </div>
-              
-              {/* Ninja Image */}
-              <img 
-                src="/images/ninja.png" 
-                alt="Ninja character offering help" 
-                className="object-contain drop-shadow-lg" 
-                style={{ 
-                  width: getResponsiveSize(
-                    isLandscape ? '8rem' : '12rem', 
-                    '14rem', 
-                    '20rem', 
-                    '6rem', 
-                    '5rem'
-                  ), 
-                  height: getResponsiveSize(
-                    isLandscape ? '8rem' : '12rem', 
-                    '14rem', 
-                    '20rem', 
-                    '6rem', 
-                    '5rem'
-                  ) 
-                }} 
-              />
             </div>
+          </div>
+
+          {/* Bottom Navigation - Now part of scrollable content */}
+          <div className="sticky bottom-0 left-0 right-0 z-40 mt-6">
+            <BottomNav />
+          </div>
+        </div>
+      ) : (
+        // Original layout for other screen sizes
+        <div className={`relative ${showPortraitLock ? 'blur-sm' : ''}`}>
+          {/* Green Navbar */}
+          <div className="relative z-50">
+            <Navbar onMenuStateChange={handleMenuStateChange} />
+          </div>
+
+          {/* Background Image */}
+          <div className="relative z-0 w-full" style={{ height: 'calc(100vh - 120px)' }}>
+            <img 
+              src={getBackgroundImage()} 
+              alt="11+ Background" 
+              className="w-full h-full object-cover"
+              style={{
+                imageRendering: '-webkit-optimize-contrast',
+                WebkitBackfaceVisibility: 'hidden',
+                backfaceVisibility: 'hidden'
+              }}
+            />
           </div>
 
           {/* Bottom Navigation */}
-          <div className="fixed bottom-0 left-0 right-0 z-40 pointer-events-auto">
+          <div className="relative z-40">
             <BottomNav />
           </div>
         </div>
       )}
+
+      {/* Interactive Elements - Fixed position elements that stay visible */}
+      <div className="fixed inset-0 z-40 pointer-events-none">
+        {/* Instant Assessment Button - INSIDE BOTTOM NAVBAR - UPDATED */}
+        {showInstantAssess && !isMenuOpen && (
+          <div 
+            className={`fixed instant-assessment-container bottom-0 right-0 z-50 pointer-events-auto`}
+            style={{ 
+              touchAction: 'manipulation',
+              transform: isMobilePortrait ? 'scale(0.6) translateY(-5px)' : 
+                         isMobileLandscape ? 'scale(0.5) translateY(-5px)' : 
+                         isTablet ? 'scale(0.7) translateY(-8px)' : 'scale(0.8) translateY(-10px)'
+            }}
+            onMouseEnter={() => !isMobile && setIs3DButtonHovered(true)}
+            onMouseLeave={() => {
+              if (!isMobile) {
+                setIs3DButtonHovered(false);
+                setHoveredCircle(null);
+              }
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative" style={{ 
+              width: getResponsiveSize('120px', '150px', '180px', '80px', '70px'), 
+              height: getResponsiveSize('120px', '150px', '180px', '80px', '70px') 
+            }}>
+              <div className="absolute inset-0">
+                {assessmentCategories.map((category, index) => {
+                  const radius = getResponsiveSize(80, 100, 120, 50, 45);
+                  const position = getCirclePosition(category.angle, radius, index);
+                  const circleSize = getResponsiveSize('50px', '60px', '70px', '35px', '30px');
+                  
+                  const shouldShowMiniCircles = isMobile || isTablet ? showMiniCircles : is3DButtonHovered;
+                  
+                  return (
+                    <div key={category.title} className={`absolute transition-all duration-700 ease-out ${shouldShowMiniCircles ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
+                      style={{ 
+                        left: '50%', 
+                        top: '50%', 
+                        transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`, 
+                        transitionDelay: shouldShowMiniCircles ? `${index * 120}ms` : '0ms' 
+                      }}
+                      onMouseEnter={() => !isMobile && setHoveredCircle(index)}
+                      onMouseLeave={() => !isMobile && setHoveredCircle(null)}>
+                      {!isMobile && !isMobilePortrait && (
+                        <svg className={`absolute transition-all duration-500 ${shouldShowMiniCircles ? 'opacity-100' : 'opacity-0'}`}
+                          style={{ 
+                            left: '50%', 
+                            top: '50%', 
+                            transform: `translate(-50%, -50%)`, 
+                            width: isTablet ? `${Math.abs(position.x) * 2 + 50}px` : `${radius + 50}px`, 
+                            height: isTablet ? '100px' : `${radius + 50}px`, 
+                            pointerEvents: 'none', 
+                            transitionDelay: shouldShowMiniCircles ? `${index * 120 + 200}ms` : '0ms' 
+                          }}>
+                          {isTablet && (
+                            <path 
+                              d={`M ${(Math.abs(position.x) * 2 + 50) / 2} ${50} L ${(Math.abs(position.x) * 2 + 50) / 2 + position.x} ${50 + position.y}`} 
+                              stroke="rgba(251, 191, 36, 0.6)" 
+                              strokeWidth="3" 
+                              fill="none" 
+                              strokeDasharray="5,5" 
+                            />
+                          )}
+                          {!isTablet && (
+                            <path 
+                              d={`M ${(radius + 50) / 2} ${(radius + 50) / 2} L ${(radius + 50) / 2 - position.x} ${(radius + 50) / 2 - position.y}`} 
+                              stroke="rgba(251, 191, 36, 0.6)" 
+                              strokeWidth="3" 
+                              fill="none" 
+                              strokeDasharray="5,5" 
+                            />
+                          )}
+                          <circle 
+                            cx={isTablet ? `${(Math.abs(position.x) * 2 + 50) / 2 + position.x}` : `${(radius + 50) / 2 - position.x}`} 
+                            cy={isTablet ? `${50 + position.y}` : `${(radius + 50) / 2 - position.y}`} 
+                            r="4" 
+                            fill="#fbbf24" 
+                            className="drop-shadow-lg" 
+                            style={{ filter: 'drop-shadow(0 0 6px rgba(251, 191, 36, 0.8))' }} 
+                          />
+                        </svg>
+                      )}
+                      <div 
+                        className={`relative rounded-full transform transition-all duration-400 cursor-pointer ${!isMobile && hoveredCircle === index ? 'scale-110 rotate-12' : 'scale-100 rotate-0'} bg-gradient-to-br ${category.gradient} shadow-xl ${category.shadow} ${!isMobile && hoveredCircle === index ? `${category.glow} shadow-2xl` : ''}`}
+                        style={{ 
+                          width: circleSize, 
+                          height: circleSize, 
+                          border: '3px solid rgba(255, 255, 255, 0.3)',
+                          boxShadow: !isMobile && hoveredCircle === index ? `0 12px 30px ${category.shadow.replace('/50', '/60')}, inset 0 -3px 8px rgba(0,0,0,0.3), inset 0 3px 8px rgba(255,255,255,0.3)` : '0 6px 20px rgba(0,0,0,0.3), inset 0 -2px 6px rgba(0,0,0,0.3), inset 0 2px 6px rgba(255,255,255,0.2)' 
+                        }}
+                        onClick={() => handleMiniCircleTap(category.href)}
+                      >
+                        <div className="absolute inset-1 rounded-full border border-white/20"></div>
+                        <div className="absolute inset-2 rounded-full bg-gradient-to-br from-white/30 to-transparent"></div>
+                        <div className="relative z-10 flex flex-col items-center justify-center h-full p-1">
+                          <span className="text-white font-black tracking-wider mb-0.5 drop-shadow-lg" style={{ 
+                            textShadow: '2px 2px 4px rgba(0,0,0,0.5)', 
+                            fontSize: getResponsiveSize('0.5rem', '0.6rem', '0.7rem', '0.4rem', '0.35rem') 
+                          }}>
+                            {category.title}
+                          </span>
+                        </div>
+                        {!isMobile && <div className={`absolute inset-0 rounded-full transition-all duration-500 ${hoveredCircle === index ? 'opacity-100' : 'opacity-0'}`} style={{ border: '1px dashed rgba(255, 255, 255, 0.4)', animation: hoveredCircle === index ? 'spin 3s linear infinite' : 'none' }}></div>}
+                        {!isMobile && hoveredCircle === index && (
+                          <div className="absolute inset-0 rounded-full overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent shine-animation"></div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <button 
+                className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-500 ${!isMobile && is3DButtonHovered ? 'scale-110' : 'scale-100'} ${isDesktop ? 'cursor-default' : 'cursor-pointer'} group`}
+                style={{ 
+                  width: getResponsiveSize('60px', '70px', '80px', '40px', '35px'), 
+                  height: getResponsiveSize('60px', '70px', '80px', '40px', '35px'), 
+                  background: 'linear-gradient(145deg, #fbbf24, #f59e0b, #d97706)', 
+                  boxShadow: !isMobile && is3DButtonHovered ? '0 15px 35px rgba(251, 191, 36, 0.6), 0 0 60px rgba(251, 191, 36, 0.4), inset 0 -5px 12px rgba(0,0,0,0.4), inset 0 5px 12px rgba(255,255,255,0.3)' : '0 8px 20px rgba(251, 191, 36, 0.4), 0 0 30px rgba(251, 191, 36, 0.2), inset 0 -3px 10px rgba(0,0,0,0.3), inset 0 3px 10px rgba(255,255,255,0.2)', 
+                  border: '3px solid rgba(255, 255, 255, 0.3)'
+                }}
+                onClick={handleInstantAssessmentTap}
+                onMouseEnter={() => !isMobile && setIs3DButtonHovered(true)}
+                onMouseLeave={() => !isMobile && setIs3DButtonHovered(false)}
+              >
+                <div className="absolute inset-0 rounded-full" style={{ border: '2px solid rgba(0, 0, 0, 0.2)', boxShadow: 'inset 0 1px 3px rgba(255,255,255,0.5), inset 0 -1px 3px rgba(0,0,0,0.3)' }}></div>
+                {!isMobile && <div className={`absolute inset-0 rounded-full transition-opacity duration-500 ${is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ border: '1px dashed rgba(255, 255, 255, 0.3)', animation: is3DButtonHovered ? 'spin 4s linear infinite' : 'none' }}></div>}
+                <div className={`absolute rounded-full transition-opacity duration-700 ${!isMobile && is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ inset: getResponsiveSize('0.8rem', '1rem', '1rem', '0.4rem', '0.35rem'), background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 60%)', animation: !isMobile && is3DButtonHovered ? 'pulse 1.5s ease-in-out infinite' : 'none' }}></div>
+                <div className="relative z-10 flex flex-col items-center justify-center h-full">
+                  <div className="relative mb-0.5">
+                    <div className="absolute inset-0 bg-white/20 rounded-full blur-sm"></div>
+                    <svg className="text-white drop-shadow-lg relative z-10" style={{ 
+                      width: getResponsiveSize('1rem', '1.25rem', '1.5rem', '0.6rem', '0.5rem'), 
+                      height: getResponsiveSize('1rem', '1.25rem', '1.5rem', '0.6rem', '0.5rem') 
+                    }} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    </svg>
+                  </div>
+                  <div className="text-center">
+                    <span className="text-white font-black tracking-wider drop-shadow-lg block" style={{ 
+                      textShadow: '1px 1px 3px rgba(0,0,0,0.5), 0 0 8px rgba(255,255,255,0.3)', 
+                      fontSize: getResponsiveSize('0.5rem', '0.6rem', '0.7rem', '0.3rem', '0.28rem') 
+                    }}>
+                      INSTANT
+                    </span>
+                    <div className="text-white font-bold tracking-wide drop-shadow-lg" style={{ 
+                      textShadow: '1px 1px 2px rgba(0,0,0,0.5)', 
+                      fontSize: getResponsiveSize('0.4rem', '0.5rem', '0.6rem', '0.25rem', '0.22rem') 
+                    }}>
+                      ASSESS
+                    </div>
+                    <span className="text-white/90 font-semibold mt-0.5 block" style={{ 
+                      textShadow: '1px 1px 2px rgba(0,0,0,0.5)', 
+                      fontSize: getResponsiveSize('0.3rem', '0.4rem', '0.4rem', '0.2rem', '0.18rem') 
+                    }}>
+                      Powered by KAI
+                    </span>
+                  </div>
+                </div>
+                {!isMobile && (
+                  <div className={`absolute inset-0 rounded-full overflow-hidden transition-opacity duration-500 ${is3DButtonHovered ? 'opacity-100' : 'opacity-0'}`}>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent shine-animation"></div>
+                  </div>
+                )}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Floating Plus Menu with Robot and Dialog - Responsive Positioning */}
+        <nav 
+          className={`btn-pluss-wrapper fixed z-50 flex flex-col items-center transition-all duration-300 pointer-events-auto ${getPlusMenuPosition()}`}
+          onMouseEnter={() => !isMobile && setIsHovered(true)}
+          onMouseLeave={() => !isMobile && setIsHovered(false)}
+          onClick={() => isMobile && setIsHovered(!isHovered)}
+        >
+          {/* Robot Image with Cartoon Dialog - Always Visible */}
+          <div className="flex flex-col items-center mb-2">
+            {/* Cartoon Dialog */}
+            <div 
+              className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 mb-2 relative"
+              style={{
+                minWidth: getResponsiveSize('100px', '120px', '120px', '90px', '80px'),
+                minHeight: getResponsiveSize('35px', '40px', '40px', '30px', '25px')
+              }}
+            >
+              <div 
+                className="font-medium text-gray-800"
+                style={{
+                  fontSize: getResponsiveSize('0.75rem', '0.875rem', '0.875rem', '0.7rem', '0.65rem')
+                }}
+              >
+                {displayedText}
+                <span className="inline-block w-1 h-3 bg-gray-800 ml-1 animate-pulse"></span>
+              </div>
+              {/* Speech bubble tail */}
+              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-white border-r border-b border-gray-200"></div>
+            </div>
+            
+            {/* Robot Image */}
+            <img 
+              src="/images/bot_kai.png" 
+              alt="KAI Robot" 
+              className="object-contain drop-shadow-lg transition-transform duration-300 hover:scale-110"
+              style={{
+                width: getResponsiveSize('2.5rem', '3rem', '3rem', '2rem', '1.75rem'),
+                height: getResponsiveSize('2.5rem', '3rem', '3rem', '2rem', '1.75rem')
+              }}
+            />
+          </div>
+
+          {/* Menu Container */}
+          <div className={`
+            btn-pluss bg-blue-900 overflow-hidden flex flex-col items-center
+            transition-all duration-600 ease-[cubic-bezier(0.34,1.56,0.64,1)]
+            ${isHovered ? 'h-auto rounded-2xl pb-3 pt-3 shadow-2xl' : 'h-12 rounded-full shadow-lg'}
+            border border-blue-700
+          `}
+          style={{
+            width: isHovered ? getResponsiveSize('10rem', '11rem', '11rem', '9rem', '8rem') : getResponsiveSize('3rem', '3rem', '3rem', '2.5rem', '2.25rem')
+          }}>
+            {/* Plus Button with Jelly Animation Both Ways */}
+            <div className={`
+              bg-red-600 rounded-full flex items-center justify-center text-white font-bold
+              transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]
+              ${isHovered ? 'rotate-45 scale-105' : 'rotate-0 scale-100'}
+              shadow-lg hover:shadow-xl border border-red-500
+            `}
+            style={{
+              width: getResponsiveSize('2.5rem', '3rem', '3rem', '2rem', '1.75rem'),
+              height: getResponsiveSize('2.5rem', '3rem', '3rem', '2rem', '1.75rem'),
+              fontSize: getResponsiveSize('1rem', '1.25rem', '1.25rem', '0.875rem', '0.8rem')
+            }}>
+              +
+            </div>
+            
+            {/* Menu Items with Jelly Staggered Animation Both Ways */}
+            <ul className={`
+              transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] px-3 w-full overflow-y-auto ${getJellyMenuMaxHeight()}
+              ${isHovered ? 'opacity-100 mt-4' : 'opacity-0 mt-0'}
+            `}
+            style={{ 
+              scrollbarWidth: 'thin',
+              scrollbarColor: 'rgba(255,255,255,0.3) transparent'
+            }}>
+              {menuItems.map((item, index) => (
+                <li 
+                  key={index}
+                  className={`
+                    bg-white rounded-lg transition-all duration-600 ease-[cubic-bezier(0.34,1.56,0.64,1)]
+                    transform border border-gray-100 shadow-sm
+                    ${isHovered 
+                      ? `mb-2 opacity-100 translate-x-0 scale-100` 
+                      : 'opacity-0 translate-x-8 scale-90'
+                    }
+                    hover:bg-blue-50 hover:border-blue-200 hover:scale-105 hover:shadow-md
+                    cursor-pointer
+                  `}
+                  style={{
+                    height: isHovered ? getResponsiveSize('2.5rem', '3rem', '3rem', '2.25rem', '2rem') : '0',
+                    transitionDelay: isHovered 
+                      ? `${index * 100}ms` 
+                      : `${(menuItems.length - index - 1) * 80}ms`
+                  }}
+                  onClick={() => handleNavigation(item.href)}
+                >
+                  <div 
+                    className="text-blue-900 font-medium block w-full h-full flex flex-col items-center justify-center transition-colors duration-300 hover:text-blue-700 p-1"
+                    style={{
+                      fontSize: getResponsiveSize('0.7rem', '0.8rem', '0.875rem', '0.65rem', '0.6rem')
+                    }}
+                  >
+                    <span className="font-semibold">{item.text}</span>
+                    <span 
+                      className="text-gray-600"
+                      style={{
+                        fontSize: getResponsiveSize('0.6rem', '0.7rem', '0.75rem', '0.55rem', '0.5rem')
+                      }}
+                    >
+                      {item.description}
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </nav>
+
+        {/* Ninja Image with Cartoon Dialog - Responsive Positioning - UPDATED to align with bottom navbar */}
+        <div className={`fixed left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 pointer-events-auto ${getNinjaPosition()}`}>
+          <div className="relative flex flex-col items-center">
+            {/* Ninja Dialog - Updated positioning */}
+            <div className={`absolute ${getNinjaDialogPosition()}`}>
+              <div className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 relative" style={{ 
+                maxWidth: getResponsiveSize('140px', '160px', '180px', '120px', '100px'), 
+                minHeight: getResponsiveSize('60px', '70px', '80px', '50px', '45px') 
+              }}>
+                <div className="font-medium text-gray-800 whitespace-pre-line text-center" style={{ 
+                  fontSize: getResponsiveSize('0.7rem', '0.8rem', '0.875rem', '0.65rem', '0.6rem') 
+                }}>
+                  {ninjaText}
+                  <span className="inline-block w-1 h-3 bg-gray-800 ml-1 animate-pulse"></span>
+                </div>
+                {/* Pointer arrow positioned for bottom placement */}
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-45 bg-white border-r border-b border-gray-200" style={{ 
+                  width: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem'), 
+                  height: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem') 
+                }}></div>
+              </div>
+            </div>
+            
+            {/* Ninja Image */}
+            <img 
+              src="/images/ninja.png" 
+              alt="Ninja character offering help" 
+              className="object-contain drop-shadow-lg" 
+              style={{ 
+                width: getResponsiveSize(
+                  isLandscape ? '8rem' : '12rem', 
+                  '14rem', 
+                  '20rem', 
+                  '6rem', 
+                  '5rem'
+                ), 
+                height: getResponsiveSize(
+                  isLandscape ? '8rem' : '12rem', 
+                  '14rem', 
+                  '20rem', 
+                  '6rem', 
+                  '5rem'
+                ) 
+              }} 
+            />
+          </div>
+        </div>
+
+        {/* Bottom Navigation */}
+        <div className="fixed bottom-0 left-0 right-0 z-40 pointer-events-auto">
+          <BottomNav />
+        </div>
+      </div>
 
       <style jsx>{`
         .line-clamp-2 {
