@@ -106,8 +106,8 @@ const Home = () => {
   // Use BBC-style layout for both mobile landscape and portrait
   const useBbcLayout = isMobileLandscape || isMobilePortrait;
 
-  // Show instant assess only on mobile screens
-  const showInstantAssess = isMobile || isTablet;
+  // Show instant assess on ALL screen sizes including PC
+  const showInstantAssess = true; // Changed from isMobile || isTablet
 
   // Navigation handler
   const handleNavigation = (href) => {
@@ -122,7 +122,7 @@ const Home = () => {
     return '/images/homee.png';
   };
 
-  // Responsive sizes - UPDATED with larger sizes to match Primary
+  // Responsive sizes - UPDATED with larger ninja size for PC
   const getResponsiveSize = (mobile, tablet, desktop, landscapeMobile = null, smallLandscape = null) => {
     if (isSmallMobileLandscape && smallLandscape !== null) return smallLandscape;
     if (isMobileLandscape && landscapeMobile !== null) return landscapeMobile;
@@ -173,17 +173,15 @@ const Home = () => {
   };
 
   const handleInstantAssessmentTap = () => {
-    if (showInstantAssess) {
+    if (isMobile || isTablet) {
       setShowMiniCircles(prev => !prev);
     }
   };
 
   const handleMiniCircleTap = (href) => {
-    if (showInstantAssess) {
-      handleNavigation(href);
+    handleNavigation(href);
+    if (isMobile || isTablet) {
       setShowMiniCircles(false);
-    } else {
-      handleNavigation(href);
     }
   };
 
@@ -196,14 +194,14 @@ const Home = () => {
   };
 
   const handleContainerClick = (e) => {
-    if (e.target === e.currentTarget && showInstantAssess) {
+    if (e.target === e.currentTarget && (isMobile || isTablet)) {
       setShowMiniCircles(false);
     }
   };
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (showInstantAssess && showMiniCircles) {
+      if ((isMobile || isTablet) && showMiniCircles) {
         const buttonContainer = document.querySelector('.instant-assessment-container');
         if (buttonContainer && !buttonContainer.contains(e.target)) {
           setShowMiniCircles(false);
@@ -215,14 +213,14 @@ const Home = () => {
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
-  }, [showMiniCircles, showInstantAssess]);
+  }, [showMiniCircles, isMobile, isTablet]);
 
-  // Function to determine ninja position - UPDATED to align with bottom navbar
+  // Function to determine ninja position - UPDATED with negative bottom padding for PC
   const getNinjaPosition = () => {
-    if (useBbcLayout) return 'bottom-9 mb-0 scale-75'; // Aligned with bottom navbar
-    if (isMobile) return isLandscape ? 'bottom-0 mb-0 scale-90' : 'bottom-0 mb-0'; // Aligned with bottom navbar
-    if (isTablet) return 'bottom-0 mb-0'; // Aligned with bottom navbar
-    return 'bottom-0 mb-0'; // Aligned with bottom navbar
+    if (useBbcLayout) return 'bottom-9 mb-0 scale-75';
+    if (isMobile) return isLandscape ? 'bottom-0 mb-0 scale-90' : 'bottom-0 mb-0';
+    if (isTablet) return 'bottom-0 mb-0';
+    return 'bottom-0 pc-ninja-bottom'; // Added special class for PC
   };
 
   // Function to determine ninja dialog position - UPDATED
@@ -245,11 +243,11 @@ const Home = () => {
 
   // Function to determine instant assess button position - UPDATED to move left by 1 inch (96px) to match Primary
   const getInstantAssessButtonPosition = () => {
-    if (isDesktopLandscape) return 'top-1/2 transform -translate-y-1/2 scale-100';
+    if (isDesktopLandscape) return 'top-1/2 transform -translate-y-1/2 scale-100 pc-padding';
     if (isMobilePortrait) return 'bottom-4 transform scale-85'; // Increased from 0.75
     if (isMobileLandscape) return 'bottom-100 transform scale-75'; // Increased from 0.65
     if (isTablet) return 'bottom-6 transform scale-100'; // Increased from 0.90
-    return 'bottom-8 transform scale-100';
+    return 'bottom-8 transform scale-100 pc-padding';
   };
 
   // Get right position for instant assess button - UPDATED to match Primary
@@ -507,7 +505,7 @@ const Home = () => {
 
       {/* Interactive Elements - Fixed position elements that stay visible */}
       <div className="fixed inset-0 z-40 pointer-events-none">
-        {/* Instant Assessment Button - UPDATED position and size to match Primary */}
+        {/* Instant Assessment Button - Now visible on PC screens too */}
         {showInstantAssess && !isMenuOpen && (
           <div 
             className={`fixed instant-assessment-container bottom-0 z-50 pointer-events-auto ${getInstantAssessButtonPosition()}`}
@@ -515,39 +513,40 @@ const Home = () => {
               right: getInstantAssessRightPosition(),
               touchAction: 'manipulation'
             }}
-            onMouseEnter={() => !isMobile && setIs3DButtonHovered(true)}
+            onMouseEnter={() => setIs3DButtonHovered(true)}
             onMouseLeave={() => {
-              if (!isMobile) {
-                setIs3DButtonHovered(false);
-                setHoveredCircle(null);
-              }
+              setIs3DButtonHovered(false);
+              setHoveredCircle(null);
             }}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="relative" style={{ 
-              width: getResponsiveSize('150px', '180px', '220px', '100px', '90px'), // Increased sizes to match Primary
-              height: getResponsiveSize('150px', '180px', '220px', '100px', '90px') // Increased sizes to match Primary
+              width: getResponsiveSize('150px', '180px', '220px', '100px', '90px'),
+              height: getResponsiveSize('150px', '180px', '220px', '100px', '90px')
             }}>
               <div className="absolute inset-0">
                 {assessmentCategories.map((category, index) => {
-                  const radius = getResponsiveSize(100, 120, 150, 60, 55); // Increased radius to match Primary
+                  const radius = getResponsiveSize(100, 120, 150, 60, 55);
                   const position = getCirclePosition(category.angle, radius, index);
-                  const circleSize = getResponsiveSize('60px', '70px', '85px', '42px', '38px'); // Increased circle sizes to match Primary
+                  const circleSize = getResponsiveSize('60px', '70px', '85px', '42px', '38px');
                   
-                  const shouldShowMiniCircles = isMobile || isTablet ? showMiniCircles : is3DButtonHovered;
+                  // Show circles on hover for desktop, or when mini circles are toggled for mobile/tablet
+                  const shouldShowCircles = isMobile || isTablet 
+                    ? showMiniCircles 
+                    : is3DButtonHovered;
                   
                   return (
-                    <div key={category.title} className={`absolute transition-all duration-700 ease-out ${shouldShowMiniCircles ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
+                    <div key={category.title} className={`absolute transition-all duration-700 ease-out ${shouldShowCircles ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
                       style={{ 
                         left: '50%', 
                         top: '50%', 
                         transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`, 
-                        transitionDelay: shouldShowMiniCircles ? `${index * 120}ms` : '0ms' 
+                        transitionDelay: shouldShowCircles ? `${index * 120}ms` : '0ms' 
                       }}
-                      onMouseEnter={() => !isMobile && setHoveredCircle(index)}
-                      onMouseLeave={() => !isMobile && setHoveredCircle(null)}>
-                      {!isMobile && !isMobilePortrait && (
-                        <svg className={`absolute transition-all duration-500 ${shouldShowMiniCircles ? 'opacity-100' : 'opacity-0'}`}
+                      onMouseEnter={() => !isMobile && !isTablet && setHoveredCircle(index)}
+                      onMouseLeave={() => !isMobile && !isTablet && setHoveredCircle(null)}>
+                      {!isMobile && !isTablet && !isMobilePortrait && (
+                        <svg className={`absolute transition-all duration-500 ${shouldShowCircles ? 'opacity-100' : 'opacity-0'}`}
                           style={{ 
                             left: '50%', 
                             top: '50%', 
@@ -555,7 +554,7 @@ const Home = () => {
                             width: isTablet ? `${Math.abs(position.x) * 2 + 60}px` : `${radius + 60}px`, 
                             height: isTablet ? '120px' : `${radius + 60}px`, 
                             pointerEvents: 'none', 
-                            transitionDelay: shouldShowMiniCircles ? `${index * 120 + 200}ms` : '0ms' 
+                            transitionDelay: shouldShowCircles ? `${index * 120 + 200}ms` : '0ms' 
                           }}>
                           {isTablet && (
                             <path 
@@ -586,12 +585,12 @@ const Home = () => {
                         </svg>
                       )}
                       <div 
-                        className={`relative rounded-full transform transition-all duration-400 cursor-pointer ${!isMobile && hoveredCircle === index ? 'scale-110 rotate-12' : 'scale-100 rotate-0'} bg-gradient-to-br ${category.gradient} shadow-xl ${category.shadow} ${!isMobile && hoveredCircle === index ? `${category.glow} shadow-2xl` : ''}`}
+                        className={`relative rounded-full transform transition-all duration-400 cursor-pointer ${!isMobile && !isTablet && hoveredCircle === index ? 'scale-110 rotate-12' : 'scale-100 rotate-0'} bg-gradient-to-br ${category.gradient} shadow-xl ${category.shadow} ${!isMobile && !isTablet && hoveredCircle === index ? `${category.glow} shadow-2xl` : ''}`}
                         style={{ 
                           width: circleSize, 
                           height: circleSize, 
                           border: '3px solid rgba(255, 255, 255, 0.3)',
-                          boxShadow: !isMobile && hoveredCircle === index ? `0 12px 30px ${category.shadow.replace('/50', '/60')}, inset 0 -3px 8px rgba(0,0,0,0.3), inset 0 3px 8px rgba(255,255,255,0.3)` : '0 6px 20px rgba(0,0,0,0.3), inset 0 -2px 6px rgba(0,0,0,0.3), inset 0 2px 6px rgba(255,255,255,0.2)' 
+                          boxShadow: !isMobile && !isTablet && hoveredCircle === index ? `0 12px 30px ${category.shadow.replace('/50', '/60')}, inset 0 -3px 8px rgba(0,0,0,0.3), inset 0 3px 8px rgba(255,255,255,0.3)` : '0 6px 20px rgba(0,0,0,0.3), inset 0 -2px 6px rgba(0,0,0,0.3), inset 0 2px 6px rgba(255,255,255,0.2)' 
                         }}
                         onClick={() => handleMiniCircleTap(category.href)}
                       >
@@ -605,8 +604,8 @@ const Home = () => {
                             {category.title}
                           </span>
                         </div>
-                        {!isMobile && <div className={`absolute inset-0 rounded-full transition-all duration-500 ${hoveredCircle === index ? 'opacity-100' : 'opacity-0'}`} style={{ border: '1px dashed rgba(255, 255, 255, 0.4)', animation: hoveredCircle === index ? 'spin 3s linear infinite' : 'none' }}></div>}
-                        {!isMobile && hoveredCircle === index && (
+                        {!isMobile && !isTablet && <div className={`absolute inset-0 rounded-full transition-all duration-500 ${hoveredCircle === index ? 'opacity-100' : 'opacity-0'}`} style={{ border: '1px dashed rgba(255, 255, 255, 0.4)', animation: hoveredCircle === index ? 'spin 3s linear infinite' : 'none' }}></div>}
+                        {!isMobile && !isTablet && hoveredCircle === index && (
                           <div className="absolute inset-0 rounded-full overflow-hidden">
                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent shine-animation"></div>
                           </div>
@@ -618,21 +617,21 @@ const Home = () => {
               </div>
 
               <button 
-                className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-500 ${!isMobile && is3DButtonHovered ? 'scale-110' : 'scale-100'} ${isDesktop ? 'cursor-default' : 'cursor-pointer'} group`}
+                className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-500 ${is3DButtonHovered ? 'scale-110' : 'scale-100'} ${isDesktop ? 'cursor-default' : 'cursor-pointer'} group`}
                 style={{ 
-                  width: getResponsiveSize('75px', '90px', '105px', '50px', '45px'), // Increased main button sizes to match Primary
-                  height: getResponsiveSize('75px', '90px', '105px', '50px', '45px'), // Increased main button sizes to match Primary
+                  width: getResponsiveSize('75px', '90px', '105px', '50px', '45px'),
+                  height: getResponsiveSize('75px', '90px', '105px', '50px', '45px'),
                   background: 'linear-gradient(145deg, #fbbf24, #f59e0b, #d97706)', 
-                  boxShadow: !isMobile && is3DButtonHovered ? '0 15px 35px rgba(251, 191, 36, 0.6), 0 0 60px rgba(251, 191, 36, 0.4), inset 0 -5px 12px rgba(0,0,0,0.4), inset 0 5px 12px rgba(255,255,255,0.3)' : '0 8px 20px rgba(251, 191, 36, 0.4), 0 0 30px rgba(251, 191, 36, 0.2), inset 0 -3px 10px rgba(0,0,0,0.3), inset 0 3px 10px rgba(255,255,255,0.2)', 
+                  boxShadow: is3DButtonHovered ? '0 15px 35px rgba(251, 191, 36, 0.6), 0 0 60px rgba(251, 191, 36, 0.4), inset 0 -5px 12px rgba(0,0,0,0.4), inset 0 5px 12px rgba(255,255,255,0.3)' : '0 8px 20px rgba(251, 191, 36, 0.4), 0 0 30px rgba(251, 191, 36, 0.2), inset 0 -3px 10px rgba(0,0,0,0.3), inset 0 3px 10px rgba(255,255,255,0.2)', 
                   border: '3px solid rgba(255, 255, 255, 0.3)'
                 }}
                 onClick={handleInstantAssessmentTap}
-                onMouseEnter={() => !isMobile && setIs3DButtonHovered(true)}
-                onMouseLeave={() => !isMobile && setIs3DButtonHovered(false)}
+                onMouseEnter={() => setIs3DButtonHovered(true)}
+                onMouseLeave={() => setIs3DButtonHovered(false)}
               >
                 <div className="absolute inset-0 rounded-full" style={{ border: '2px solid rgba(0, 0, 0, 0.2)', boxShadow: 'inset 0 1px 3px rgba(255,255,255,0.5), inset 0 -1px 3px rgba(0,0,0,0.3)' }}></div>
-                {!isMobile && <div className={`absolute inset-0 rounded-full transition-opacity duration-500 ${is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ border: '1px dashed rgba(255, 255, 255, 0.3)', animation: is3DButtonHovered ? 'spin 4s linear infinite' : 'none' }}></div>}
-                <div className={`absolute rounded-full transition-opacity duration-700 ${!isMobile && is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ inset: getResponsiveSize('1rem', '1.2rem', '1.2rem', '0.5rem', '0.45rem'), background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 60%)', animation: !isMobile && is3DButtonHovered ? 'pulse 1.5s ease-in-out infinite' : 'none' }}></div>
+                {!isMobile && !isTablet && <div className={`absolute inset-0 rounded-full transition-opacity duration-500 ${is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ border: '1px dashed rgba(255, 255, 255, 0.3)', animation: is3DButtonHovered ? 'spin 4s linear infinite' : 'none' }}></div>}
+                <div className={`absolute rounded-full transition-opacity duration-700 ${is3DButtonHovered ? 'opacity-100' : 'opacity-60'}`} style={{ inset: getResponsiveSize('1rem', '1.2rem', '1.2rem', '0.5rem', '0.45rem'), background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 60%)', animation: is3DButtonHovered ? 'pulse 1.5s ease-in-out infinite' : 'none' }}></div>
                 <div className="relative z-10 flex flex-col items-center justify-center h-full">
                   <div className="relative mb-0.5">
                     <div className="absolute inset-0 bg-white/20 rounded-full blur-sm"></div>
@@ -664,7 +663,7 @@ const Home = () => {
                     </span>
                   </div>
                 </div>
-                {!isMobile && (
+                {!isMobile && !isTablet && (
                   <div className={`absolute inset-0 rounded-full overflow-hidden transition-opacity duration-500 ${is3DButtonHovered ? 'opacity-100' : 'opacity-0'}`}>
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent shine-animation"></div>
                   </div>
@@ -674,37 +673,16 @@ const Home = () => {
           </div>
         )}
 
-        {/* Floating Plus Menu with Robot and Dialog - Responsive Positioning */}
+        {/* Floating Plus Menu with Robot - Responsive Positioning */}
         <nav 
           className={`btn-pluss-wrapper fixed z-50 flex flex-col items-center transition-all duration-300 pointer-events-auto ${getPlusMenuPosition()}`}
           onMouseEnter={() => !isMobile && setIsHovered(true)}
           onMouseLeave={() => !isMobile && setIsHovered(false)}
           onClick={() => isMobile && setIsHovered(!isHovered)}
         >
-          {/* Robot Image with Cartoon Dialog - Always Visible */}
+          {/* Robot Image without Dialog */}
           <div className="flex flex-col items-center mb-2">
-            {/* Cartoon Dialog */}
-            <div 
-              className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 mb-2 relative"
-              style={{
-                minWidth: getResponsiveSize('100px', '120px', '120px', '90px', '80px'),
-                minHeight: getResponsiveSize('35px', '40px', '40px', '30px', '25px')
-              }}
-            >
-              <div 
-                className="font-medium text-gray-800"
-                style={{
-                  fontSize: getResponsiveSize('0.75rem', '0.875rem', '0.875rem', '0.7rem', '0.65rem')
-                }}
-              >
-                {displayedText}
-                <span className="inline-block w-1 h-3 bg-gray-800 ml-1 animate-pulse"></span>
-              </div>
-              {/* Speech bubble tail */}
-              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-white border-r border-b border-gray-200"></div>
-            </div>
-            
-            {/* Robot Image */}
+            {/* Robot Image only, no dialog */}
             <img 
               src="/images/bot_kai.png" 
               alt="KAI Robot" 
@@ -793,50 +771,26 @@ const Home = () => {
           </div>
         </nav>
 
-        {/* Ninja Image with Cartoon Dialog - Responsive Positioning - UPDATED to align with bottom navbar */}
+        {/* Ninja Image without Dialog - Responsive Positioning with larger size for PC */}
         <div className={`fixed left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 pointer-events-auto ${getNinjaPosition()}`}>
           <div className="relative flex flex-col items-center">
-            {/* Ninja Dialog - Updated positioning */}
-            <div className={`absolute ${getNinjaDialogPosition()}`}>
-              <div className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 relative" style={{ 
-                maxWidth: getResponsiveSize('140px', '160px', '180px', '120px', '100px'), 
-                minHeight: getResponsiveSize('60px', '70px', '80px', '50px', '45px') 
-              }}>
-                <div className="font-medium text-gray-800 whitespace-pre-line text-center" style={{ 
-                  fontSize: getResponsiveSize('0.7rem', '0.8rem', '0.875rem', '0.65rem', '0.6rem') 
-                }}>
-                  {ninjaText}
-                  <span className="inline-block w-1 h-3 bg-gray-800 ml-1 animate-pulse"></span>
-                </div>
-                {/* Pointer arrow with conditional positioning */}
-                <div className={`absolute transform ${
-                  isMobileLandscape 
-                    ? 'top-1/2 right-0 translate-x-1/2 -translate-y-1/2 rotate-[135deg]' 
-                    : 'top-full left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-45'
-                } bg-white border-r border-b border-gray-200`} style={{ 
-                  width: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem'), 
-                  height: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem') 
-                }}></div>
-              </div>
-            </div>
-            
-            {/* Ninja Image */}
+            {/* Ninja Image only, no dialog */}
             <img 
               src="/images/ninja.png" 
-              alt="Ninja character offering help" 
-              className="object-contain drop-shadow-lg" 
+              alt="Ninja character" 
+              className="object-contain drop-shadow-lg pc-ninja" 
               style={{ 
                 width: getResponsiveSize(
                   isLandscape ? '8rem' : '12rem', 
                   '14rem', 
-                  '20rem', 
+                  '25rem', // Increased from 20rem to 28rem for PC
                   '6rem', 
                   '5rem'
                 ), 
                 height: getResponsiveSize(
                   isLandscape ? '8rem' : '12rem', 
                   '14rem', 
-                  '20rem', 
+                  '28rem', // Increased from 20rem to 28rem for PC
                   '6rem', 
                   '5rem'
                 ) 
@@ -939,6 +893,41 @@ const Home = () => {
         
         .btn-pluss ul::-webkit-scrollbar-thumb:hover {
           background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* PC-only instant assess circle padding */
+        @media (min-width: 1024px) {
+          .pc-padding {
+            right: calc(128px + 10%) !important; /* Add 10% padding to the right side */
+            top: 40% !important; /* Add 25% padding from top */
+            transform: translateY(0) !important; /* Remove vertical centering */
+            bottom: auto !important; /* Remove bottom positioning */
+          }
+        }
+
+        /* PC-only ninja adjustments: larger size and negative bottom padding */
+        @media (min-width: 1024px) {
+          .pc-ninja-bottom {
+            margin-bottom: -0rem !important; /* Negative margin to push ninja below bottom */
+          }
+          
+          .pc-ninja {
+            transform: translateY(20%) scale(1.1); /* Move down 20% and scale up 10% */
+            transition: transform 0.5s ease-out;
+          }
+          
+          /* Alternative method with more precise control */
+          .pc-ninja-container {
+            bottom: -4rem !important; /* Negative bottom positioning */
+          }
+        }
+
+        /* Optional: Add hover effect for PC */
+        @media (min-width: 1024px) {
+          .pc-ninja:hover {
+            transform: translateY(20%) scale(1.15);
+            filter: brightness(1.1) drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+          }
         }
       `}</style>
     </div>

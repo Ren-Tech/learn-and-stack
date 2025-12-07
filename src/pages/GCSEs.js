@@ -217,22 +217,12 @@ const GCSEs = () => {
     };
   }, [showMiniCircles, showInstantAssess]);
 
-  // Function to determine ninja position - UPDATED to align with bottom navbar
+  // Function to determine ninja position - UPDATED with -4rem margin for PC (SAME AS ELEVENPLUS)
   const getNinjaPosition = () => {
-    if (useBbcLayout) return 'bottom-9 mb-0 scale-75'; // Aligned with bottom navbar
-    if (isMobile) return isLandscape ? 'bottom-0 mb-0 scale-90' : 'bottom-0 mb-0'; // Aligned with bottom navbar
-    if (isTablet) return 'bottom-0 mb-0'; // Aligned with bottom navbar
-    return 'bottom-0 mb-0'; // Aligned with bottom navbar
-  };
-
-  // Function to determine ninja dialog position - UPDATED
-  const getNinjaDialogPosition = () => {
-    if (isDesktopLandscape) return 'bottom-1/2 left-full transform translate-y-1/2 ml-4 scale-50';
-    if (isMobileLandscape) return 'top-1/2 right-full transform -translate-y-1/2 mr-2 scale-75';
-    if (useBbcLayout) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-2 scale-90';
-    if (isMobile) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-2';
-    if (isTablet) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-3';
-    return 'bottom-full left-1/2 transform -translate-x-1/2 mb-4';
+    if (useBbcLayout) return 'bottom-9 mb-0 scale-75';
+    if (isMobile) return isLandscape ? 'bottom-0 mb-0 scale-90' : 'bottom-0 mb-0';
+    if (isTablet) return 'bottom-0 mb-0';
+    return 'bottom-0 pc-ninja-bottom'; // Added special class for PC with negative margin
   };
 
   // Function to determine plus menu position
@@ -298,23 +288,9 @@ const GCSEs = () => {
     }
   }, [displayedText, currentLine, isTyping, dialogLines]);
 
-  // Ninja dialog typing animation
+  // Ninja dialog typing animation - REMOVED since we're removing the dialog (SAME AS ELEVENPLUS)
   useEffect(() => {
-    if (isNinjaTyping) {
-      const fullText = ninjaLines.join('\n');
-      if (ninjaText.length < fullText.length) {
-        const timer = setTimeout(() => {
-          setNinjaText(fullText.slice(0, ninjaText.length + 1));
-        }, 50);
-        return () => clearTimeout(timer);
-      } else {
-        const timer = setTimeout(() => {
-          setNinjaText('');
-          setIsNinjaTyping(true);
-        }, 5000);
-        return () => clearTimeout(timer);
-      }
-    }
+    // Empty effect since we're removing the ninja dialog
   }, [ninjaText, isNinjaTyping, ninjaLines]);
 
   return (
@@ -687,37 +663,16 @@ const GCSEs = () => {
           </div>
         )}
 
-        {/* Floating Plus Menu with Robot and Dialog - Responsive Positioning */}
+        {/* Floating Plus Menu with Robot - Responsive Positioning (SAME AS ELEVENPLUS) */}
         <nav 
           className={`btn-pluss-wrapper fixed z-50 flex flex-col items-center transition-all duration-300 pointer-events-auto ${getPlusMenuPosition()}`}
           onMouseEnter={() => !isMobile && setIsHovered(true)}
           onMouseLeave={() => !isMobile && setIsHovered(false)}
           onClick={() => isMobile && setIsHovered(!isHovered)}
         >
-          {/* Robot Image with Cartoon Dialog - Always Visible */}
+          {/* Robot Image without Dialog (SAME AS ELEVENPLUS) */}
           <div className="flex flex-col items-center mb-2">
-            {/* Cartoon Dialog */}
-            <div 
-              className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 mb-2 relative"
-              style={{
-                minWidth: getResponsiveSize('100px', '120px', '120px', '90px', '80px'),
-                minHeight: getResponsiveSize('35px', '40px', '40px', '30px', '25px')
-              }}
-            >
-              <div 
-                className="font-medium text-gray-800"
-                style={{
-                  fontSize: getResponsiveSize('0.75rem', '0.875rem', '0.875rem', '0.7rem', '0.65rem')
-                }}
-              >
-                {displayedText}
-                <span className="inline-block w-1 h-3 bg-gray-800 ml-1 animate-pulse"></span>
-              </div>
-              {/* Speech bubble tail */}
-              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-white border-r border-b border-gray-200"></div>
-            </div>
-            
-            {/* Robot Image */}
+            {/* Robot Image only, no dialog */}
             <img 
               src="/images/bot_kai.png" 
               alt="KAI Robot" 
@@ -806,50 +761,26 @@ const GCSEs = () => {
           </div>
         </nav>
 
-        {/* Ninja Image with Cartoon Dialog - Responsive Positioning - UPDATED to align with bottom navbar */}
+        {/* Ninja Image without Dialog - Responsive Positioning with 20rem size for PC and -4rem margin (SAME AS ELEVENPLUS) */}
         <div className={`fixed left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 pointer-events-auto ${getNinjaPosition()}`}>
           <div className="relative flex flex-col items-center">
-            {/* Ninja Dialog - Updated positioning */}
-            <div className={`absolute ${getNinjaDialogPosition()}`}>
-              <div className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-gray-200 relative" style={{ 
-                maxWidth: getResponsiveSize('140px', '160px', '180px', '120px', '100px'), 
-                minHeight: getResponsiveSize('60px', '70px', '80px', '50px', '45px') 
-              }}>
-                <div className="font-medium text-gray-800 whitespace-pre-line text-center" style={{ 
-                  fontSize: getResponsiveSize('0.7rem', '0.8rem', '0.875rem', '0.65rem', '0.6rem') 
-                }}>
-                  {ninjaText}
-                  <span className="inline-block w-1 h-3 bg-gray-800 ml-1 animate-pulse"></span>
-                </div>
-                {/* Pointer arrow with conditional positioning */}
-                <div className={`absolute transform ${
-                  isMobileLandscape 
-                    ? 'top-1/2 right-0 translate-x-1/2 -translate-y-1/2 rotate-[135deg]' 
-                    : 'top-full left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-45'
-                } bg-white border-r border-b border-gray-200`} style={{ 
-                  width: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem'), 
-                  height: getResponsiveSize('0.5rem', '0.6rem', '0.75rem', '0.4rem', '0.35rem') 
-                }}></div>
-              </div>
-            </div>
-            
-            {/* Ninja Image */}
+            {/* Ninja Image only, no dialog */}
             <img 
               src="/images/ninja.png" 
-              alt="Ninja character offering help" 
-              className="object-contain drop-shadow-lg" 
+              alt="Ninja character" 
+              className="object-contain drop-shadow-lg pc-ninja" 
               style={{ 
                 width: getResponsiveSize(
                   isLandscape ? '8rem' : '12rem', 
                   '14rem', 
-                  '20rem', 
+                  '20rem', // Set to 20rem for PC (SAME AS ELEVENPLUS)
                   '6rem', 
                   '5rem'
                 ), 
                 height: getResponsiveSize(
                   isLandscape ? '8rem' : '12rem', 
                   '14rem', 
-                  '20rem', 
+                  '20rem', // Set to 20rem for PC (SAME AS ELEVENPLUS)
                   '6rem', 
                   '5rem'
                 ) 
@@ -952,6 +883,26 @@ const GCSEs = () => {
         
         .btn-pluss ul::-webkit-scrollbar-thumb:hover {
           background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* PC-only ninja adjustments: 20rem size and -4rem margin to move down (SAME AS ELEVENPLUS) */
+        @media (min-width: 1024px) {
+          .pc-ninja-bottom {
+            margin-bottom: 1.5rem !important; /* Negative margin to move ninja down */
+          }
+          
+          .pc-ninja {
+            transform: translateY(20%) scale(1.1); /* Move down 20% and scale up 10% */
+            transition: transform 0.5s ease-out;
+          }
+        }
+
+        /* Optional: Add hover effect for PC (SAME AS ELEVENPLUS) */
+        @media (min-width: 1024px) {
+          .pc-ninja:hover {
+            transform: translateY(20%) scale(1.15);
+            filter: brightness(1.1) drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+          }
         }
       `}</style>
     </div>
