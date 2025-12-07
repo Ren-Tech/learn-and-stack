@@ -121,7 +121,7 @@ const Navbar = ({ onMenuStateChange }) => {
       case "/":
         return {
           title: "Learning Simplified",
-          items: ["Expert Tutoring", "Proven Results", "Personalized Learning"],
+          items: ["Expert Tutoring", "Proven Results", "Personalised Learning"],
         };
       case "/preschool":
         return {
