@@ -119,7 +119,7 @@ const GCSEs = () => {
     if (useBbcLayout) return "/images/landscape/gc1.png";
     if (isMobile) return "/images/gcse_mob.png";
     if (isTabletPortrait) return "/images/tab_gcse.png";
-    return "/images/GCSEs.png";
+    return "/images/GCSE.jpg";
   };
 
   // Responsive sizes - UPDATED with larger sizes to match Primary
@@ -292,6 +292,8 @@ const GCSEs = () => {
   useEffect(() => {
     // Empty effect since we're removing the ninja dialog
   }, [ninjaText, isNinjaTyping, ninjaLines]);
+
+  const backgroundImage = getBackgroundImage();
 
   return (
     <div className={`min-h-screen bg-white relative overflow-x-hidden ${showPortraitLock ? 'backdrop-blur-sm' : ''}`} onClick={handleContainerClick}>
@@ -476,13 +478,15 @@ const GCSEs = () => {
           {/* Background Image */}
           <div className="relative z-0 w-full" style={{ height: 'calc(100vh - 120px)' }}>
             <img 
-              src={getBackgroundImage()} 
+              src={backgroundImage} 
               alt="GCSEs Background" 
               className="w-full h-full object-cover"
               style={{
                 imageRendering: '-webkit-optimize-contrast',
                 WebkitBackfaceVisibility: 'hidden',
-                backfaceVisibility: 'hidden'
+                backfaceVisibility: 'hidden',
+                transform: backgroundImage === '/images/GCSE.jpg' ? 'scale(0.8) translateY(-15%)' : 'none',
+                transformOrigin: 'center'
               }}
             />
           </div>
