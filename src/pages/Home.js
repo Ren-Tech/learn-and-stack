@@ -484,6 +484,7 @@ const Home = () => {
 
           {/* Background Image - UPDATED with 30% larger size */}
          {/* Background Image - UPDATED with 30% larger size */}
+        {/* Background Image - Balanced size */}
           <div className="relative z-0 w-full" style={{ height: 'calc(100vh - 120px)' }}>
             <div className="relative w-full h-full overflow-hidden flex items-start justify-center">
               <img 
@@ -494,33 +495,30 @@ const Home = () => {
                   imageRendering: '-webkit-optimize-contrast',
                   WebkitBackfaceVisibility: 'hidden',
                   backfaceVisibility: 'hidden',
-                  // Increased size by 30% (scale 1.25) and moved up by 5%
-                  transform: 'scale(1.25) translateY(-5%)',
+                  transform: 'scale(1.15) translateY(-5%)',
                   width: 'auto',
                   height: 'auto',
-                  maxWidth: '95%', // Increased max width to allow larger display
-                  maxHeight: '95%', // Increased max height to allow larger display
+                  maxWidth: '85%',
+                  maxHeight: '85%',
                 }}
               />
             </div>
 
-            {/* Our Commitments Section - Below Image */}
-            <div className="absolute left-8 z-10" style={{ top: 'calc(60% + 2rem)' }}>
-              <div className="flex items-start gap-6 max-w-4xl">
-             
-                
-                {/* Commitment Text */}
-                <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl p-6 border border-gray-200">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4 border-b-2 border-blue-600 pb-2">
+          {/* Our Commitments Section - Closer to image */}
+            <div className="absolute left-20 z-10" style={{ top: 'calc(55% + 0.5rem)' }}>
+              <div className="flex items-start gap-6 max-w-sm">
+                {/* Commitment Text without card background */}
+                <div>
+                  <h2 className="text-base font-bold text-gray-900 mb-1.5 border-b-2 border-blue-600 pb-1 inline-block">
                     Our Commitments to Excellence
                   </h2>
-                  <div className="space-y-3">
+                  <div className="space-y-1">
                     {commitments.map((commitment, index) => (
-                      <div key={index} className="flex items-start gap-3">
-                        <div className="flex-shrink-0 mt-1">
-                          <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                      <div key={index} className="flex items-start gap-1.5">
+                        <div className="flex-shrink-0 mt-0.5">
+                          <div className="w-1 h-1 bg-blue-600 rounded-full"></div>
                         </div>
-                        <p className="text-gray-700 text-sm leading-relaxed">
+                        <p className="text-gray-800 text-[0.65rem] leading-tight">
                           {commitment}
                         </p>
                       </div>
@@ -940,19 +938,20 @@ const Home = () => {
         }
 
         /* PC-only ninja adjustments: larger size and negative bottom padding */
+/* PC-only ninja adjustments: larger size and adjusted positioning */
         @media (min-width: 1024px) {
           .pc-ninja-bottom {
-            margin-bottom: -0rem !important; /* Negative margin to push ninja below bottom */
+            margin-bottom: 0rem !important; /* Small positive margin to move up slightly */
           }
           
           .pc-ninja {
-            transform: translateY(20%) scale(1.1); /* Move down 20% and scale up 10% */
+            transform: translateY(10%) scale(1.1); /* Move down slightly less (10%) and scale up 10% */
             transition: transform 0.5s ease-out;
           }
           
           /* Alternative method with more precise control */
           .pc-ninja-container {
-            bottom: -4rem !important; /* Negative bottom positioning */
+            bottom: 0rem !important; /* Adjust bottom positioning */
           }
         }
 
