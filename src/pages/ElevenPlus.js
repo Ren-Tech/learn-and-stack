@@ -121,7 +121,7 @@ const ElevenPlus = () => {
     if (useBbcLayout) return "/images/landscape/el1.png";
     if (isMobile) return "/images/11.png";
     if (isTabletPortrait) return "/images/tab_11.png";
-    return "/images/11+.png";
+    return "/images/elevenPlus.jpg";
   };
 
   // Responsive sizes - UPDATED with larger sizes to match Primary
@@ -475,18 +475,26 @@ const ElevenPlus = () => {
             <Navbar onMenuStateChange={handleMenuStateChange} />
           </div>
 
-          {/* Background Image */}
+          {/* Background Image - UPDATED with 30% larger size */}
           <div className="relative z-0 w-full" style={{ height: 'calc(100vh - 120px)' }}>
-            <img 
-              src={getBackgroundImage()} 
-              alt="11+ Background" 
-              className="w-full h-full object-cover"
-              style={{
-                imageRendering: '-webkit-optimize-contrast',
-                WebkitBackfaceVisibility: 'hidden',
-                backfaceVisibility: 'hidden'
-              }}
-            />
+            <div className="relative w-full h-full overflow-hidden flex items-start justify-center">
+              <img 
+                src={getBackgroundImage()} 
+                alt="11+ Background" 
+                className="object-contain"
+                style={{
+                  imageRendering: '-webkit-optimize-contrast',
+                  WebkitBackfaceVisibility: 'hidden',
+                  backfaceVisibility: 'hidden',
+                  // Increased size by 30% (from scale 0.95 to scale 1.25) and moved up by 5%
+                  transform: 'scale(1.25) translateY(-5%)',
+                  width: 'auto',
+                  height: 'auto',
+                  maxWidth: '95%', // Increased max width to allow larger display
+                  maxHeight: '95%', // Increased max height to allow larger display
+                }}
+              />
+            </div>
           </div>
 
           {/* Bottom Navigation */}
