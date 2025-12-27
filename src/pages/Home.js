@@ -119,7 +119,7 @@ const Home = () => {
     if (useBbcLayout) return process.env.PUBLIC_URL + '/images/landscape/home1.jpg';
     if (isMobile) return process.env.PUBLIC_URL + '/images/home_mob.png';
     if (isTabletPortrait) return process.env.PUBLIC_URL + '/images/tab_home.png';
-    return process.env.PUBLIC_URL + '/images/homee.png';
+    return process.env.PUBLIC_URL + '/images/Homes.jpg';
   };
 
   // Responsive sizes - UPDATED with larger ninja size for PC
@@ -482,18 +482,26 @@ const Home = () => {
             <Navbar onMenuStateChange={handleMenuStateChange} />
           </div>
 
-          {/* Background Image */}
+          {/* Background Image - UPDATED with 30% larger size */}
           <div className="relative z-0 w-full" style={{ height: 'calc(100vh - 120px)' }}>
-            <img 
-              src={getHomeImage()} 
-              alt="Home Background" 
-              className="w-full h-full object-cover"
-              style={{
-                imageRendering: '-webkit-optimize-contrast',
-                WebkitBackfaceVisibility: 'hidden',
-                backfaceVisibility: 'hidden'
-              }}
-            />
+            <div className="relative w-full h-full overflow-hidden flex items-start justify-center">
+              <img 
+                src={getHomeImage()} 
+                alt="Home Background" 
+                className="object-contain"
+                style={{
+                  imageRendering: '-webkit-optimize-contrast',
+                  WebkitBackfaceVisibility: 'hidden',
+                  backfaceVisibility: 'hidden',
+                  // Increased size by 30% (scale 1.25) and moved up by 5%
+                  transform: 'scale(1.25) translateY(-5%)',
+                  width: 'auto',
+                  height: 'auto',
+                  maxWidth: '95%', // Increased max width to allow larger display
+                  maxHeight: '95%', // Increased max height to allow larger display
+                }}
+              />
+            </div>
           </div>
 
           {/* Bottom Navigation */}
@@ -783,14 +791,14 @@ const Home = () => {
                 width: getResponsiveSize(
                   isLandscape ? '8rem' : '12rem', 
                   '14rem', 
-                  '25rem', // Increased from 20rem to 28rem for PC
+                  '20rem', // Set to 20rem for PC
                   '6rem', 
                   '5rem'
                 ), 
                 height: getResponsiveSize(
                   isLandscape ? '8rem' : '12rem', 
                   '14rem', 
-                  '28rem', // Increased from 20rem to 28rem for PC
+                  '20rem', // Set to 20rem for PC
                   '6rem', 
                   '5rem'
                 ) 
