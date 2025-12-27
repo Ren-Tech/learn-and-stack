@@ -220,12 +220,12 @@ const Primary = () => {
     };
   }, [showMiniCircles, showInstantAssess]);
 
-  // Function to determine ninja position - UPDATED with negative bottom padding for PC
+  // Function to determine ninja position - UPDATED to align with bottom navbar
   const getNinjaPosition = () => {
     if (useBbcLayout) return 'bottom-9 mb-0 scale-75';
     if (isMobile) return isLandscape ? 'bottom-0 mb-0 scale-90' : 'bottom-0 mb-0';
     if (isTablet) return 'bottom-0 mb-0';
-    return 'bottom-0 pc-ninja-bottom'; // Added special class for PC
+    return 'bottom-0 pc-ninja-bottom'; // Back to bottom-0
   };
 
   // Function to determine plus menu position
@@ -772,9 +772,9 @@ const Primary = () => {
           </div>
         </nav>
 
-        {/* Ninja Image without Dialog - Responsive Positioning with larger size for PC */}
+        {/* Ninja Image without Dialog - Added more padding-top (24rem) to move 20% more below */}
         <div className={`fixed left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 pointer-events-auto ${getNinjaPosition()}`}>
-          <div className="relative flex flex-col items-center">
+         <div className="relative flex flex-col items-center pt-24">  {/* Changed from pt-20 to pt-24 (6rem instead of 5rem) - 20% more */}
             {/* Ninja Image only, no dialog */}
             <img 
               src="/images/ninja_v2.png" 
@@ -784,14 +784,14 @@ const Primary = () => {
                 width: getResponsiveSize(
                   isLandscape ? '8rem' : '12rem', 
                   '14rem', 
-                  '20rem', // Set to 20rem for PC
+                  '20rem',
                   '6rem', 
                   '5rem'
                 ), 
                 height: getResponsiveSize(
                   isLandscape ? '8rem' : '12rem', 
                   '14rem', 
-                  '20rem', // Set to 20rem for PC
+                  '20rem',
                   '6rem', 
                   '5rem'
                 ) 
@@ -896,28 +896,24 @@ const Primary = () => {
           background: rgba(255, 255, 255, 0.5);
         }
 
-        /* PC-only ninja adjustments: larger size and negative bottom padding */
+        /* PC-only ninja adjustments: larger size */
         @media (min-width: 1024px) {
-          .pc-ninja-bottom {
-            margin-bottom: -0rem !important; /* Negative margin to push ninja below bottom */
-          }
-          
           .pc-ninja {
-            transform: translateY(20%) scale(1.1); /* Move down 20% and scale up 10% */
+            transform: scale(1.1); /* Scale up 10% */
             transition: transform 0.5s ease-out;
           }
           
-          /* Alternative method with more precise control */
-          .pc-ninja-container {
-            bottom: -4rem !important; /* Negative bottom positioning */
+          /* Optional: Add hover effect for PC */
+          .pc-ninja:hover {
+            transform: scale(1.15);
+            filter: brightness(1.1) drop-shadow(0 10px 20px rgba(0,0,0,0.3));
           }
         }
 
-        /* Optional: Add hover effect for PC */
-        @media (min-width: 1024px) {
-          .pc-ninja:hover {
-            transform: translateY(20%) scale(1.15);
-            filter: brightness(1.1) drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+        /* Ensure ninja stays above other elements on mobile */
+        @media (max-width: 1100px) {
+          .fixed.left-1\\/2.transform.-translate-x-1\\/2 {
+            z-index: 60;
           }
         }
       `}</style>

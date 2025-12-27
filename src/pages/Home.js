@@ -483,6 +483,7 @@ const Home = () => {
           </div>
 
           {/* Background Image - UPDATED with 30% larger size */}
+         {/* Background Image - UPDATED with 30% larger size */}
           <div className="relative z-0 w-full" style={{ height: 'calc(100vh - 120px)' }}>
             <div className="relative w-full h-full overflow-hidden flex items-start justify-center">
               <img 
@@ -502,8 +503,33 @@ const Home = () => {
                 }}
               />
             </div>
-          </div>
 
+            {/* Our Commitments Section - Below Image */}
+            <div className="absolute left-8 z-10" style={{ top: 'calc(60% + 2rem)' }}>
+              <div className="flex items-start gap-6 max-w-4xl">
+             
+                
+                {/* Commitment Text */}
+                <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl p-6 border border-gray-200">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4 border-b-2 border-blue-600 pb-2">
+                    Our Commitments to Excellence
+                  </h2>
+                  <div className="space-y-3">
+                    {commitments.map((commitment, index) => (
+                      <div key={index} className="flex items-start gap-3">
+                        <div className="flex-shrink-0 mt-1">
+                          <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                        </div>
+                        <p className="text-gray-700 text-sm leading-relaxed">
+                          {commitment}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           {/* Bottom Navigation */}
           <div className="relative z-40">
             <BottomNav />
