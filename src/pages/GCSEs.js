@@ -766,7 +766,7 @@ const GCSEs = () => {
           <div className="relative flex flex-col items-center">
             {/* Ninja Image only, no dialog */}
             <img 
-              src="/images/ninja.png" 
+              src="/images/ninja_v2.png" 
               alt="Ninja character" 
               className="object-contain drop-shadow-lg pc-ninja" 
               style={{ 

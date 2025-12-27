@@ -46,11 +46,11 @@ const Home = () => {
     { title: "A-Levels", gradient: "from-orange-600 via-orange-500 to-yellow-500", shadow: "shadow-orange-500/50", glow: "shadow-orange-400", angle: 60, href: "/alevels" }
   ];
 
-  // Home specific images for mobile - using PNGs
+  // Home specific images for mobile - using PNGs (use PUBLIC_URL so paths work when deployed to subfolders)
   const homeImages = [
-    { src: '/images/landscape/home1.jpg', alt: 'Home Hero 1', title: 'Welcome to EduPlatform' },
-    { src: '/images/landscape/home2.png', alt: 'Home Activity 2', title: 'Creative Learning' },
-    { src: '/images/landscape/home3.png', alt: 'Home Activity 3', title: 'Team Collaboration' },
+    { src: process.env.PUBLIC_URL + '/images/landscape/home1.jpg', alt: 'Home Hero 1', title: 'Welcome to EduPlatform' },
+    { src: process.env.PUBLIC_URL + '/images/landscape/home2.png', alt: 'Home Activity 2', title: 'Creative Learning' },
+    { src: process.env.PUBLIC_URL + '/images/landscape/home3.png', alt: 'Home Activity 3', title: 'Team Collaboration' },
   ];
 
   // Handle window resize
@@ -116,10 +116,10 @@ const Home = () => {
 
   // Get appropriate image based on screen size
   const getHomeImage = () => {
-    if (useBbcLayout) return '/images/landscape/home1.jpg';
-    if (isMobile) return '/images/home_mob.png';
-    if (isTabletPortrait) return '/images/tab_home.png';
-    return '/images/homee.png';
+    if (useBbcLayout) return process.env.PUBLIC_URL + '/images/landscape/home1.jpg';
+    if (isMobile) return process.env.PUBLIC_URL + '/images/home_mob.png';
+    if (isTabletPortrait) return process.env.PUBLIC_URL + '/images/tab_home.png';
+    return process.env.PUBLIC_URL + '/images/homee.png';
   };
 
   // Responsive sizes - UPDATED with larger ninja size for PC
@@ -368,7 +368,7 @@ const Home = () => {
               <div className="bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200">
                 <div className={`relative w-full ${isMobilePortrait ? 'h-64' : 'h-48'} overflow-hidden`}>
                   <img
-                    src="/images/landscape/home1.jpg"
+                    src={homeImages[0].src}
                     alt="Educational Platform Hero"
                     className="w-full h-full object-contain"
                     style={{
@@ -684,7 +684,7 @@ const Home = () => {
           <div className="flex flex-col items-center mb-2">
             {/* Robot Image only, no dialog */}
             <img 
-              src="/images/bot_kai.png" 
+              src={process.env.PUBLIC_URL + '/images/bot_kai.png'} 
               alt="KAI Robot" 
               className="object-contain drop-shadow-lg transition-transform duration-300 hover:scale-110"
               style={{
@@ -776,7 +776,7 @@ const Home = () => {
           <div className="relative flex flex-col items-center">
             {/* Ninja Image only, no dialog */}
             <img 
-              src="/images/ninja.png" 
+              src={process.env.PUBLIC_URL + '/images/ninja_v2.png'} 
               alt="Ninja character" 
               className="object-contain drop-shadow-lg pc-ninja" 
               style={{ 

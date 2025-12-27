@@ -117,9 +117,9 @@ const ALevels = () => {
   // Get background image based on screen size
   const getBackgroundImage = () => {
     if (useBbcLayout) return "/images/landscape/level1.png";
-    if (isMobile) return "/images/a-level.png";
+    if (isMobile) return "/images/a-level.jpg";
     if (isTabletPortrait) return "/images/tab_alevel.png";
-    return "/images/a-levels.png";
+    return "/images/a-levels.jpg";
   };
 
   // Responsive sizes - UPDATED with larger sizes to match ElevenPlus
@@ -292,6 +292,8 @@ const ALevels = () => {
   useEffect(() => {
     // Empty effect since we're removing the ninja dialog
   }, [ninjaText, isNinjaTyping, ninjaLines]);
+
+  const backgroundImage = getBackgroundImage();
 
   return (
     <div className={`min-h-screen bg-white relative overflow-x-hidden ${showPortraitLock ? 'backdrop-blur-sm' : ''}`} onClick={handleContainerClick}>
@@ -476,13 +478,15 @@ const ALevels = () => {
           {/* Background Image */}
           <div className="relative z-0 w-full" style={{ height: 'calc(100vh - 120px)' }}>
             <img 
-              src={getBackgroundImage()} 
+              src={backgroundImage} 
               alt="A-Levels Background" 
               className="w-full h-full object-cover"
               style={{
                 imageRendering: '-webkit-optimize-contrast',
                 WebkitBackfaceVisibility: 'hidden',
-                backfaceVisibility: 'hidden'
+                backfaceVisibility: 'hidden',
+                transform: backgroundImage === '/images/a-levels.jpg' ? 'scale(0.75) translateY(-15%)' : 'none',
+                transformOrigin: 'center'
               }}
             />
           </div>
@@ -766,7 +770,7 @@ const ALevels = () => {
           <div className="relative flex flex-col items-center">
             {/* Ninja Image only, no dialog */}
             <img 
-              src="/images/ninja.png" 
+              src="/images/ninja_v2.png" 
               alt="Ninja character" 
               className="object-contain drop-shadow-lg pc-ninja" 
               style={{ 
