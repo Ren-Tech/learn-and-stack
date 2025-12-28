@@ -106,8 +106,8 @@ const Home = () => {
   // Use BBC-style layout for both mobile landscape and portrait
   const useBbcLayout = isMobileLandscape || isMobilePortrait;
 
-  // Show instant assess on ALL screen sizes including PC
-  const showInstantAssess = true; // Changed from isMobile || isTablet
+  // Show instant assess only for mobile and tablet, NOT for desktop
+  const showInstantAssess = isMobile || isTablet;
 
   // Navigation handler
   const handleNavigation = (href) => {
@@ -122,7 +122,7 @@ const Home = () => {
     return process.env.PUBLIC_URL + '/images/Homes.jpg';
   };
 
-  // Responsive sizes - UPDATED with larger ninja size for PC
+  // Responsive sizes
   const getResponsiveSize = (mobile, tablet, desktop, landscapeMobile = null, smallLandscape = null) => {
     if (isSmallMobileLandscape && smallLandscape !== null) return smallLandscape;
     if (isMobileLandscape && landscapeMobile !== null) return landscapeMobile;
@@ -131,7 +131,7 @@ const Home = () => {
     return desktop;
   };
 
-  // Circle position calculation for mobile only - UPDATED with larger spacing
+  // Circle position calculation for mobile only
   const getCirclePosition = (angle, radius, index) => {
     // For mobile portrait, position circles in a grid
     if (isMobilePortrait && showMiniCircles) {
@@ -215,22 +215,12 @@ const Home = () => {
     };
   }, [showMiniCircles, isMobile, isTablet]);
 
-  // Function to determine ninja position - UPDATED with negative bottom padding for PC
+  // Function to determine ninja position
   const getNinjaPosition = () => {
     if (useBbcLayout) return 'bottom-9 mb-0 scale-75';
     if (isMobile) return isLandscape ? 'bottom-0 mb-0 scale-90' : 'bottom-0 mb-0';
     if (isTablet) return 'bottom-0 mb-0';
-    return 'bottom-0 pc-ninja-bottom'; // Added special class for PC
-  };
-
-  // Function to determine ninja dialog position - UPDATED
-  const getNinjaDialogPosition = () => {
-    if (isDesktopLandscape) return 'bottom-1/2 left-full transform translate-y-1/2 ml-4 scale-50';
-    if (isMobileLandscape) return 'top-1/2 right-full transform -translate-y-1/2 mr-2 scale-75';
-    if (useBbcLayout) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-2 scale-90';
-    if (isMobile) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-2';
-    if (isTablet) return 'bottom-full left-1/2 transform -translate-x-1/2 mb-3';
-    return 'bottom-full left-1/2 transform -translate-x-1/2 mb-4';
+    return 'bottom-0 pc-ninja-bottom';
   };
 
   // Function to determine plus menu position
@@ -241,22 +231,20 @@ const Home = () => {
     return 'bottom-16 right-10';
   };
 
-  // Function to determine instant assess button position - UPDATED to move left by 1 inch (96px) to match Primary
+  // Function to determine instant assess button position
   const getInstantAssessButtonPosition = () => {
-    if (isDesktopLandscape) return 'top-1/2 transform -translate-y-1/2 scale-100 pc-padding';
-    if (isMobilePortrait) return 'bottom-4 transform scale-85'; // Increased from 0.75
-    if (isMobileLandscape) return 'bottom-100 transform scale-75'; // Increased from 0.65
-    if (isTablet) return 'bottom-6 transform scale-100'; // Increased from 0.90
-    return 'bottom-8 transform scale-100 pc-padding';
+    if (isMobilePortrait) return 'bottom-4 transform scale-85';
+    if (isMobileLandscape) return 'bottom-100 transform scale-75';
+    if (isTablet) return 'bottom-6 transform scale-100';
+    return 'bottom-8 transform scale-100';
   };
 
-  // Get right position for instant assess button - UPDATED to match Primary
+  // Get right position for instant assess button
   const getInstantAssessRightPosition = () => {
-    if (isDesktopLandscape) return '128px'; // Desktop: moved left by 96px (1 inch)
-    if (isMobilePortrait) return '20px'; // Mobile portrait: moved left
-    if (isMobileLandscape) return '60px'; // Mobile landscape: moved left
-    if (isTablet) return '30px'; // Tablet: moved left
-    return '40px'; // Default: moved left
+    if (isMobilePortrait) return '20px';
+    if (isMobileLandscape) return '60px';
+    if (isTablet) return '30px';
+    return '40px';
   };
 
   const getJellyMenuMaxHeight = () => {
@@ -315,6 +303,196 @@ const Home = () => {
     }
   }, [ninjaText, isNinjaTyping, ninjaLines]);
 
+  // KAI Dynamic Learning Cycle Component - Static on right side for desktop
+  const KAIDynamicLearningCycle = () => (
+    <div className="fixed z-40 pointer-events-auto"
+      style={{
+        right: '2rem',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        width: '300px',
+        opacity: isDesktop ? 1 : 0,
+        pointerEvents: isDesktop ? 'auto' : 'none',
+        transition: 'opacity 0.3s ease-in-out'
+      }}
+    >
+      <div className="bg-gradient-to-br from-gray-900 to-black rounded-2xl py-4 pl-4 pr-8 border-4 border-red-600 shadow-2xl relative"
+           style={{
+             boxShadow: '0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)',
+             transform: 'perspective(1000px) rotateX(2deg)'
+           }}>
+        
+        {/* Top row - 4 circles with 3D effect */}
+        <div className="flex justify-between items-center mb-10 relative z-10">
+          {/* Circle 1 - Yellow */}
+          <div className="flex flex-col items-center flex-1 -ml-3">
+            <div className="relative group">
+              <div className="w-14 h-14 bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-500 rounded-full flex items-center justify-center transform transition-transform duration-300 hover:scale-110 hover:-translate-y-2 cursor-pointer"
+                   style={{
+                     boxShadow: '0 8px 20px rgba(234, 179, 8, 0.4), inset 0 -4px 8px rgba(0,0,0,0.2), inset 0 1px 4px rgba(255,255,255,0.5)',
+                     border: '2px solid rgba(255, 255, 255, 0.3)'
+                   }}
+                   onClick={() => handleNavigation('/clear-objectives')}>
+                <div className="text-center px-1">
+                  <p className="text-[0.55rem] font-bold text-gray-900 drop-shadow-sm leading-tight">Clear</p>
+                  <p className="text-[0.55rem] font-bold text-gray-900 drop-shadow-sm leading-tight">Learning</p>
+                  <p className="text-[0.55rem] font-bold text-gray-900 drop-shadow-sm leading-tight">Objectives</p>
+                </div>
+              </div>
+              <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-br from-gray-800 to-black rounded-full flex items-center justify-center border-2 border-white shadow-lg"
+                   style={{boxShadow: '0 4px 8px rgba(0,0,0,0.6)'}}>
+                <span className="text-white font-bold text-[0.6rem]">1</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Arrow 1 with 3D effect */}
+          <div className="flex-shrink-0 mx-1">
+            <svg width="16" height="8" viewBox="0 0 16 8" className="text-red-600 drop-shadow-lg">
+              <defs>
+                <linearGradient id="arrowGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#dc2626" />
+                  <stop offset="100%" stopColor="#991b1b" />
+                </linearGradient>
+              </defs>
+              <path d="M0 4 L11 4 L9 2 M11 4 L9 6" stroke="url(#arrowGradient1)" strokeWidth="2" fill="none" strokeLinecap="round"/>
+            </svg>
+          </div>
+
+          {/* Circle 2 - Blue */}
+          <div className="flex flex-col items-center flex-1">
+            <div className="relative group">
+              <div className="w-14 h-14 bg-gradient-to-br from-blue-300 via-blue-400 to-blue-600 rounded-full flex items-center justify-center transform transition-transform duration-300 hover:scale-110 hover:-translate-y-2 cursor-pointer"
+                   style={{
+                     boxShadow: '0 8px 20px rgba(59, 130, 246, 0.4), inset 0 -4px 8px rgba(0,0,0,0.2), inset 0 1px 4px rgba(255,255,255,0.5)',
+                     border: '2px solid rgba(255, 255, 255, 0.3)'
+                   }}
+                   onClick={() => handleNavigation('/learner-journeys')}>
+                <div className="text-center px-1">
+                  <p className="text-[0.55rem] font-bold text-white drop-shadow-md leading-tight">Simplified</p>
+                  <p className="text-[0.55rem] font-bold text-white drop-shadow-md leading-tight">Learner's</p>
+                  <p className="text-[0.55rem] font-bold text-white drop-shadow-md leading-tight">Journeys</p>
+                </div>
+              </div>
+              <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-br from-gray-800 to-black rounded-full flex items-center justify-center border-2 border-white shadow-lg"
+                   style={{boxShadow: '0 4px 8px rgba(0,0,0,0.6)'}}>
+                <span className="text-white font-bold text-[0.6rem]">2</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Arrow 2 */}
+          <div className="flex-shrink-0 mx-1">
+            <svg width="16" height="8" viewBox="0 0 16 8" className="text-red-600 drop-shadow-lg">
+              <path d="M0 4 L11 4 L9 2 M11 4 L9 6" stroke="url(#arrowGradient1)" strokeWidth="2" fill="none" strokeLinecap="round"/>
+            </svg>
+          </div>
+
+          {/* Circle 3 - Orange */}
+          <div className="flex flex-col items-center flex-1">
+            <div className="relative group">
+              <div className="w-14 h-14 bg-gradient-to-br from-orange-400 via-orange-600 to-orange-700 rounded-full flex items-center justify-center transform transition-transform duration-300 hover:scale-110 hover:-translate-y-2 cursor-pointer"
+                   style={{
+                     boxShadow: '0 8px 20px rgba(234, 88, 12, 0.4), inset 0 -4px 8px rgba(0,0,0,0.2), inset 0 1px 4px rgba(255,255,255,0.5)',
+                     border: '2px solid rgba(255, 255, 255, 0.3)'
+                   }}
+                   onClick={() => handleNavigation('/learning-activities')}>
+                <div className="text-center px-1">
+                  <p className="text-[0.55rem] font-bold text-white drop-shadow-md leading-tight">Effective</p>
+                  <p className="text-[0.55rem] font-bold text-white drop-shadow-md leading-tight">Learning</p>
+                  <p className="text-[0.55rem] font-bold text-white drop-shadow-md leading-tight">Activities</p>
+                </div>
+              </div>
+              <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-br from-gray-800 to-black rounded-full flex items-center justify-center border-2 border-white shadow-lg"
+                   style={{boxShadow: '0 4px 8px rgba(0,0,0,0.6)'}}>
+                <span className="text-white font-bold text-[0.6rem]">3</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Arrow 3 */}
+          <div className="flex-shrink-0 mx-1">
+            <svg width="16" height="8" viewBox="0 0 16 8" className="text-red-600 drop-shadow-lg">
+              <path d="M0 4 L11 4 L9 2 M11 4 L9 6" stroke="url(#arrowGradient1)" strokeWidth="2" fill="none" strokeLinecap="round"/>
+            </svg>
+          </div>
+
+          {/* Circle 4 - Gold */}
+          <div className="flex flex-col items-center flex-1">
+            <div className="relative group">
+              <div className="w-14 h-14 bg-gradient-to-br from-yellow-200 via-yellow-300 to-amber-400 rounded-full flex items-center justify-center transform transition-transform duration-300 hover:scale-110 hover:-translate-y-2 cursor-pointer"
+                   style={{
+                     boxShadow: '0 8px 20px rgba(251, 191, 36, 0.4), inset 0 -4px 8px rgba(0,0,0,0.2), inset 0 1px 4px rgba(255,255,255,0.5)',
+                     border: '2px solid rgba(255, 255, 255, 0.3)'
+                   }}
+                   onClick={() => handleNavigation('/knowledge-evaluations')}>
+                <div className="text-center px-1">
+                  <p className="text-[0.55rem] font-bold text-gray-900 drop-shadow-sm leading-tight">Accurate</p>
+                  <p className="text-[0.55rem] font-bold text-gray-900 drop-shadow-sm leading-tight">Knowledge</p>
+                  <p className="text-[0.55rem] font-bold text-gray-900 drop-shadow-sm leading-tight">Evaluations</p>
+                </div>
+              </div>
+              <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-br from-gray-800 to-black rounded-full flex items-center justify-center border-2 border-white shadow-lg"
+                   style={{boxShadow: '0 4px 8px rgba(0,0,0,0.6)'}}>
+                <span className="text-white font-bold text-[0.6rem]">4</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Center text with 3D effect */}
+        <div className="text-center mb-4">
+          <h2 className="text-xl font-bold bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500 bg-clip-text text-transparent mb-1"
+              style={{
+                textShadow: '2px 2px 4px rgba(0,0,0,0.5), 0 0 20px rgba(156, 163, 175, 0.3)',
+                letterSpacing: '0.1em'
+              }}>
+            KAI
+          </h2>
+          <p className="text-gray-400 text-[0.65rem] font-medium tracking-wide">Dynamic Learning Cycle</p>
+        </div>
+      </div>
+
+      {/* Bottom feedback box with 3D effect */}
+      <div className="relative mt-6">
+        <div className="bg-gradient-to-br from-green-600 via-green-700 to-green-800 rounded-lg py-2 px-3 relative transform transition-transform duration-300 hover:scale-105 cursor-pointer"
+             style={{
+               boxShadow: '0 8px 20px rgba(22, 163, 74, 0.4), inset 0 -4px 8px rgba(0,0,0,0.2), inset 0 1px 4px rgba(255,255,255,0.2)',
+               border: '2px solid rgba(255, 255, 255, 0.2)'
+             }}
+             onClick={() => handleNavigation('/feedback-improvements')}>
+          <p className="text-white text-center font-bold text-xs tracking-wide drop-shadow-lg">
+            Feedbacks and Constant Improvements
+          </p>
+          <div className="absolute -bottom-1.5 left-1/2 transform -translate-x-1/2 w-6 h-6 bg-gradient-to-br from-gray-800 to-black rounded-full flex items-center justify-center border-2 border-white shadow-lg"
+               style={{boxShadow: '0 4px 8px rgba(0,0,0,0.6)'}}>
+            <span className="text-white font-bold text-xs">5</span>
+          </div>
+        </div>
+
+        {/* Return arrows with 3D effect */}
+        <div className="absolute -top-8 right-4">
+          <svg width="30" height="40" viewBox="0 0 30 40" className="drop-shadow-2xl">
+            <defs>
+              <linearGradient id="arrowGradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#dc2626" />
+                <stop offset="100%" stopColor="#991b1b" />
+              </linearGradient>
+            </defs>
+            <path d="M15 2 L15 30 M15 30 L21 25 M15 30 L9 25" stroke="url(#arrowGradient2)" strokeWidth="2" fill="none" strokeLinecap="round"/>
+          </svg>
+        </div>
+
+        {/* Left return arrow with 3D effect */}
+        <div className="absolute -top-8 left-4">
+          <svg width="30" height="40" viewBox="0 0 30 40" className="drop-shadow-2xl">
+            <path d="M15 2 L15 30 M15 30 L21 25 M15 30 L9 25" stroke="url(#arrowGradient2)" strokeWidth="2" fill="none" strokeLinecap="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className={`min-h-screen bg-white relative overflow-x-hidden ${showPortraitLock ? 'backdrop-blur-sm' : ''}`} onClick={handleContainerClick}>
       {/* Portrait Lock Dialog */}
@@ -323,7 +501,7 @@ const Home = () => {
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full text-center shadow-2xl border border-gray-200">
             <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
               <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2h-5l-5 5v-5z" />
               </svg>
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">Portrait Mode Locked</h3>
@@ -337,6 +515,9 @@ const Home = () => {
           </div>
         </div>
       )}
+
+      {/* KAI Dynamic Learning Cycle - Static on right side for desktop with padding */}
+      {isDesktop && <KAIDynamicLearningCycle />}
 
       {useBbcLayout ? (
         // BBC-style Layout for Mobile (Both Landscape and Portrait)
@@ -442,21 +623,6 @@ const Home = () => {
               </div>
             </div>
 
-            {/* BBC-style trending section */}
-            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-6">
-              <div className="flex items-center mb-3">
-                <div className="w-3 h-6 bg-blue-600 mr-2"></div>
-                <h3 className="text-md font-bold text-gray-900">Quick Access</h3>
-              </div>
-              <div className={`grid ${isMobilePortrait ? 'grid-cols-2' : 'grid-cols-2'} gap-2`}>
-                {assessmentCategories.map((item, index) => (
-                  <div key={index} className="bg-white rounded p-2 text-center border border-gray-300">
-                    <span className="text-xs font-medium text-gray-700">{item.title}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
             {/* BBC-style footer section */}
             <div className="border-t border-gray-300 pt-4">
               <div className="text-center">
@@ -482,9 +648,7 @@ const Home = () => {
             <Navbar onMenuStateChange={handleMenuStateChange} />
           </div>
 
-          {/* Background Image - UPDATED with 30% larger size */}
-         {/* Background Image - UPDATED with 30% larger size */}
-        {/* Background Image - Balanced size */}
+          {/* Background Image */}
           <div className="relative z-0 w-full" style={{ height: 'calc(100vh - 120px)' }}>
             <div className="relative w-full h-full overflow-hidden flex items-start justify-center">
               <img 
@@ -498,7 +662,7 @@ const Home = () => {
                   transform: 'scale(1.15) translateY(-5%)',
                   width: 'auto',
                   height: 'auto',
-                  maxWidth: '85%',
+                  maxWidth: isDesktop ? '70%' : '85%', // Reduced width for desktop to accommodate KAI component
                   maxHeight: '85%',
                 }}
               />
@@ -537,7 +701,7 @@ const Home = () => {
 
       {/* Interactive Elements - Fixed position elements that stay visible */}
       <div className="fixed inset-0 z-40 pointer-events-none">
-        {/* Instant Assessment Button - Now visible on PC screens too */}
+        {/* Instant Assessment Button - Only for Mobile and Tablet */}
         {showInstantAssess && !isMenuOpen && (
           <div 
             className={`fixed instant-assessment-container bottom-0 z-50 pointer-events-auto ${getInstantAssessButtonPosition()}`}
@@ -563,9 +727,7 @@ const Home = () => {
                   const circleSize = getResponsiveSize('60px', '70px', '85px', '42px', '38px');
                   
                   // Show circles on hover for desktop, or when mini circles are toggled for mobile/tablet
-                  const shouldShowCircles = isMobile || isTablet 
-                    ? showMiniCircles 
-                    : is3DButtonHovered;
+                  const shouldShowCircles = showMiniCircles;
                   
                   return (
                     <div key={category.title} className={`absolute transition-all duration-700 ease-out ${shouldShowCircles ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
@@ -649,7 +811,7 @@ const Home = () => {
               </div>
 
               <button 
-                className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-500 ${is3DButtonHovered ? 'scale-110' : 'scale-100'} ${isDesktop ? 'cursor-default' : 'cursor-pointer'} group`}
+                className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-500 ${is3DButtonHovered ? 'scale-110' : 'scale-100'} cursor-pointer group`}
                 style={{ 
                   width: getResponsiveSize('75px', '90px', '105px', '50px', '45px'),
                   height: getResponsiveSize('75px', '90px', '105px', '50px', '45px'),
@@ -803,7 +965,7 @@ const Home = () => {
           </div>
         </nav>
 
-        {/* Ninja Image without Dialog - Responsive Positioning with larger size for PC */}
+        {/* Ninja Image without Dialog - Responsive Positioning */}
         <div className={`fixed left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 pointer-events-auto ${getNinjaPosition()}`}>
           <div className="relative flex flex-col items-center">
             {/* Ninja Image only, no dialog */}
@@ -815,14 +977,14 @@ const Home = () => {
                 width: getResponsiveSize(
                   isLandscape ? '8rem' : '12rem', 
                   '14rem', 
-                  '20rem', // Set to 20rem for PC
+                  '20rem',
                   '6rem', 
                   '5rem'
                 ), 
                 height: getResponsiveSize(
                   isLandscape ? '8rem' : '12rem', 
                   '14rem', 
-                  '20rem', // Set to 20rem for PC
+                  '20rem',
                   '6rem', 
                   '5rem'
                 ) 
@@ -927,31 +1089,19 @@ const Home = () => {
           background: rgba(255, 255, 255, 0.5);
         }
 
-        /* PC-only instant assess circle padding */
-        @media (min-width: 1024px) {
-          .pc-padding {
-            right: calc(128px + 10%) !important; /* Add 10% padding to the right side */
-            top: 40% !important; /* Add 25% padding from top */
-            transform: translateY(0) !important; /* Remove vertical centering */
-            bottom: auto !important; /* Remove bottom positioning */
-          }
-        }
-
-        /* PC-only ninja adjustments: larger size and negative bottom padding */
-/* PC-only ninja adjustments: larger size and adjusted positioning */
+        /* PC-only ninja adjustments */
         @media (min-width: 1024px) {
           .pc-ninja-bottom {
-            margin-bottom: 0rem !important; /* Small positive margin to move up slightly */
+            margin-bottom: 0rem !important;
           }
           
           .pc-ninja {
-            transform: translateY(10%) scale(1.1); /* Move down slightly less (10%) and scale up 10% */
+            transform: translateY(10%) scale(1.1);
             transition: transform 0.5s ease-out;
           }
           
-          /* Alternative method with more precise control */
           .pc-ninja-container {
-            bottom: 0rem !important; /* Adjust bottom positioning */
+            bottom: 0rem !important;
           }
         }
 
