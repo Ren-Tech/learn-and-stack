@@ -342,6 +342,36 @@ const Primary = () => {
             </div>
           </div>
 
+          {/* KS2 Info for Mobile BBC Layout - SIMPLE FORMAT */}
+          <div className="px-4 pt-6">
+            {/* Title */}
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Primary Education</h1>
+            
+            {/* Simple text lines - Only 1 line */}
+            <div className="mb-4">
+              <p className="text-lg text-gray-700">Primary School Apps</p>
+            </div>
+            
+            {/* KS2 Image and Text side by side - Reduced image size by 20% */}
+            <div className="flex items-start space-x-4 mb-4">
+              <div className="flex-shrink-0">
+                <img 
+                  src="/images/ks1.png" 
+                  alt="Key Stage 2" 
+                  className="w-20 h-20 object-contain" // Reduced from w-24 h-24 to w-20 h-20 (20% reduction)
+                />
+              </div>
+              <div className="flex-1">
+                <p className="text-base text-gray-700 leading-relaxed line-clamp-3"> {/* Added line-clamp-3 */}
+                  Key Stage 2 (KS2) is the final 4 years of Primary education for children aged 7 to 11 (Years 3 to 6). 
+                  It covers core subjects like English, Mathematics and Science, along with other subjects such as 
+                  History, Geography, Arts, Music, and Physical Education. As defined by the national curriculum.
+                  At the end of Key Stage 2, students take national SATs (Standard Assessment Tests) to assess their skills.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* BBC-style main content grid - Adjusted for portrait */}
           <div className="p-4">
             {/* Main featured story - BBC style */}
@@ -469,11 +499,41 @@ const Primary = () => {
           </div>
         </div>
       ) : (
-        // Original layout for other screen sizes
+        // Original layout for other screen sizes with KS2 info
         <div className={`relative ${showPortraitLock ? 'blur-sm' : ''}`}>
           {/* Green Navbar */}
           <div className="relative z-50">
             <Navbar onMenuStateChange={handleMenuStateChange} />
+          </div>
+
+          {/* KS2 Information Section - SIMPLE FORMAT */}
+          <div className={`absolute top-4 left-4 z-30 p-4 max-w-lg ${isDesktop ? 'pc-text-size' : ''}`}>
+            {/* Title */}
+            <h1 className={`${isDesktop ? 'text-2xl' : 'text-3xl'} font-bold text-gray-900 mb-4`}>Primary Education</h1>
+            
+            {/* Simple text lines - Only 1 line */}
+            <div className="mb-4">
+              <p className={`${isDesktop ? 'text-lg' : 'text-xl'} text-gray-700`}>Primary School Apps</p>
+            </div>
+            
+            {/* KS2 Image and Text side by side - Reduced image size by 20% */}
+            <div className="flex items-start space-x-6 mb-4">
+              <div className="flex-shrink-0">
+                <img 
+                  src="/images/ks1.png" 
+                  alt="Key Stage 2" 
+                  className={`${isDesktop ? 'w-24 h-24' : 'w-32 h-32'} object-contain`} // Desktop: w-24 h-24, Others: w-32 h-32
+                />
+              </div>
+              <div className="flex-1">
+                <p className={`${isDesktop ? 'text-sm' : 'text-lg'} text-gray-700 leading-relaxed line-clamp-3`}> {/* Desktop: 50% smaller, added line-clamp-3 */}
+                  Key Stage 2 (KS2) is the final 4 years of Primary education for children aged 7 to 11 (Years 3 to 6). 
+                  It covers core subjects like English, Mathematics and Science, along with other subjects such as 
+                  History, Geography, Arts, Music, and Physical Education. As defined by the national curriculum.
+                  At the end of Key Stage 2, students take national SATs (Standard Assessment Tests) to assess their skills.
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Background Image - UPDATED with 30% larger size */}
@@ -774,7 +834,7 @@ const Primary = () => {
 
         {/* Ninja Image without Dialog - Added more padding-top (24rem) to move 20% more below */}
         <div className={`fixed left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 pointer-events-auto ${getNinjaPosition()}`}>
-         <div className="relative flex flex-col items-center pt-24">  {/* Changed from pt-20 to pt-24 (6rem instead of 5rem) - 20% more */}
+          <div className="relative flex flex-col items-center">
             {/* Ninja Image only, no dialog */}
             <img 
               src="/images/ninja_v2.png" 
@@ -807,6 +867,13 @@ const Primary = () => {
       </div>
 
       <style jsx>{`
+        .line-clamp-3 {
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
         .line-clamp-2 {
           display: -webkit-box;
           -webkit-line-clamp: 2;
@@ -896,7 +963,7 @@ const Primary = () => {
           background: rgba(255, 255, 255, 0.5);
         }
 
-        /* PC-only ninja adjustments: larger size */
+        /* PC-only adjustments */
         @media (min-width: 1024px) {
           .pc-ninja {
             transform: scale(1.1); /* Scale up 10% */
@@ -907,6 +974,20 @@ const Primary = () => {
           .pc-ninja:hover {
             transform: scale(1.15);
             filter: brightness(1.1) drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+          }
+
+          /* PC text size reduction to 50% */
+          .pc-text-size h1 {
+            font-size: 1.5rem !important; /* 50% of original 3xl */
+          }
+          
+          .pc-text-size p {
+            font-size: 0.875rem !important; /* 50% of original xl */
+          }
+          
+          /* Specific adjustment for KS2 text */
+          .pc-text-size .text-lg {
+            font-size: 0.875rem !important; /* Reduced from lg to base */
           }
         }
 
