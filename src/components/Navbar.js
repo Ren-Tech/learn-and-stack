@@ -181,11 +181,12 @@ const Navbar = ({ onMenuStateChange }) => {
 />
 
             <div
-              className="text-white font-bold text-lg sm:text-xl md:text-2xl cursor-pointer hover:scale-105 transition-transform duration-300"
-              onClick={() => navigate("/")}
-            >
-              Learning Adventure
-            </div>
+  className="pl-2 sm:pl-3 md:pl-4 text-white font-bold text-lg sm:text-xl md:text-2xl cursor-pointer hover:scale-105 transition-transform duration-300"
+  onClick={() => navigate("/")}
+>
+  Learning Adventure
+</div>
+
           </div>
 
           {/* Desktop Nav */}
