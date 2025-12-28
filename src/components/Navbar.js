@@ -166,11 +166,20 @@ const Navbar = ({ onMenuStateChange }) => {
           {/* Logo + Title */}
           <div className="flex items-center gap-3">
             <img
-              src="/images/leftIcon.png"
-              alt="Edu Icon"
-              className="w-10 h-10 sm:w-12 sm:h-12 object-contain hover:rotate-12 transition-transform duration-500 cursor-pointer"
-              onClick={() => navigate("/")}
-            />
+  src="/images/leftIcon.png"
+  alt="Edu Icon"
+  className="
+    w-10 h-10
+    sm:w-12 sm:h-12
+    object-contain
+    scale-[1.8]
+    hover:scale-[2]
+    transition-transform duration-300
+    cursor-pointer
+  "
+  onClick={() => navigate("/")}
+/>
+
             <div
               className="text-white font-bold text-lg sm:text-xl md:text-2xl cursor-pointer hover:scale-105 transition-transform duration-300"
               onClick={() => navigate("/")}

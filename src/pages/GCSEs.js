@@ -341,6 +341,35 @@ const GCSEs = () => {
             </div>
           </div>
 
+          {/* GCSE Info for Mobile BBC Layout - SIMPLE FORMAT */}
+          <div className="px-4 pt-6">
+            {/* Title */}
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">GCSE Preparation</h1>
+            
+            {/* Simple text lines - Only 1 line */}
+            <div className="mb-4">
+              <p className="text-lg text-gray-700">GCSE Exam Apps</p>
+            </div>
+            
+            {/* KS4 Image and Text side by side - Reduced image size by 20% */}
+            <div className="flex items-start space-x-4 mb-4">
+              <div className="flex-shrink-0">
+                <img 
+                  src="/images/ks4.png" 
+                  alt="Key Stage 4" 
+                  className="w-20 h-20 object-contain" // Reduced from w-24 h-24 to w-20 h-20 (20% reduction)
+                />
+              </div>
+              <div className="flex-1">
+                <p className="text-base text-gray-700 leading-relaxed line-clamp-3"> {/* Added line-clamp-3 */}
+                  General Certificate of Secondary Education (GCSE) is the main academic qualification for 15 and 16 years old taken 
+                  at the end of Year 11. Subjects includes compulsory core subjects such as English, Mathematics and Science (Physics.
+                  Chemistry and Biology) as well as Optional subjects such as Geography, Economics, History, Music, Arts and many more.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* BBC-style main content grid - Adjusted for portrait */}
           <div className="p-4">
             {/* Main featured story - BBC style */}
@@ -468,11 +497,40 @@ const GCSEs = () => {
           </div>
         </div>
       ) : (
-        // Original layout for other screen sizes
+        // Original layout for other screen sizes with GCSE info
         <div className={`relative ${showPortraitLock ? 'blur-sm' : ''}`}>
           {/* Green Navbar */}
           <div className="relative z-50">
             <Navbar onMenuStateChange={handleMenuStateChange} />
+          </div>
+
+          {/* GCSE Information Section - SIMPLE FORMAT */}
+          <div className={`absolute top-4 left-4 z-30 p-4 max-w-lg ${isDesktop ? 'pc-text-size' : ''}`}>
+            {/* Title */}
+            <h1 className={`${isDesktop ? 'text-2xl' : 'text-3xl'} font-bold text-gray-900 mb-4`}>GCSE Preparation</h1>
+            
+            {/* Simple text lines - Only 1 line */}
+            <div className="mb-4">
+              <p className={`${isDesktop ? 'text-lg' : 'text-xl'} text-gray-700`}>GCSE Exam Apps</p>
+            </div>
+            
+            {/* KS4 Image and Text side by side - Reduced image size by 20% */}
+            <div className="flex items-start space-x-6 mb-4">
+              <div className="flex-shrink-0">
+                <img 
+                  src="/images/ks4.png" 
+                  alt="Key Stage 4" 
+                  className={`${isDesktop ? 'w-24 h-24' : 'w-32 h-32'} object-contain`} // Desktop: w-24 h-24, Others: w-32 h-32
+                />
+              </div>
+              <div className="flex-1">
+                <p className={`${isDesktop ? 'text-sm' : 'text-lg'} text-gray-700 leading-relaxed line-clamp-3`}> {/* Desktop: 50% smaller, added line-clamp-3 */}
+                  General Certificate of Secondary Education (GCSE) is the main academic qualification for 15 and 16 years old taken 
+                  at the end of Year 11. Subjects includes compulsory core subjects such as English, Mathematics and Science (Physics.
+                  Chemistry and Biology) as well as Optional subjects such as Geography, Economics, History, Music, Arts and many more.
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Background Image */}
@@ -800,6 +858,13 @@ const GCSEs = () => {
       </div>
 
       <style jsx>{`
+        .line-clamp-3 {
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
         .line-clamp-2 {
           display: -webkit-box;
           -webkit-line-clamp: 2;
@@ -842,7 +907,7 @@ const GCSEs = () => {
         
         /* For Firefox */
         .overflow-y-auto {
-          scrollbar-width: thin;
+          scrollbarWidth: thin;
           scrollbar-color: #2563eb #dbeafe;
         }
 
@@ -889,7 +954,7 @@ const GCSEs = () => {
           background: rgba(255, 255, 255, 0.5);
         }
 
-        /* PC-only ninja adjustments: 20rem size and -4rem margin to move down (SAME AS ELEVENPLUS) */
+        /* PC-only adjustments */
         @media (min-width: 1024px) {
           .pc-ninja-bottom {
             margin-bottom: 1.5rem !important; /* Negative margin to move ninja down */
@@ -898,6 +963,20 @@ const GCSEs = () => {
           .pc-ninja {
             transform: translateY(20%) scale(1.1); /* Move down 20% and scale up 10% */
             transition: transform 0.5s ease-out;
+          }
+
+          /* PC text size reduction to 50% */
+          .pc-text-size h1 {
+            font-size: 1.5rem !important; /* 50% of original 3xl */
+          }
+          
+          .pc-text-size p {
+            font-size: 0.875rem !important; /* 50% of original xl */
+          }
+          
+          /* Specific adjustment for GCSE text */
+          .pc-text-size .text-lg {
+            font-size: 0.875rem !important; /* Reduced from lg to base */
           }
         }
 
