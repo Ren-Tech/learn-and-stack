@@ -356,7 +356,7 @@ const Primary = () => {
             <div className="flex items-start space-x-4 mb-4">
               <div className="flex-shrink-0">
                 <img 
-                  src="/images/ks1.png" 
+                  src="/images/ks2.png" 
                   alt="Key Stage 2" 
                   className="w-20 h-20 object-contain" // Reduced from w-24 h-24 to w-20 h-20 (20% reduction)
                 />
@@ -520,7 +520,7 @@ const Primary = () => {
             <div className="flex items-start space-x-6 mb-4">
               <div className="flex-shrink-0">
                 <img 
-                  src="/images/ks1.png" 
+                  src="/images/ks2.png" 
                   alt="Key Stage 2" 
                   className={`${isDesktop ? 'w-24 h-24' : 'w-32 h-32'} object-contain`} // Desktop: w-24 h-24, Others: w-32 h-32
                 />

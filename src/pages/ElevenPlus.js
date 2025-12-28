@@ -341,6 +341,33 @@ const ElevenPlus = () => {
             </div>
           </div>
 
+          {/* 11+ Info for Mobile BBC Layout - SIMPLE FORMAT */}
+          <div className="px-4 pt-6">
+            {/* Title */}
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">11+ Exam Preparation</h1>
+            
+            {/* Simple text lines - Only 1 line */}
+            <div className="mb-4">
+              <p className="text-lg text-gray-700">11+ Exam Apps</p>
+            </div>
+            
+            {/* KS3 Image and Text side by side - Reduced image size by 20% */}
+            <div className="flex items-start space-x-4 mb-4">
+              <div className="flex-shrink-0">
+                <img 
+                  src="/images/ks3.png" 
+                  alt="Key Stage 3" 
+                  className="w-20 h-20 object-contain" // Reduced from w-24 h-24 to w-20 h-20 (20% reduction)
+                />
+              </div>
+              <div className="flex-1">
+                <p className="text-base text-gray-700 leading-relaxed line-clamp-3"> {/* Added line-clamp-3 */}
+                  The 11+ is an entrance exam for selective secondary schools and grammar schools taken by students around age 10 or 11 years old. The subject can include English, Mathematics, Verbal Reasoning and Non-Verbal Reasoning.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* BBC-style main content grid - Adjusted for portrait */}
           <div className="p-4">
             {/* Main featured story - BBC style */}
@@ -468,11 +495,38 @@ const ElevenPlus = () => {
           </div>
         </div>
       ) : (
-        // Original layout for other screen sizes
+        // Original layout for other screen sizes with 11+ info
         <div className={`relative ${showPortraitLock ? 'blur-sm' : ''}`}>
           {/* Green Navbar */}
           <div className="relative z-50">
             <Navbar onMenuStateChange={handleMenuStateChange} />
+          </div>
+
+          {/* 11+ Information Section - SIMPLE FORMAT */}
+          <div className={`absolute top-4 left-4 z-30 p-4 max-w-lg ${isDesktop ? 'pc-text-size' : ''}`}>
+            {/* Title */}
+            <h1 className={`${isDesktop ? 'text-2xl' : 'text-3xl'} font-bold text-gray-900 mb-4`}>11+ Exam Preparation</h1>
+            
+            {/* Simple text lines - Only 1 line */}
+            <div className="mb-4">
+              <p className={`${isDesktop ? 'text-lg' : 'text-xl'} text-gray-700`}>11+ Exam Apps</p>
+            </div>
+            
+            {/* KS3 Image and Text side by side - Reduced image size by 20% */}
+            <div className="flex items-start space-x-6 mb-4">
+              <div className="flex-shrink-0">
+                <img 
+                  src="/images/ks3.png" 
+                  alt="Key Stage 3" 
+                  className={`${isDesktop ? 'w-24 h-24' : 'w-32 h-32'} object-contain`} // Desktop: w-24 h-24, Others: w-32 h-32
+                />
+              </div>
+              <div className="flex-1">
+                <p className={`${isDesktop ? 'text-sm' : 'text-lg'} text-gray-700 leading-relaxed line-clamp-3`}> {/* Desktop: 50% smaller, added line-clamp-3 */}
+                  The 11+ is an entrance exam for selective secondary schools and grammar schools taken by students around age 10 or 11 years old. The subject can include English, Mathematics, Verbal Reasoning and Non-Verbal Reasoning.
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Background Image - UPDATED with 30% larger size */}
@@ -486,7 +540,7 @@ const ElevenPlus = () => {
                   imageRendering: '-webkit-optimize-contrast',
                   WebkitBackfaceVisibility: 'hidden',
                   backfaceVisibility: 'hidden',
-                  // Increased size by 30% (from scale 0.95 to scale 1.25) and moved up by 5%
+                  // Increased size by 30% (scale 1.25) and moved up by 5%
                   transform: 'scale(1.25) translateY(-5%)',
                   width: 'auto',
                   height: 'auto',
@@ -806,6 +860,13 @@ const ElevenPlus = () => {
       </div>
 
       <style jsx>{`
+        .line-clamp-3 {
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
         .line-clamp-2 {
           display: -webkit-box;
           -webkit-line-clamp: 2;
@@ -848,7 +909,7 @@ const ElevenPlus = () => {
         
         /* For Firefox */
         .overflow-y-auto {
-          scrollbar-width: thin;
+          scrollbarWidth: thin;
           scrollbar-color: #9333ea #f3e8ff;
         }
 
@@ -895,7 +956,7 @@ const ElevenPlus = () => {
           background: rgba(255, 255, 255, 0.5);
         }
 
-        /* PC-only ninja adjustments: 20rem size and -4rem margin to move down */
+        /* PC-only adjustments */
         @media (min-width: 1024px) {
           .pc-ninja-bottom {
             margin-bottom: 1.5rem !important; /* Negative margin to move ninja down */
@@ -904,6 +965,20 @@ const ElevenPlus = () => {
           .pc-ninja {
             transform: translateY(20%) scale(1.1); /* Move down 20% and scale up 10% */
             transition: transform 0.5s ease-out;
+          }
+
+          /* PC text size reduction to 50% */
+          .pc-text-size h1 {
+            font-size: 1.5rem !important; /* 50% of original 3xl */
+          }
+          
+          .pc-text-size p {
+            font-size: 0.875rem !important; /* 50% of original xl */
+          }
+          
+          /* Specific adjustment for 11+ text */
+          .pc-text-size .text-lg {
+            font-size: 0.875rem !important; /* Reduced from lg to base */
           }
         }
 
