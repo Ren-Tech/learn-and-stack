@@ -17,8 +17,9 @@ const Navbar = ({ onMenuStateChange }) => {
 
   const navLinks = [
     { path: "/", label: "Home", ageRange: "" },
-    { path: "/primary", label: "Primary", ageRange: "6-11 Years Old" },
     { path: "/preschool", label: "Pre-School", ageRange: "2-5 Years Old" },
+    { path: "/primary", label: "Primary", ageRange: "6-11 Years Old" },
+    
     { path: "/11plus", label: "11+", ageRange: "11 Years Old" },
     { path: "/gcses", label: "GCSEs", ageRange: "14-16 Years Old" },
     { path: "/alevels", label: "A-Levels", ageRange: "16-18 Years Old" },
