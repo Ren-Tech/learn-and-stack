@@ -493,6 +493,181 @@ const Home = () => {
     </div>
   );
 
+  // KAI Dynamic Learning Cycle Component for Mobile Landscape
+  const KAIDynamicLearningCycleMobileLandscape = () => (
+    <div className="absolute top-24 right-4 z-10 pointer-events-auto" style={{ width: '180px' }}>
+      <div className="bg-gradient-to-br from-gray-900 to-black rounded-xl py-3 pl-3 pr-6 border-3 border-red-600 shadow-xl relative"
+           style={{
+             boxShadow: '0 10px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1)',
+           }}>
+        
+        {/* Top row - 4 circles with 3D effect */}
+        <div className="flex justify-between items-center mb-6 relative z-10">
+          {/* Circle 1 - Yellow */}
+          <div className="flex flex-col items-center flex-1 -ml-2">
+            <div className="relative group">
+              <div className="w-10 h-10 bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-500 rounded-full flex items-center justify-center transform transition-transform duration-300 hover:scale-110 hover:-translate-y-1 cursor-pointer"
+                   style={{
+                     boxShadow: '0 6px 15px rgba(234, 179, 8, 0.4), inset 0 -3px 6px rgba(0,0,0,0.2), inset 0 1px 3px rgba(255,255,255,0.5)',
+                     border: '1.5px solid rgba(255, 255, 255, 0.3)'
+                   }}
+                   onClick={() => handleNavigation('/clear-objectives')}>
+                <div className="text-center px-1">
+                  <p className="text-[0.4rem] font-bold text-gray-900 drop-shadow-sm leading-tight">Clear</p>
+                  <p className="text-[0.4rem] font-bold text-gray-900 drop-shadow-sm leading-tight">Learning</p>
+                </div>
+              </div>
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-gray-800 to-black rounded-full flex items-center justify-center border-1.5 border-white shadow-md"
+                   style={{boxShadow: '0 3px 6px rgba(0,0,0,0.5)'}}>
+                <span className="text-white font-bold text-[0.45rem]">1</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Arrow 1 */}
+          <div className="flex-shrink-0 mx-0.5">
+            <svg width="12" height="6" viewBox="0 0 12 6" className="text-red-600 drop-shadow-md">
+              <defs>
+                <linearGradient id="arrowGradientMobile1" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#dc2626" />
+                  <stop offset="100%" stopColor="#991b1b" />
+                </linearGradient>
+              </defs>
+              <path d="M0 3 L8 3 L6 1.5 M8 3 L6 4.5" stroke="url(#arrowGradientMobile1)" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+            </svg>
+          </div>
+
+          {/* Circle 2 - Blue */}
+          <div className="flex flex-col items-center flex-1">
+            <div className="relative group">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-300 via-blue-400 to-blue-600 rounded-full flex items-center justify-center transform transition-transform duration-300 hover:scale-110 hover:-translate-y-1 cursor-pointer"
+                   style={{
+                     boxShadow: '0 6px 15px rgba(59, 130, 246, 0.4), inset 0 -3px 6px rgba(0,0,0,0.2), inset 0 1px 3px rgba(255,255,255,0.5)',
+                     border: '1.5px solid rgba(255, 255, 255, 0.3)'
+                   }}
+                   onClick={() => handleNavigation('/learner-journeys')}>
+                <div className="text-center px-1">
+                  <p className="text-[0.4rem] font-bold text-white drop-shadow-md leading-tight">Simplified</p>
+                  <p className="text-[0.4rem] font-bold text-white drop-shadow-md leading-tight">Journeys</p>
+                </div>
+              </div>
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-gray-800 to-black rounded-full flex items-center justify-center border-1.5 border-white shadow-md"
+                   style={{boxShadow: '0 3px 6px rgba(0,0,0,0.5)'}}>
+                <span className="text-white font-bold text-[0.45rem]">2</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Arrow 2 */}
+          <div className="flex-shrink-0 mx-0.5">
+            <svg width="12" height="6" viewBox="0 0 12 6" className="text-red-600 drop-shadow-md">
+              <path d="M0 3 L8 3 L6 1.5 M8 3 L6 4.5" stroke="url(#arrowGradientMobile1)" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+            </svg>
+          </div>
+
+          {/* Circle 3 - Orange */}
+          <div className="flex flex-col items-center flex-1">
+            <div className="relative group">
+              <div className="w-10 h-10 bg-gradient-to-br from-orange-400 via-orange-600 to-orange-700 rounded-full flex items-center justify-center transform transition-transform duration-300 hover:scale-110 hover:-translate-y-1 cursor-pointer"
+                   style={{
+                     boxShadow: '0 6px 15px rgba(234, 88, 12, 0.4), inset 0 -3px 6px rgba(0,0,0,0.2), inset 0 1px 3px rgba(255,255,255,0.5)',
+                     border: '1.5px solid rgba(255, 255, 255, 0.3)'
+                   }}
+                   onClick={() => handleNavigation('/learning-activities')}>
+                <div className="text-center px-1">
+                  <p className="text-[0.4rem] font-bold text-white drop-shadow-md leading-tight">Effective</p>
+                  <p className="text-[0.4rem] font-bold text-white drop-shadow-md leading-tight">Activities</p>
+                </div>
+              </div>
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-gray-800 to-black rounded-full flex items-center justify-center border-1.5 border-white shadow-md"
+                   style={{boxShadow: '0 3px 6px rgba(0,0,0,0.5)'}}>
+                <span className="text-white font-bold text-[0.45rem]">3</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Arrow 3 */}
+          <div className="flex-shrink-0 mx-0.5">
+            <svg width="12" height="6" viewBox="0 0 12 6" className="text-red-600 drop-shadow-md">
+              <path d="M0 3 L8 3 L6 1.5 M8 3 L6 4.5" stroke="url(#arrowGradientMobile1)" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+            </svg>
+          </div>
+
+          {/* Circle 4 - Gold */}
+          <div className="flex flex-col items-center flex-1">
+            <div className="relative group">
+              <div className="w-10 h-10 bg-gradient-to-br from-yellow-200 via-yellow-300 to-amber-400 rounded-full flex items-center justify-center transform transition-transform duration-300 hover:scale-110 hover:-translate-y-1 cursor-pointer"
+                   style={{
+                     boxShadow: '0 6px 15px rgba(251, 191, 36, 0.4), inset 0 -3px 6px rgba(0,0,0,0.2), inset 0 1px 3px rgba(255,255,255,0.5)',
+                     border: '1.5px solid rgba(255, 255, 255, 0.3)'
+                   }}
+                   onClick={() => handleNavigation('/knowledge-evaluations')}>
+                <div className="text-center px-1">
+                  <p className="text-[0.4rem] font-bold text-gray-900 drop-shadow-sm leading-tight">Accurate</p>
+                  <p className="text-[0.4rem] font-bold text-gray-900 drop-shadow-sm leading-tight">Knowledge</p>
+                </div>
+              </div>
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-gray-800 to-black rounded-full flex items-center justify-center border-1.5 border-white shadow-md"
+                   style={{boxShadow: '0 3px 6px rgba(0,0,0,0.5)'}}>
+                <span className="text-white font-bold text-[0.45rem]">4</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Center text */}
+        <div className="text-center mb-3">
+          <h2 className="text-sm font-bold bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500 bg-clip-text text-transparent mb-0.5"
+              style={{
+                textShadow: '1px 1px 3px rgba(0,0,0,0.4), 0 0 15px rgba(156, 163, 175, 0.2)',
+                letterSpacing: '0.05em'
+              }}>
+            KAI
+          </h2>
+          <p className="text-gray-400 text-[0.5rem] font-medium tracking-wide">Dynamic Learning Cycle</p>
+        </div>
+      </div>
+
+      {/* Bottom feedback box */}
+      <div className="relative mt-3">
+        <div className="bg-gradient-to-br from-green-600 via-green-700 to-green-800 rounded-md py-1.5 px-2 relative transform transition-transform duration-300 hover:scale-105 cursor-pointer"
+             style={{
+               boxShadow: '0 6px 15px rgba(22, 163, 74, 0.4), inset 0 -3px 6px rgba(0,0,0,0.2), inset 0 1px 3px rgba(255,255,255,0.2)',
+               border: '1.5px solid rgba(255, 255, 255, 0.2)'
+             }}
+             onClick={() => handleNavigation('/feedback-improvements')}>
+          <p className="text-white text-center font-bold text-[0.55rem] tracking-wide drop-shadow-md">
+            Feedbacks and Constant Improvements
+          </p>
+          <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-gradient-to-br from-gray-800 to-black rounded-full flex items-center justify-center border-1.5 border-white shadow-md"
+               style={{boxShadow: '0 3px 6px rgba(0,0,0,0.5)'}}>
+            <span className="text-white font-bold text-[0.55rem]">5</span>
+          </div>
+        </div>
+
+        {/* Return arrows */}
+        <div className="absolute -top-5 right-2">
+          <svg width="20" height="30" viewBox="0 0 20 30" className="drop-shadow-xl">
+            <defs>
+              <linearGradient id="arrowGradientMobile2" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#dc2626" />
+                <stop offset="100%" stopColor="#991b1b" />
+              </linearGradient>
+            </defs>
+            <path d="M10 2 L10 22 M10 22 L14 18 M10 22 L6 18" stroke="url(#arrowGradientMobile2)" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+          </svg>
+        </div>
+
+        {/* Left return arrow */}
+        <div className="absolute -top-5 left-2">
+          <svg width="20" height="30" viewBox="0 0 20 30" className="drop-shadow-xl">
+            <path d="M10 2 L10 22 M10 22 L14 18 M10 22 L6 18" stroke="url(#arrowGradientMobile2)" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className={`min-h-screen bg-white relative overflow-x-hidden ${showPortraitLock ? 'backdrop-blur-sm' : ''}`} onClick={handleContainerClick}>
       {/* Portrait Lock Dialog */}
@@ -543,7 +718,10 @@ const Home = () => {
           </div>
 
           {/* BBC-style main content grid - Adjusted for portrait */}
-          <div className="p-4">
+          <div className="p-4 relative">
+            {/* KAI Dynamic Learning Cycle for Mobile Landscape - Properly positioned inside content */}
+            {isMobileLandscape && !showPortraitLock && <KAIDynamicLearningCycleMobileLandscape />}
+            
             {/* Main featured story - BBC style */}
             <div className="mb-6">
               <div className="bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200">
